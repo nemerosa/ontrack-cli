@@ -22,9 +22,9 @@ THE SOFTWARE.
 package cmd
 
 import (
-	"fmt"
-
 	"github.com/spf13/cobra"
+
+	config "ontrack-cli/config"
 )
 
 // authentication
@@ -55,7 +55,19 @@ func createConfig(args []string) {
 	// Arguments have already been validated by ExactValidArgs(2) in the command definition
 	name := args[0]
 	url := args[1]
-	fmt.Println(name, url)
+
+	// Creates the configuration
+	var cfg = config.Config{
+		Name:     name,
+		URL:      url,
+		Username: username,
+		Password: password,
+		Token:    token,
+	}
+
+	// Adds this configuration to the file
+	// and sets as default
+	config.AddConfiguration(cfg)
 }
 
 func init() {
