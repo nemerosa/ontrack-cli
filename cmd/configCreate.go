@@ -27,9 +27,14 @@ import (
 	"github.com/spf13/cobra"
 )
 
+// authentication
+var username string
+var password string
+var token string
+
 // configCreateCmd represents the configCreate command
 var configCreateCmd = &cobra.Command{
-	Use:   "create",
+	Use:   "create NAME URL",
 	Short: "Creates a new configuration",
 	Long: `To create a 'local' configuration to connect to a local instance of Ontrack 
 using a username and a password:
@@ -40,8 +45,12 @@ or to create a 'prod' configuration using a token:
 	
 	ontrack-cli config create prod https://ontrack.nemerosa.net --token <token>
 `,
+	Args: cobra.ExactValidArgs(2),
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("configCreate called")
+		name := args[0]
+		url := args[1]
+
+		fmt.Println("name = ", name, ", url = ", url)
 	},
 }
 
@@ -56,5 +65,10 @@ func init() {
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
-	// configCreateCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+
+	// Authentication flags
+
+	configCreateCmd.Flags().StringVarP(&username, "username", "u", "", "Username for basic authentication")
+	configCreateCmd.Flags().StringVarP(&password, "password", "p", "", "Password for basic authentication")
+	configCreateCmd.Flags().StringVarP(&token, "token", "t", "", "Token based authentication (if defined, takes priority over username/password authentication)")
 }
