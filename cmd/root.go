@@ -24,6 +24,7 @@ package cmd
 import (
 	"fmt"
 	"os"
+
 	"github.com/spf13/cobra"
 
 	homedir "github.com/mitchellh/go-homedir"
@@ -35,16 +36,46 @@ var cfgFile string
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   "ontrack-cli",
-	Short: "A brief description of your application",
-	Long: `A longer description that spans multiple lines and likely contains
-examples and usage of using your application. For example:
+	Short: "Ontrack Command Line Interface",
+	Long: `The Ontrack CLI allows you to communicate with an Ontrack server.
 
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+First, you need to configure the connection to Ontrack. For example:
+
+	ontrack-cli config create local http://localhost:8080 --username <user> --password <password>
+	
+Or, using a token:
+
+	ontrack-cli config create local http://localhost:8080 --token <token>
+	
+Note that you can create several configurations and manage them using
+
+	ontrack-cli config
+	
+Examples of usages:
+
+* To get the list of projects:
+
+	ontrack-cli project list
+	
+* To setup a project and a branch in an idempotent way:
+
+	ontrack-cli branch setup --project my-project --branch release/1.0
+
+* To create a validation stamp in an idempotent way:
+
+	ontrack-cli validation setup --project my-project --branch release/1.0 --validation TESTS
+	
+* To create a new build on a branch and project:
+
+	ontrack-cli build create --project my-project --branch release/1.0 --build 123
+	
+* To create a validation run on an existing build:
+
+	ontrack-cli build validate --project my-project --branch release/1.0 --build 123 --validation TESTS --status PASSED
+	`,
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
-	// Run: func(cmd *cobra.Command, args []string) { },
+	// Run: func(cmd *cobra.Command, args []string) {},
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
