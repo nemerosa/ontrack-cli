@@ -46,12 +46,12 @@ or to create a 'prod' configuration using a token:
 	ontrack-cli config create prod https://ontrack.nemerosa.net --token <token>
 `,
 	Args: cobra.ExactValidArgs(2),
-	Run: func(cmd *cobra.Command, args []string) {
-		createConfig(args)
+	RunE: func(cmd *cobra.Command, args []string) error {
+		return createConfig(args)
 	},
 }
 
-func createConfig(args []string) {
+func createConfig(args []string) error {
 	// Arguments have already been validated by ExactValidArgs(2) in the command definition
 	name := args[0]
 	url := args[1]
@@ -67,7 +67,8 @@ func createConfig(args []string) {
 
 	// Adds this configuration to the file
 	// and sets as default
-	config.AddConfiguration(cfg)
+	err := config.AddConfiguration(cfg)
+	return err
 }
 
 func init() {
