@@ -47,11 +47,15 @@ or to create a 'prod' configuration using a token:
 `,
 	Args: cobra.ExactValidArgs(2),
 	Run: func(cmd *cobra.Command, args []string) {
-		name := args[0]
-		url := args[1]
-
-		fmt.Println("name = ", name, ", url = ", url)
+		createConfig(args)
 	},
+}
+
+func createConfig(args []string) {
+	// Arguments have already been validated by ExactValidArgs(2) in the command definition
+	name := args[0]
+	url := args[1]
+	fmt.Println(name, url)
 }
 
 func init() {
