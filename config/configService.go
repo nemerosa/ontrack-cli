@@ -96,3 +96,35 @@ func AddConfiguration(config Config) error {
 	// OK
 	return nil
 }
+
+// Finds an existing configuration
+func findConfigurationByName(root RootConfig, name string) *Config {
+	for _, item := range root.Configurations {
+		if item.Name == name {
+			return &item
+		}
+	}
+	return nil
+}
+
+// Sets the new selected configuration
+func SetSelectedConfiguration(name string) error {
+	root := ReadRootConfiguration()
+	existing := findConfigurationByName(root, name)
+	if existing == nil {
+		return fmt.Errorf("Configuration with name %s does not exist", name)
+	}
+	newRoot := RootConfig{
+		Selected:       name,
+		Configurations: root.Configurations,
+	}
+	// Saves the root configuration back
+	home, _ := homedir.Dir()
+	configFilePath := filepath.Join(home, configFileName)
+	buf, _ := yaml.Marshal(newRoot)
+	_, _ = os.OpenFile(configFilePath, os.O_CREATE|os.O_WRONLY, 0600)
+	_ = ioutil.WriteFile(configFilePath, buf, 0600)
+
+	// OK
+	return nil
+}
