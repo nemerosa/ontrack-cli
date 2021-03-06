@@ -60,6 +60,15 @@ func projectList() error {
 	}
 
 	fmt.Println(data)
+
+	for _, project := range data.projects {
+		if showID {
+			fmt.Println(project.id)
+		} else {
+			fmt.Println(project.name)
+		}
+	}
+
 	return nil
 }
 
