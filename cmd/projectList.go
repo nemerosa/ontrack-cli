@@ -59,13 +59,11 @@ func projectList() error {
 		return err
 	}
 
-	fmt.Println(data)
-
-	for _, project := range data.projects {
+	for _, project := range data.Projects {
 		if showID {
-			fmt.Println(project.id)
+			fmt.Println(project.ID)
 		} else {
-			fmt.Println(project.name)
+			fmt.Println(project.Name)
 		}
 	}
 
@@ -87,10 +85,10 @@ func init() {
 }
 
 type projectListResponse struct {
-	projects []project
+	Projects []project
 }
 
 type project struct {
-	id   int
-	name string
+	ID   int
+	Name string
 }
