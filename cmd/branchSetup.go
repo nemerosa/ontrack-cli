@@ -22,9 +22,10 @@ THE SOFTWARE.
 package cmd
 
 import (
-	"fmt"
-
 	"github.com/spf13/cobra"
+
+	client "ontrack-cli/client"
+	config "ontrack-cli/config"
 )
 
 var branchSetupProject string
@@ -41,9 +42,53 @@ var branchSetupCmd = &cobra.Command{
 The BRANCH name will be adapted to fit Ontrack naming conventions, so you
 can directly give the name of the Git branch.
 `,
-	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("branchSetup called with ", branchSetupProject, " and ", branchSetupBranch)
+	RunE: func(cmd *cobra.Command, args []string) error {
+		return branchSetup()
 	},
+}
+
+func branchSetup() error {
+	config, err := config.GetSelectedConfiguration()
+	if err != nil {
+		return err
+	}
+	// Creates or get the project
+	var projectData struct {
+		CreateProjectOrGet struct {
+			Project struct {
+				ID   int
+				Name string
+			}
+			Errors []struct {
+				Message string
+			}
+		}
+	}
+	if err := client.GraphQLCall(config, `
+		mutation ProjectSetup($name: String!) {
+			createProjectOrGet(input: {name: $name}) {
+				project {
+				  id
+				  name
+				}
+				errors {
+				  message
+				}
+			}
+		}
+	`, map[string]interface{}{
+		"name": branchSetupProject,
+	}, &projectData); err != nil {
+		return err
+	}
+
+	// Checks errors for the project
+	if err := client.CheckDataErrors(projectData.CreateProjectOrGet.Errors); err != nil {
+		return err
+	}
+
+	// OK
+	return nil
 }
 
 func init() {

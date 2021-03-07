@@ -2,6 +2,8 @@ package client
 
 import (
 	"encoding/json"
+	"errors"
+	"fmt"
 	config "ontrack-cli/config"
 
 	resty "github.com/go-resty/resty/v2"
@@ -50,4 +52,21 @@ type graphErr struct {
 type graphResponse struct {
 	Data   interface{}
 	Errors []graphErr
+}
+
+// CheckDataErrors Given a list of errors in a data GraphQL structure (typically
+// returned by a mutation), returns a GoLang error aggregating all error messages
+// or returns nil if there is no error.
+func CheckDataErrors(errorsList []struct{ Message string }) error {
+	if errorsList != nil {
+		if len(errorsList) > 0 {
+			var message string
+			for index, error := range errorsList {
+				message += fmt.Sprintf("%d) %s\n", index+1, error.Message)
+			}
+			return errors.New(message)
+		}
+	}
+	// All good
+	return nil
 }
