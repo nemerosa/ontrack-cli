@@ -1,5 +1,12 @@
 #!/usr/bin/env bash
 
+version=$1
+if [ version == "" ]
+then
+    version=Snapshot
+fi
+echo version=$version
+
 package_name=ontrack-cli
 
 platforms=("windows/amd64" "darwin/amd64" "linux/amd64")
@@ -14,7 +21,7 @@ do
         output_name+='.exe'
     fi
 
-    env GOOS=$GOOS GOARCH=$GOARCH go build -o $output_name $package
+    env GOOS=$GOOS GOARCH=$GOARCH go build -ldflags "-X ontrack-cli/config.Version=$version" -o $output_name $package
     if [ $? -ne 0 ]; then
         echo 'An error has occurred! Aborting the script execution...'
         exit 1

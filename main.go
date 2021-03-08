@@ -21,7 +21,9 @@ THE SOFTWARE.
 */
 package main
 
-import "ontrack-cli/cmd"
+import (
+	"ontrack-cli/cmd"
+)
 
 func main() {
 	cmd.Execute()
