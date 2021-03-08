@@ -31,6 +31,17 @@ func GraphQLCall(config *config.Config, query string, variables map[string]inter
 		return err
 	}
 
+	// Error returned
+	var error struct {
+		Status  int
+		Message string
+	}
+	if err := json.Unmarshal(resp.Body(), &error); err == nil {
+		if error.Status != 0 {
+			return fmt.Errorf("HTTP %d %s", error.Status, error.Message)
+		}
+	}
+
 	// Parsing
 	result := &graphResponse{
 		Data: data,
@@ -39,7 +50,16 @@ func GraphQLCall(config *config.Config, query string, variables map[string]inter
 		return err
 	}
 
-	// TODO Management of errors
+	// Management of errors
+	if result.Errors != nil {
+		if len(result.Errors) > 0 {
+			var message string
+			for index, error := range result.Errors {
+				message += fmt.Sprintf("%d) %s\n", index+1, error.Message)
+			}
+			return errors.New(message)
+		}
+	}
 
 	// OK
 	return nil

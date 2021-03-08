@@ -22,6 +22,8 @@ THE SOFTWARE.
 package cmd
 
 import (
+	"regexp"
+
 	"github.com/spf13/cobra"
 
 	client "ontrack-cli/client"
@@ -52,12 +54,22 @@ func branchSetup() error {
 	if err != nil {
 		return err
 	}
+	// Normalizing the name of the branch
+	re := regexp.MustCompile("[^A-Za-z0-9\\._-]")
+	normalizedBranchName := re.ReplaceAllString(branchSetupBranch, "-")
 	// Creates or get the project
-	var projectData struct {
+	var data struct {
 		CreateProjectOrGet struct {
 			Project struct {
-				ID   int
-				Name string
+				ID int
+			}
+			Errors []struct {
+				Message string
+			}
+		}
+		CreateBranchOrGet struct {
+			Branch struct {
+				ID int
 			}
 			Errors []struct {
 				Message string
@@ -65,11 +77,18 @@ func branchSetup() error {
 		}
 	}
 	if err := client.GraphQLCall(config, `
-		mutation ProjectSetup($name: String!) {
-			createProjectOrGet(input: {name: $name}) {
+		mutation ProjectSetup($project: String!, $branch: String!) {
+			createProjectOrGet(input: {name: $project}) {
 				project {
 				  id
-				  name
+				}
+				errors {
+				  message
+				}
+			}
+			createBranchOrGet(input: {projectName: $project, name: $branch}) {
+				branch {
+				  id
 				}
 				errors {
 				  message
@@ -77,13 +96,18 @@ func branchSetup() error {
 			}
 		}
 	`, map[string]interface{}{
-		"name": branchSetupProject,
-	}, &projectData); err != nil {
+		"project": branchSetupProject,
+		"branch":  normalizedBranchName,
+	}, &data); err != nil {
 		return err
 	}
 
 	// Checks errors for the project
-	if err := client.CheckDataErrors(projectData.CreateProjectOrGet.Errors); err != nil {
+	if err := client.CheckDataErrors(data.CreateProjectOrGet.Errors); err != nil {
+		return err
+	}
+	// Checks errors for the branch
+	if err := client.CheckDataErrors(data.CreateBranchOrGet.Errors); err != nil {
 		return err
 	}
 
