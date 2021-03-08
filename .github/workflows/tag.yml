@@ -32,5 +32,4 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         body: Preview version of the CLI
-        prerelease: true
         files: ontrack-cli-*
