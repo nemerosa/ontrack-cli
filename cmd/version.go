@@ -27,6 +27,7 @@ import (
 
 	"github.com/spf13/cobra"
 
+	client "ontrack-cli/client"
 	config "ontrack-cli/config"
 )
 
@@ -64,7 +65,28 @@ func version() error {
 			return err
 		}
 		ontrackURL = cfg.URL
-		ontrackVersion = "N/A See https://github.com/nemerosa/ontrack/issues/834"
+
+		var data struct {
+			Info struct {
+				Version struct {
+					Display string
+				}
+			}
+		}
+
+		if err := client.GraphQLCall(cfg, `
+			{
+				info {
+					version {
+						display
+					}
+				}
+			}
+		`, map[string]interface{}{}, &data); err != nil {
+			return err
+		}
+
+		ontrackVersion = data.Info.Version.Display
 	}
 	if both {
 		fmt.Printf("CLI Version %s\n", config.Version)
