@@ -25,52 +25,39 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// projectSetPropertyGenericCmd represents the projectSetPropertyGeneric command
-var projectSetPropertyGenericCmd = &cobra.Command{
-	Use:   "generic",
-	Short: "Sets a project property using its type and its value as JSON",
-	Long: `Sets a project property using its type and its value as JSON.
+// branchSetPropertyCmd represents the branchSetProperty command
+var branchSetPropertyCmd = &cobra.Command{
+	Use:   "set-property",
+	Short: "Sets a property on a branch",
+	Long: `Sets a property on a branch.
+	
+This can be used for setting generic properties, using their full qualified class name and some JSON content:
+	
+	ontrack-cli branch set-property --project PROJECT --branch BRANCH generic --property "net.nemerosa.ontrack.extension.git.property.GitBranchConfigurationPropertyType" --value '{branch:"main"}'
 
-Example:
+Some specific commands are also available for the most common property types. The example below does exactly the
+same update than the one just above:
 
-	ontrack-cli project set-property --project PROJECT generic --property "net.nemerosa.ontrack.extension.github.property.GitHubProjectConfigurationPropertyType" --value '{configuration:"GitHub",repository:"nemerosa/ontrack"}'
-	`,
-	RunE: func(cmd *cobra.Command, args []string) error {
-		project, err := cmd.Flags().GetString("project")
-		if err != nil {
-			return err
-		}
-
-		property, err := cmd.Flags().GetString("property")
-		if err != nil {
-			return err
-		}
-
-		value, err := cmd.Flags().GetString("value")
-		if err != nil {
-			return err
-		}
-
-		return SetProperty("project", map[string]string{
-			"project": project,
-		}, property, value)
-	},
+	ontrack-cli branch set-property --project PROJECT --branch BRANCH git --git-branch main
+`,
+	// Run: func(cmd *cobra.Command, args []string) {},
 }
 
 func init() {
-	projectSetPropertyCmd.AddCommand(projectSetPropertyGenericCmd)
+	branchCmd.AddCommand(branchSetPropertyCmd)
 
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command
 	// and all subcommands, e.g.:
-	// projectSetPropertyGenericCmd.PersistentFlags().String("foo", "", "A help for foo")
+	// branchSetPropertyCmd.PersistentFlags().String("foo", "", "A help for foo")
+	branchSetPropertyCmd.PersistentFlags().StringP("project", "p", "", "Name of the project")
+	branchSetPropertyCmd.PersistentFlags().StringP("branch", "b", "", "Name of the branch")
+
+	branchSetPropertyCmd.MarkPersistentFlagRequired("project")
+	branchSetPropertyCmd.MarkPersistentFlagRequired("branch")
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
-	projectSetPropertyGenericCmd.Flags().StringP("property", "t", "", "FQCN of the property")
-	projectSetPropertyGenericCmd.Flags().StringP("value", "v", "", "Value of the property as a JSON string")
-
-	projectSetPropertyGenericCmd.MarkFlagRequired("property")
-	projectSetPropertyGenericCmd.MarkFlagRequired("value")
+	// branchSetPropertyCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }

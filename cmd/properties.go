@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"bytes"
-	"fmt"
 	client "ontrack-cli/client"
 	config "ontrack-cli/config"
 	"strings"
@@ -40,7 +39,6 @@ func SetProperty(entityType string, entityNames map[string]string, typeName stri
 	if err := tmpl.Execute(&query, queryTmplInput); err != nil {
 		return err
 	}
-	fmt.Printf("Query: %s\n", query.String())
 
 	// nodeName --> errors --> []error
 	var data map[string]setPropertyPayload
