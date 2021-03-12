@@ -1,6 +1,8 @@
 Ontrack CLI
 ===========
 
+[![Build](https://github.com/nemerosa/ontrack-cli/actions/workflows/go.yml/badge.svg)](https://github.com/nemerosa/ontrack-cli/actions/workflows/go.yml)
+
 [Ontrack](https://github.com/nemerosa/ontrack) is an application which store all events which happen in your CI/CD environment: branches, builds, validations, promotions, labels, commits, etc. It allows your delivery chains to reach new levels by driving your pipelines using real-time data.
 
 The Ontrack CLI is a Command Line Interface tool, available on many platforms, which allows you to feed information into Ontrack from any shell platform.
