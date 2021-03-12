@@ -62,7 +62,7 @@ As of now, this also sets the "GitCommitPropertyLink" property by default (build
 		}
 
 		var data struct {
-			SetBranchGitConfiProperty struct {
+			SetBranchGitConfigProperty struct {
 				Errors []struct {
 					Message string
 				}
@@ -74,7 +74,7 @@ As of now, this also sets the "GitCommitPropertyLink" property by default (build
 				$branch: String!,
 				$gitBranch: String!
 			) {
-				setBranchGitConfiProperty(input: {
+				setBranchGitConfigProperty(input: {
 					project: $project,
 					branch: $branch,
 					gitBranch: $gitBranch
@@ -92,7 +92,7 @@ As of now, this also sets the "GitCommitPropertyLink" property by default (build
 			return err
 		}
 
-		if err := client.CheckDataErrors(data.SetBranchGitConfiProperty.Errors); err != nil {
+		if err := client.CheckDataErrors(data.SetBranchGitConfigProperty.Errors); err != nil {
 			return err
 		}
 
