@@ -106,6 +106,10 @@ Example:
 			return err
 		}
 
+		if err := client.CheckDataErrors(data.SetProjectGitHubConfigurationProperty.Errors); err != nil {
+			return err
+		}
+
 		// OK
 		return nil
 	},
