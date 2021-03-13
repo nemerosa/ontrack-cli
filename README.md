@@ -104,7 +104,7 @@ ontrack-cli build set-property --project <project> --branch <branch> --build <bu
 
 While the Ontrack CLI can be used directly, there are direct integrations in some environments:
 
-* [`ontrack-github-actions-cli-setup` GitHub action](nemerosa/ontrack-github-actions-cli-setup) - _installation of the CLI and simplified GitHub/Git setup_
+* [`ontrack-github-actions-cli-setup` GitHub action](https://github.com/nemerosa/ontrack-github-actions-cli-setup) - _installation of the CLI and simplified GitHub/Git setup_
 
 ## TODO
 
