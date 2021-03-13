@@ -54,11 +54,45 @@ ontrack-cli build setup --project <project> --branch <branch> --build <build>
 
 where `<build>` is a unique identifier for your build (typically a build number).
 
+### Git integration
+
+Ontrack can leverage SCM information stored in its model, in order to compute change logs or to allow searches based on commits.
+
+For example, to associate a project with a GitHub repository:
+
+```bash
+# GitHub setup of the project
+ontrack-cli project set-property --project <project> github \
+    --configuration github.com \
+    --repository nemerosa/ontrack-cli \
+    --indexation 30 \
+    --issue-service self
+```
+
+This command associates the project with the `nemerosa/ontrack-cli` repository, using the credentials defined by the `github.com` GitHub configuration stored in Ontrack. Additionally, Ontrack will index the content of this repository every `30` minutes and the GitHub issues will be used to track issues.
+
+Whenever a branch is created, you associate it with the corresponding Git branch this way:
+
+```bash
+# Git setup of the branch
+ontrack-cli branch set-property --project <project> --branch <branch> git \
+    --git-branch <branch>
+```
+
+> Note that pull requests are also supported. In this case, the `--git-branch` must be something like `PR-123`.
+
+Finally, each build can be associated with a Git commit:
+
+```bash
+# Git setup of the build
+ontrack-cli build set-property --project <project> --branch <branch> --build <build> git-commit \
+    --commit <full commit hash>
+```
+
 ## TODO
 
-- Setup of the project for Git
-- Setup of the branch for Git
 - Setup of the validation stamps
 - Setup of the promotions
 - Setup of the auto promotions
 - Validations
+- Validation & build run infos (timings)
