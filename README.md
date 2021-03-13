@@ -15,6 +15,7 @@ The Ontrack CLI is a Command Line Interface tool, available on many platforms, w
   * [Branch setup](#branch-setup)
   * [Build setup](#build-setup)
   * [Git integration](#git-integration)
+* [Integrations](#integrations)
 * [TODO](#todo)
 
 ## Installation
@@ -98,6 +99,12 @@ Finally, each build can be associated with a Git commit:
 ontrack-cli build set-property --project <project> --branch <branch> --build <build> git-commit \
     --commit <full commit hash>
 ```
+
+## Integrations
+
+While the Ontrack CLI can be used directly, there are direct integrations in some environments:
+
+* [`ontrack-github-actions-cli-setup` GitHub action](nemerosa/ontrack-github-actions-cli-setup) - _installation of the CLI and simplified GitHub/Git setup_
 
 ## TODO
 
