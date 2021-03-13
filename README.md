@@ -7,6 +7,16 @@ Ontrack CLI
 
 The Ontrack CLI is a Command Line Interface tool, available on many platforms, which allows you to feed information into Ontrack from any shell platform.
 
+## Table of contents
+
+* [Installation](#installation)
+* [Setup](#setup)
+* [Usage](#usage)
+  * [Branch setup](#branch-setup)
+  * [Build setup](#build-setup)
+  * [Git integration](#git-integration)
+* [TODO](#todo)
+
 ## Installation
 
 Download the latest version for your platform from the [releases](https://github.com/nemerosa/ontrack-cli/releases) page.
