@@ -13,6 +13,7 @@ The Ontrack CLI is a Command Line Interface tool, available on many platforms, w
 * [Setup](#setup)
 * [Usage](#usage)
   * [Branch setup](#branch-setup)
+  * [Validation stamps setup](#validation-stamps-setup)
   * [Build setup](#build-setup)
   * [Git integration](#git-integration)
 * [Integrations](#integrations)
@@ -53,6 +54,61 @@ ontrack-cli branch setup --project <project> --branch <branch>
 
 Here, `<project>` is the name of your project or repository, and `<branch>` is typically the Git branch name
 or the PR name (like `PR-123`). The `branch setup` operation is idempotent.
+
+### Validation stamps setup
+
+The CLI can be used to create validation stamps:
+
+```bash
+ontrack-cli validation-stamp setup --project <project> --branch <branch> --validation <validation>
+```
+
+The `validation-stamp setup` (or `vs setup` for a shortcut) command is idempotent.
+
+Additionally, a validation stamp can be created with a
+[data type](https://static.nemerosa.net/ontrack/release/latest/docs/doc/index.html#validation-stamps-data)
+and its configuration. For example, to create a CHML validation type:
+
+```bash
+ontrack-cli validation-stamp setup --project <project> --branch <branch> --validation <validation> \
+    --data-type net.nemerosa.ontrack.extension.general.validation.CHMLValidationDataType \
+    --data-config '{warningLevel: {level: "HIGH",value:1},failedLevel:{level:"CRITICAL",value:1}}'
+```
+
+The later syntax is pretty cumbersome and the CLI provides dedicated commands for the most used data types:
+
+* for CHML data type:
+
+```bash
+ontrack-cli validation-stamp setup --project <project> --branch <branch> --validation <validation> \
+    chml \
+        --warning HIGH=1 \
+        --failed CRITICAL=1
+```
+
+* for test summary data type:
+
+```bash
+ontrack-cli validation-stamp setup --project <project> --branch <branch> --validation <validation> \
+    tests --warning-if-skipped true
+```
+
+* for percentage data type:
+
+```bash
+ontrack-cli validation-stamp setup --project <project> --branch <branch> --validation <validation> \
+    percentage \
+        --warning 60 \
+        --failure 50 \
+        --ok-if-greater false
+```
+
+* for metrics data type:
+
+```bash
+ontrack-cli validation-stamp setup --project <project> --branch <branch> --validation <validation> \
+    metrics
+```
 
 ### Build setup
 
@@ -108,7 +164,6 @@ While the Ontrack CLI can be used directly, there are direct integrations in som
 
 ## TODO
 
-- Setup of the validation stamps
 - Setup of the promotions
 - Setup of the auto promotions
 - Validations
