@@ -22,28 +22,22 @@ THE SOFTWARE.
 package cmd
 
 import (
-	"errors"
-
-	"github.com/spf13/cobra"
-
-	"regexp"
-	"strconv"
-
 	client "ontrack-cli/client"
 	config "ontrack-cli/config"
+
+	"github.com/spf13/cobra"
 )
 
-// validationStampSetupCHMLCmd represents the validationStampSetupCHML command
-var validationStampSetupCHMLCmd = &cobra.Command{
-	Use:   "chml",
-	Short: "Setup of a CHML validation stamp",
-	Long: `Setup of a CHML validation stamp.
+// validationStampSetupTestsCmd represents the validationStampSetupTests command
+var validationStampSetupTestsCmd = &cobra.Command{
+	Use:   "tests",
+	Short: "Setup of a tests validation stamp",
+	Long: `Setup of a tests validation stamp.
 
 For example:
 
-	ontrack-cli vs setup chml --project PROJECT --branch BRANCH --validation STAMP \
-		--warning HIGH=1 \
-		--failed CRITICAL=1
+	ontrack-cli vs setup tests --project PROJECT --branch BRANCH --validation STAMP \
+		--warning-if-skipped
 `,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		project, err := cmd.Flags().GetString("project")
@@ -66,12 +60,7 @@ For example:
 			return err
 		}
 
-		warningLevel, warningValue, err := parseLevel(cmd, "warning")
-		if err != nil {
-			return err
-		}
-
-		failedLevel, failedValue, err := parseLevel(cmd, "failed")
+		warningIfSkipped, err := cmd.Flags().GetBool("warning-if-skipped")
 		if err != nil {
 			return err
 		}
@@ -82,36 +71,26 @@ For example:
 		}
 
 		var data struct {
-			SetupCHMLValidationStamp struct {
+			SetupTestSummaryValidationStamp struct {
 				Errors []struct {
 					Message string
 				}
 			}
 		}
 		if err := client.GraphQLCall(cfg, `
-			mutation SetupCHMLValidationStamp(
+			mutation SetupTestSummaryValidationStamp(
 				$project: String!,
 				$branch: String!,
 				$validation: String!,
 				$description: String,
-				$warningLevel: CHML!,
-				$warningValue: Int!,
-				$failedLevel: CHML!,
-				$failedValue: Int!
+				$warningIfSkipped: Boolean!
 			) {
-				setupCHMLValidationStamp(input: {
+				setupTestSummaryValidationStamp(input: {
 					project: $project,
 					branch: $branch,
 					validation: $validation,
 					description: $description,
-					warningLevel: {
-						level: $warningLevel,
-						value: $warningValue
-					},
-					failedLevel: {
-						level: $failedLevel,
-						value: $failedValue
-					}
+					warningIfSkipped: $warningIfSkipped
 				}) {
 					errors {
 						message
@@ -119,19 +98,16 @@ For example:
 				}
 			}
 		`, map[string]interface{}{
-			"project":      project,
-			"branch":       branch,
-			"validation":   validation,
-			"description":  description,
-			"warningLevel": warningLevel,
-			"warningValue": warningValue,
-			"failedLevel":  failedLevel,
-			"failedValue":  failedValue,
+			"project":          project,
+			"branch":           branch,
+			"validation":       validation,
+			"description":      description,
+			"warningIfSkipped": warningIfSkipped,
 		}, &data); err != nil {
 			return err
 		}
 
-		if err := client.CheckDataErrors(data.SetupCHMLValidationStamp.Errors); err != nil {
+		if err := client.CheckDataErrors(data.SetupTestSummaryValidationStamp.Errors); err != nil {
 			return err
 		}
 
@@ -140,42 +116,17 @@ For example:
 	},
 }
 
-func parseLevel(cmd *cobra.Command, name string) (string, int, error) {
-	arg, err := cmd.Flags().GetString(name)
-	if err != nil {
-		return "", 0, err
-	}
-
-	re := regexp.MustCompile(`^(CRITICAL|HIGH|MEDIUM|LOW)=(\d+)$`)
-	match := re.FindStringSubmatch(arg)
-	if match == nil {
-		return "", 0, errors.New("Argument " + name + " with value \"" + arg + "\" must match (CRITICAL|HIGH|MEDIUM|LOW)=<value>")
-	}
-
-	level := match[1]
-	value, err := strconv.Atoi(match[2])
-	if err != nil {
-		return "", 0, err
-	}
-
-	return level, value, nil
-}
-
 func init() {
-	validationStampSetupCmd.AddCommand(validationStampSetupCHMLCmd)
+	validationStampSetupCmd.AddCommand(validationStampSetupTestsCmd)
 
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command
 	// and all subcommands, e.g.:
-	// validationStampSetupCHMLCmd.PersistentFlags().String("foo", "", "A help for foo")
+	// validationStampSetupTestsCmd.PersistentFlags().String("foo", "", "A help for foo")
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
-	// validationStampSetupCHMLCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
-	validationStampSetupCHMLCmd.Flags().StringP("warning", "w", "", "Warning threshold, in the form of 'level=value'")
-	validationStampSetupCHMLCmd.Flags().StringP("failed", "f", "", "Failure threshold, in the form of 'level=value'")
-
-	validationStampSetupCHMLCmd.MarkFlagRequired("warning")
-	validationStampSetupCHMLCmd.MarkFlagRequired("failed")
+	// validationStampSetupTestsCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	validationStampSetupTestsCmd.Flags().BoolP("warning-if-skipped", "w", false, "Configures the validation stamp to fail if there are some skipped tests.")
 }
