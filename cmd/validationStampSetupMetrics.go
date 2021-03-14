@@ -28,17 +28,15 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// validationStampSetupPercentageCmd represents the validationStampSetupPercentage command
-var validationStampSetupPercentageCmd = &cobra.Command{
-	Use:     "percentage",
-	Aliases: []string{"percent"},
-	Short:   "Setup of a percentage validation stamp",
-	Long: `Setup of a percentage validation stamp.
+// validationStampSetupMetricsCmd represents the validationStampSetupMetrics command
+var validationStampSetupMetricsCmd = &cobra.Command{
+	Use:   "metrics",
+	Short: "Setup of a metrics validation stamp",
+	Long: `Setup of a metrics validation stamp.
 
 For example:
 
-	ontrack-cli vs setup percentage --project PROJECT --branch BRANCH --validation STAMP \
-		--warning-if-skipped
+	ontrack-cli vs setup metrics --project PROJECT --branch BRANCH --validation STAMP
 `,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		project, err := cmd.Flags().GetString("project")
@@ -61,63 +59,30 @@ For example:
 			return err
 		}
 
-		warning, err := cmd.Flags().GetInt("warning")
-		if err != nil {
-			return err
-		}
-		var warningValue *int
-		if warning > 0 {
-			warningValue = &warning
-		} else {
-			warningValue = nil
-		}
-
-		failure, err := cmd.Flags().GetInt("failure")
-		if err != nil {
-			return err
-		}
-		var failureValue *int
-		if failure > 0 {
-			failureValue = &failure
-		} else {
-			failureValue = nil
-		}
-
-		okIfGreater, err := cmd.Flags().GetBool("ok-if-greater")
-		if err != nil {
-			return err
-		}
-
 		cfg, err := config.GetSelectedConfiguration()
 		if err != nil {
 			return err
 		}
 
 		var data struct {
-			SetupPercentageValidationStamp struct {
+			SetupMetricsValidationStamp struct {
 				Errors []struct {
 					Message string
 				}
 			}
 		}
 		if err := client.GraphQLCall(cfg, `
-			mutation SetupPercentageValidationStamp(
+			mutation SetupMetricsValidationStamp(
 				$project: String!,
 				$branch: String!,
 				$validation: String!,
-				$description: String,
-				$warning: Int,
-				$failure: Int,
-				$okIfGreater: Boolean!
+				$description: String
 			) {
-				setupPercentageValidationStamp(input: {
+				setupMetricsValidationStamp(input: {
 					project: $project,
 					branch: $branch,
 					validation: $validation,
-					description: $description,
-					warningThreshold: $warning,
-					failureThreshold: $failure,
-					okIfGreater: $okIfGreater
+					description: $description
 				}) {
 					errors {
 						message
@@ -129,14 +94,11 @@ For example:
 			"branch":      branch,
 			"validation":  validation,
 			"description": description,
-			"warning":     warningValue,
-			"failure":     failureValue,
-			"okIfGreater": okIfGreater,
 		}, &data); err != nil {
 			return err
 		}
 
-		if err := client.CheckDataErrors(data.SetupPercentageValidationStamp.Errors); err != nil {
+		if err := client.CheckDataErrors(data.SetupMetricsValidationStamp.Errors); err != nil {
 			return err
 		}
 
@@ -146,19 +108,15 @@ For example:
 }
 
 func init() {
-	validationStampSetupCmd.AddCommand(validationStampSetupPercentageCmd)
+	validationStampSetupCmd.AddCommand(validationStampSetupMetricsCmd)
 
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command
 	// and all subcommands, e.g.:
-	// validationStampSetupPercentageCmd.PersistentFlags().String("foo", "", "A help for foo")
+	// validationStampSetupMetricsCmd.PersistentFlags().String("foo", "", "A help for foo")
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
-	// validationStampSetupPercentageCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
-	validationStampSetupPercentageCmd.Flags().IntP("warning", "w", 0, "Threshold value for a warning")
-	validationStampSetupPercentageCmd.Flags().IntP("failure", "f", 0, "Threshold value for a failure")
-	validationStampSetupPercentageCmd.Flags().BoolP("ok-if-greater", "o", false, "Direction of the value scale")
-
+	// validationStampSetupMetricsCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
