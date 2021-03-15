@@ -156,6 +156,66 @@ ontrack-cli build set-property --project <project> --branch <branch> --build <bu
     --commit <full commit hash>
 ```
 
+## Validation
+
+One of the most important point of Ontrack is to record _validations_:
+
+```bash
+ontrack-cli validate --project <project> --branch <branch> --build <build> --validation <validation> --status <status>
+```
+
+where `<status>` is an Ontrack validation run status like `PASSED`, `WARNING` or `FAILED`.
+
+Additionally, a validation run can be created with some
+[data](https://static.nemerosa.net/ontrack/release/latest/docs/doc/index.html#validation-stamps-data). For example, to create a test summary validation:
+
+```bash
+ontrack-cli validate --project <project> --branch <branch> --build <build> --validation <validation> \
+    --data-type net.nemerosa.ontrack.extension.general.validation.TestSummaryValidationDataType \
+    --data {passed: 1, skipped: 2, failed: 3}
+```
+
+The later syntax is pretty cumbersome and the CLI provides dedicated commands for the most used data types:
+
+* for CHML data type:
+
+```bash
+ontrack-cli validate --project <project> --branch <branch> --build <build> --validation <validation> \
+    chml \
+        --critical 0 \
+        --high 2 \
+        --medium 25 \
+        --low 1214
+```
+
+* for test summary data type:
+
+```bash
+ontrack-cli validate --project <project> --branch <branch> --build <build> --validation <validation> \
+    tests \
+        --passed 20 \
+        --skipped 2 \
+        --failed 1
+```
+
+* for percentage data type:
+
+```bash
+ontrack-cli validate --project <project> --branch <branch> --build <build> --validation <validation> \
+    percentage \
+        --value 87
+```
+
+* for metrics data type:
+
+```bash
+ontrack-cli validate --project <project> --branch <branch> --build <build> --validation <validation> \
+    metrics \
+        --metric speed=1.5 \
+        --metric acceleration=0.25 \
+        --metrics weight=145,height=185.1
+```
+
 ## Integrations
 
 While the Ontrack CLI can be used directly, there are direct integrations in some environments:
@@ -166,5 +226,4 @@ While the Ontrack CLI can be used directly, there are direct integrations in som
 
 - Setup of the promotions
 - Setup of the auto promotions
-- Validations
 - Validation & build run infos (timings)
