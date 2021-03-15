@@ -200,6 +200,6 @@ func init() {
 }
 
 type metric struct {
-	Name  string
-	Value float64
+	Name  string  `json:"name"`
+	Value float64 `json:"value"`
 }
