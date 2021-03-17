@@ -84,6 +84,11 @@ For example:
 			return err
 		}
 
+		runInfo, err := GetRunInfo(cmd)
+		if err != nil {
+			return err
+		}
+
 		// Get the configuration
 		cfg, err := config.GetSelectedConfiguration()
 		if err != nil {
@@ -107,6 +112,7 @@ For example:
 				$build: String!,
 				$validationStamp: String!,
 				$description: String!,
+				$runInfo: RunInfoInput,
 				$critical: Int!,
 				$high: Int!,
 				$medium: Int!,
@@ -118,6 +124,7 @@ For example:
 					build: $build,
 					validation: $validationStamp,
 					description: $description,
+					runInfo: $runInfo,
 					critical: $critical,
 					high: $high,
 					medium: $medium,
@@ -134,6 +141,7 @@ For example:
 			"build":           build,
 			"validationStamp": validation,
 			"description":     description,
+			"runInfo":         runInfo,
 			"critical":        critical,
 			"high":            high,
 			"medium":          medium,
@@ -167,4 +175,7 @@ func init() {
 	validateCHMLCmd.Flags().Int("high", 0, "Number of high issues")
 	validateCHMLCmd.Flags().Int("medium", 0, "Number of medium issues")
 	validateCHMLCmd.Flags().Int("low", 0, "Number of low issues")
+
+	// Run info arguments
+	InitRunInfoCommandFlags(validateCHMLCmd)
 }

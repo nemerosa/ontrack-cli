@@ -64,6 +64,11 @@ For example:
 			return err
 		}
 
+		runInfo, err := GetRunInfo(cmd)
+		if err != nil {
+			return err
+		}
+
 		passed, err := cmd.Flags().GetInt("passed")
 		if err != nil {
 			return err
@@ -102,6 +107,7 @@ For example:
 				$build: String!,
 				$validationStamp: String!,
 				$description: String!,
+				$runInfo: RunInfoInput,
 				$passed: Int!,
 				$skipped: Int!,
 				$failed: Int!
@@ -112,6 +118,7 @@ For example:
 					build: $build,
 					validation: $validationStamp,
 					description: $description,
+					runInfo: $runInfo,
 					passed: $passed,
 					skipped: $skipped,
 					failed: $failed
@@ -127,6 +134,7 @@ For example:
 			"build":           build,
 			"validationStamp": validation,
 			"description":     description,
+			"runInfo":         runInfo,
 			"passed":          passed,
 			"skipped":         skipped,
 			"failed":          failed,
@@ -159,4 +167,7 @@ func init() {
 	validateTestsCmd.Flags().Int("passed", 0, "Number of passed tests")
 	validateTestsCmd.Flags().Int("skipped", 0, "Number of skipped tests")
 	validateTestsCmd.Flags().Int("failed", 0, "Number of failed tests")
+
+	// Run info arguments
+	InitRunInfoCommandFlags(validateTestsCmd)
 }

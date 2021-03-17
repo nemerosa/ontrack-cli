@@ -73,6 +73,11 @@ An alternative syntax is:
 			return err
 		}
 
+		runInfo, err := GetRunInfo(cmd)
+		if err != nil {
+			return err
+		}
+
 		// List of metrics
 		var metricList = []metric{}
 
@@ -131,6 +136,7 @@ An alternative syntax is:
 				$build: String!,
 				$validationStamp: String!,
 				$description: String!,
+				$runInfo: RunInfoInput,
 				$metrics: [MetricsEntryInput!]!
 			) {
 				validateBuildWithMetrics(input: {
@@ -139,6 +145,7 @@ An alternative syntax is:
 					build: $build,
 					validation: $validationStamp,
 					description: $description,
+					runInfo: $runInfo,
 					metrics: $metrics
 				}) {
 					errors {
@@ -152,6 +159,7 @@ An alternative syntax is:
 			"build":           build,
 			"validationStamp": validation,
 			"description":     description,
+			"runInfo":         runInfo,
 			"metrics":         metricList,
 		}, &payload); err != nil {
 			return err
@@ -197,6 +205,9 @@ func init() {
 	// validateMetricsCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 	validateMetricsCmd.Flags().StringSliceP("metric", "m", []string{}, "List of metric, each value being provided like 'name=value'")
 	validateMetricsCmd.Flags().String("metrics", "", "Comma-separated list of metric, each value being provided like 'name=value'")
+
+	// Run info arguments
+	InitRunInfoCommandFlags(validateMetricsCmd)
 }
 
 type metric struct {

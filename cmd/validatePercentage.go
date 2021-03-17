@@ -65,6 +65,11 @@ For example:
 			return err
 		}
 
+		runInfo, err := GetRunInfo(cmd)
+		if err != nil {
+			return err
+		}
+
 		value, err := cmd.Flags().GetInt("value")
 		if err != nil {
 			return err
@@ -93,6 +98,7 @@ For example:
 				$build: String!,
 				$validationStamp: String!,
 				$description: String!,
+				$runInfo: RunInfoInput,
 				$value: Int!
 			) {
 				validateBuildWithPercentage(input: {
@@ -101,6 +107,7 @@ For example:
 					build: $build,
 					validation: $validationStamp,
 					description: $description,
+					runInfo: $runInfo,
 					value: $value
 				}) {
 					errors {
@@ -114,6 +121,7 @@ For example:
 			"build":           build,
 			"validationStamp": validation,
 			"description":     description,
+			"runInfo":         runInfo,
 			"value":           value,
 		}, &payload); err != nil {
 			return err
@@ -142,4 +150,7 @@ func init() {
 	// is called directly, e.g.:
 	// validatePercentageCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 	validatePercentageCmd.Flags().Int("value", 0, "Percentage value")
+
+	// Run info arguments
+	InitRunInfoCommandFlags(validatePercentageCmd)
 }
