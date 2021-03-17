@@ -4,12 +4,12 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func InitCommandFlags(cmd *cobra.Command) {
-	cmd.Flags().String("source-type", "", "Run info source type")
-	cmd.Flags().String("source-uri", "", "Run info source URI")
-	cmd.Flags().String("trigger-type", "", "Run info trigger type")
-	cmd.Flags().String("trigger-data", "", "Run info trigger data")
-	cmd.Flags().Int("run-time", 0, "Run info run time (in seconds)")
+func InitRunInfoCommandFlags(cmd *cobra.Command) {
+	cmd.PersistentFlags().String("source-type", "", "Run info source type")
+	cmd.PersistentFlags().String("source-uri", "", "Run info source URI")
+	cmd.PersistentFlags().String("trigger-type", "", "Run info trigger type")
+	cmd.PersistentFlags().String("trigger-data", "", "Run info trigger data")
+	cmd.PersistentFlags().Int("run-time", 0, "Run info run time (in seconds)")
 }
 
 func GetRunInfo(cmd *cobra.Command) (*RunInfo, error) {

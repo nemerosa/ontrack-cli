@@ -145,13 +145,20 @@ Type 'ontrack-cli validate --help' to get a list of all options.
 			inputs.Data = data // Pure JSON
 		}
 
+		// Run info
+		runInfo, err := GetRunInfo(cmd)
+		if err != nil {
+			return err
+		}
+
 		// Query template
 		tmpl, err := template.New("mutation").Parse(`
 			mutation CreateValidationRun(
 				$project: String!,
 				$branch: String!,
 				$build: String!,
-				$validationStamp: String!
+				$validationStamp: String!,
+				$runInfo: RunInfoInput
 			) {
 				createValidationRun(input: {
 					project: $project,
@@ -161,7 +168,8 @@ Type 'ontrack-cli validate --help' to get a list of all options.
 					validationRunStatus: {{ .Status }},
 					description: {{ .Description }}
 					dataTypeId: {{ .DataType }},
-					data: {{ .Data }}
+					data: {{ .Data }},
+					runInfo: $runInfo
 				}) {
 					errors {
 						message
@@ -206,6 +214,7 @@ Type 'ontrack-cli validate --help' to get a list of all options.
 			"description":         description,
 			"dataTypeId":          dataType,
 			"data":                data,
+			"runInfo":             runInfo,
 		}, &payload); err != nil {
 			return err
 		}
@@ -237,6 +246,9 @@ func init() {
 	validateCmd.MarkPersistentFlagRequired("branch")
 	validateCmd.MarkPersistentFlagRequired("build")
 	validateCmd.MarkPersistentFlagRequired("validation")
+
+	// Run info arguments
+	InitRunInfoCommandFlags(validateCmd)
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:

@@ -17,6 +17,7 @@ func GraphQLCall(config *config.Config, query string, variables map[string]inter
 	}
 
 	client := resty.New()
+	// client.SetDebug(true)
 	if config.Token != "" {
 		client.SetHeader("X-Ontrack-Token", config.Token)
 	} else if config.Username != "" {

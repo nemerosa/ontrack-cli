@@ -119,7 +119,7 @@ func init() {
 	buildSetupCmd.Flags().StringVarP(&buildSetupDescription, "description", "d", "", "Build description")
 
 	// Run info parameters
-	InitCommandFlags(buildSetupCmd)
+	InitRunInfoCommandFlags(buildSetupCmd)
 
 	buildSetupCmd.MarkFlagRequired("project")
 	buildSetupCmd.MarkFlagRequired("branch")
