@@ -48,11 +48,18 @@ For example, the following command will create the build:
 and the same command run a second time won't do anything.
 `,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		return buildSetup()
+		return buildSetup(cmd)
 	},
 }
 
-func buildSetup() error {
+func buildSetup(cmd *cobra.Command) error {
+
+	// Run info
+	runInfo, err := GetRunInfo(cmd)
+	if err != nil {
+		return err
+	}
+
 	config, err := config.GetSelectedConfiguration()
 	if err != nil {
 		return err
@@ -63,20 +70,14 @@ func buildSetup() error {
 	// Creates or get the build
 	var data struct {
 		CreateBuildOrGet struct {
-			Build struct {
-				ID int
-			}
 			Errors []struct {
 				Message string
 			}
 		}
 	}
 	if err := client.GraphQLCall(config, `
-		mutation BuildSetup($project: String!, $branch: String!, $build: String!, $description: String) {
-			createBuildOrGet(input: {projectName: $project, branchName: $branch, name: $build, description: $description}) {
-				build {
-				  id
-				}
+		mutation BuildSetup($project: String!, $branch: String!, $build: String!, $description: String, $runInfo: RunInfoInput) {
+			createBuildOrGet(input: {projectName: $project, branchName: $branch, name: $build, description: $description, runInfo: $runInfo}) {
 				errors {
 				  message
 				}
@@ -87,6 +88,7 @@ func buildSetup() error {
 		"branch":      normalizedBranchName,
 		"build":       buildSetupBuild,
 		"description": buildSetupDescription,
+		"runInfo":     runInfo,
 	}, &data); err != nil {
 		return err
 	}
@@ -115,6 +117,9 @@ func init() {
 	buildSetupCmd.Flags().StringVarP(&buildSetupBranch, "branch", "b", "", "Branch name (required)")
 	buildSetupCmd.Flags().StringVarP(&buildSetupBuild, "build", "n", "", "Build name (required)")
 	buildSetupCmd.Flags().StringVarP(&buildSetupDescription, "description", "d", "", "Build description")
+
+	// Run info parameters
+	InitCommandFlags(buildSetupCmd)
 
 	buildSetupCmd.MarkFlagRequired("project")
 	buildSetupCmd.MarkFlagRequired("branch")
