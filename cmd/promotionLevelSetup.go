@@ -35,6 +35,14 @@ var promotionLevelSetupCmd = &cobra.Command{
 	Long: `Creates or updates a promotion level.
 
 	ontrack-cli pl setup -p PROJECT -b BRANCH -l PROMOTION
+
+The promotion can be set to be in "auto promotion" mode by using addtional options. For example:
+
+    ontrack-cli pl setup -p PROJECT -b BRANCH -l PROMOTION \
+	    --validation VALIDATION_1 \
+	    --validation VALIDATION_2 \
+		--depends-on IRON \
+		--depends-on SILVER
 `,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		project, err := cmd.Flags().GetString("project")
@@ -54,6 +62,26 @@ var promotionLevelSetupCmd = &cobra.Command{
 			return err
 		}
 
+		// Auto promotion
+		validations, err := cmd.Flags().GetStringSlice("validation")
+		if err != nil {
+			return err
+		}
+		include, err := cmd.Flags().GetString("include")
+		if err != nil {
+			return err
+		}
+		exclude, err := cmd.Flags().GetString("exclude")
+		if err != nil {
+			return err
+		}
+		promotions, err := cmd.Flags().GetStringSlice("depends-on")
+		if err != nil {
+			return err
+		}
+
+		autoPromotion := len(validations) > 0 || len(promotions) > 0 || include != "" || exclude != ""
+
 		// Configuration
 		cfg, err := config.GetSelectedConfiguration()
 		if err != nil {
@@ -67,6 +95,11 @@ var promotionLevelSetupCmd = &cobra.Command{
 					Message string
 				}
 			}
+			SetPromotionLevelAutoPromotionProperty struct {
+				Errors []struct {
+					Message string
+				}
+			}
 		}
 
 		// Call
@@ -75,7 +108,12 @@ var promotionLevelSetupCmd = &cobra.Command{
 				$project: String!,
 				$branch: String!,
 				$promotion: String!,
-				$description: String
+				$description: String,
+				$autoPromotion: Boolean!,
+				$validationStamps: [String!],
+				$include: String,
+				$exclude: String,
+				$promotionLevels: [String!]
 			) {
 				setupPromotionLevel(input: {
 					project: $project,
@@ -87,18 +125,39 @@ var promotionLevelSetupCmd = &cobra.Command{
 						message
 					}
 				}
+				setPromotionLevelAutoPromotionProperty(input: {
+					project: $project,
+					branch: $branch,
+					promotion: $promotion,
+					validationStamps: $validationStamps,
+					include: $include,
+					exclude: $exclude,
+					promotionLevels: $promotionLevels
+				}) @include(if: $autoPromotion) {
+					errors {
+						message
+					}
+				}
 			}
 		`, map[string]interface{}{
-			"project":     project,
-			"branch":      branch,
-			"promotion":   promotion,
-			"description": description,
+			"project":          project,
+			"branch":           branch,
+			"promotion":        promotion,
+			"description":      description,
+			"autoPromotion":    autoPromotion,
+			"validationStamps": validations,
+			"promotionLevels":  promotions,
+			"include":          include,
+			"exclude":          exclude,
 		}, &data); err != nil {
 			return err
 		}
 
-		// Error check
+		// Error checks
 		if err := client.CheckDataErrors(data.SetupPromotionLevel.Errors); err != nil {
+			return err
+		}
+		if err := client.CheckDataErrors(data.SetPromotionLevelAutoPromotionProperty.Errors); err != nil {
 			return err
 		}
 
@@ -121,6 +180,11 @@ func init() {
 	// promotionLevelSetupCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 	promotionLevelSetupCmd.Flags().StringP("promotion", "l", "", "Name of the promotion level")
 	promotionLevelSetupCmd.Flags().StringP("description", "d", "", "Description of the promotion level")
+
+	promotionLevelSetupCmd.Flags().StringSliceP("validation", "v", []string{}, "Validations the promotion level needs")
+	promotionLevelSetupCmd.Flags().StringSliceP("depends-on", "o", []string{}, "Promotions the promotion level needs")
+	promotionLevelSetupCmd.Flags().StringP("include", "i", "", "Including validation stamps using a regular expression")
+	promotionLevelSetupCmd.Flags().StringP("exclude", "x", "", "Excluding validation stamps using a regular expression")
 
 	promotionLevelSetupCmd.MarkPersistentFlagRequired("promotion")
 }
