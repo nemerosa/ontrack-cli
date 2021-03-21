@@ -216,6 +216,20 @@ ontrack-cli validate --project <project> --branch <branch> --build <build> --val
         --metrics weight=145,height=185.1
 ```
 
+## Misc
+
+### Direct GraphQL calls
+
+The Ontrack CLI uses the GraphQL API of Ontrack for its communication. The `graphql` command allows to run raw GraphQL queries.
+
+For example:
+
+```bash
+ontrack-cli graphql \
+    --query 'query ProjectList($name: String!) { projects(name: $name) { id name branches { name } } }' \
+    --var name=ontrack-cli
+```
+
 ## Integrations
 
 While the Ontrack CLI can be used directly, there are direct integrations in some environments:
