@@ -68,6 +68,7 @@ Type 'ontrack-cli validate --help' to get a list of all options.
 		if err != nil {
 			return err
 		}
+		branch = NormalizeBranchName(branch)
 
 		build, err := cmd.Flags().GetString("build")
 		if err != nil {

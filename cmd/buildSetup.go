@@ -22,18 +22,11 @@ THE SOFTWARE.
 package cmd
 
 import (
-	"regexp"
-
 	"github.com/spf13/cobra"
 
 	client "ontrack-cli/client"
 	config "ontrack-cli/config"
 )
-
-var buildSetupProject string
-var buildSetupBranch string
-var buildSetupBuild string
-var buildSetupDescription string
 
 // buildSetupCmd represents the buildSetup command
 var buildSetupCmd = &cobra.Command{
@@ -53,6 +46,26 @@ and the same command run a second time won't do anything.
 }
 
 func buildSetup(cmd *cobra.Command) error {
+	project, err := cmd.Flags().GetString("project")
+	if err != nil {
+		return err
+	}
+
+	branch, err := cmd.Flags().GetString("branch")
+	if err != nil {
+		return err
+	}
+	branch = NormalizeBranchName(branch)
+
+	build, err := cmd.Flags().GetString("build")
+	if err != nil {
+		return err
+	}
+
+	description, err := cmd.Flags().GetString("description")
+	if err != nil {
+		return err
+	}
 
 	// Run info
 	runInfo, err := GetRunInfo(cmd)
@@ -64,9 +77,7 @@ func buildSetup(cmd *cobra.Command) error {
 	if err != nil {
 		return err
 	}
-	// Normalizing the name of the branch
-	re := regexp.MustCompile("[^A-Za-z0-9\\._-]")
-	normalizedBranchName := re.ReplaceAllString(buildSetupBranch, "-")
+
 	// Creates or get the build
 	var data struct {
 		CreateBuildOrGet struct {
@@ -84,10 +95,10 @@ func buildSetup(cmd *cobra.Command) error {
 			}
 		}
 	`, map[string]interface{}{
-		"project":     buildSetupProject,
-		"branch":      normalizedBranchName,
-		"build":       buildSetupBuild,
-		"description": buildSetupDescription,
+		"project":     project,
+		"branch":      branch,
+		"build":       build,
+		"description": description,
 		"runInfo":     runInfo,
 	}, &data); err != nil {
 		return err
@@ -113,10 +124,10 @@ func init() {
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
-	buildSetupCmd.Flags().StringVarP(&buildSetupProject, "project", "p", "", "Project name (required)")
-	buildSetupCmd.Flags().StringVarP(&buildSetupBranch, "branch", "b", "", "Branch name (required)")
-	buildSetupCmd.Flags().StringVarP(&buildSetupBuild, "build", "n", "", "Build name (required)")
-	buildSetupCmd.Flags().StringVarP(&buildSetupDescription, "description", "d", "", "Build description")
+	buildSetupCmd.Flags().StringP("project", "p", "", "Project name (required)")
+	buildSetupCmd.Flags().StringP("branch", "b", "", "Branch name (required)")
+	buildSetupCmd.Flags().StringP("build", "n", "", "Build name (required)")
+	buildSetupCmd.Flags().StringP("description", "d", "", "Build description")
 
 	// Run info parameters
 	InitRunInfoCommandFlags(buildSetupCmd)

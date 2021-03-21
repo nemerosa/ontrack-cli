@@ -53,6 +53,7 @@ The promotion can be set to be in "auto promotion" mode by using addtional optio
 		if err != nil {
 			return err
 		}
+		branch = NormalizeBranchName(branch)
 		promotion, err := cmd.Flags().GetString("promotion")
 		if err != nil {
 			return err

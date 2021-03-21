@@ -59,6 +59,7 @@ Note that specific commands per type are also available, see 'ontrack-cli vs set
 		if err != nil {
 			return err
 		}
+		branch = NormalizeBranchName(branch)
 
 		validation, err := cmd.Flags().GetString("validation")
 		if err != nil {

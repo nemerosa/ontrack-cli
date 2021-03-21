@@ -55,6 +55,10 @@ As of now, this also sets the "GitCommitPropertyLink" property by default (build
 		if err != nil {
 			return err
 		}
+		if gitBranch == "" {
+			gitBranch = branch
+		}
+		branch = NormalizeBranchName(branch)
 
 		cfg, err := config.GetSelectedConfiguration()
 		if err != nil {
@@ -114,6 +118,4 @@ func init() {
 	// is called directly, e.g.:
 	// branchSetPropertyGitCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 	branchSetPropertyGitCmd.Flags().StringP("git-branch", "g", "", "Git branch to associate with the branch")
-
-	branchSetPropertyGitCmd.MarkFlagRequired("git-branch")
 }

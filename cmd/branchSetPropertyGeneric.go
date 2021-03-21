@@ -46,6 +46,7 @@ ontrack-cli branch set-property --project PROJECT --branch BRANCH generic --prop
 		if err != nil {
 			return err
 		}
+		branch = NormalizeBranchName(branch)
 
 		property, err := cmd.Flags().GetString("property")
 		if err != nil {

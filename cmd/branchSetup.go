@@ -22,16 +22,11 @@ THE SOFTWARE.
 package cmd
 
 import (
-	"regexp"
-
 	"github.com/spf13/cobra"
 
 	client "ontrack-cli/client"
 	config "ontrack-cli/config"
 )
-
-var branchSetupProject string
-var branchSetupBranch string
 
 // branchSetupCmd represents the branchSetup command
 var branchSetupCmd = &cobra.Command{
@@ -45,38 +40,40 @@ The BRANCH name will be adapted to fit Ontrack naming conventions, so you
 can directly give the name of the Git branch.
 `,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		return branchSetup()
-	},
-}
+		project, err := cmd.Flags().GetString("project")
+		if err != nil {
+			return err
+		}
+		branch, err := cmd.Flags().GetString("branch")
+		if err != nil {
+			return err
+		}
+		branch = NormalizeBranchName(branch)
 
-func branchSetup() error {
-	config, err := config.GetSelectedConfiguration()
-	if err != nil {
-		return err
-	}
-	// Normalizing the name of the branch
-	re := regexp.MustCompile("[^A-Za-z0-9\\._-]")
-	normalizedBranchName := re.ReplaceAllString(branchSetupBranch, "-")
-	// Creates or get the project
-	var data struct {
-		CreateProjectOrGet struct {
-			Project struct {
-				ID int
+		config, err := config.GetSelectedConfiguration()
+		if err != nil {
+			return err
+		}
+		// Creates or get the project
+		var data struct {
+			CreateProjectOrGet struct {
+				Project struct {
+					ID int
+				}
+				Errors []struct {
+					Message string
+				}
 			}
-			Errors []struct {
-				Message string
+			CreateBranchOrGet struct {
+				Branch struct {
+					ID int
+				}
+				Errors []struct {
+					Message string
+				}
 			}
 		}
-		CreateBranchOrGet struct {
-			Branch struct {
-				ID int
-			}
-			Errors []struct {
-				Message string
-			}
-		}
-	}
-	if err := client.GraphQLCall(config, `
+		if err := client.GraphQLCall(config, `
 		mutation ProjectSetup($project: String!, $branch: String!) {
 			createProjectOrGet(input: {name: $project}) {
 				project {
@@ -96,23 +93,24 @@ func branchSetup() error {
 			}
 		}
 	`, map[string]interface{}{
-		"project": branchSetupProject,
-		"branch":  normalizedBranchName,
-	}, &data); err != nil {
-		return err
-	}
+			"project": project,
+			"branch":  branch,
+		}, &data); err != nil {
+			return err
+		}
 
-	// Checks errors for the project
-	if err := client.CheckDataErrors(data.CreateProjectOrGet.Errors); err != nil {
-		return err
-	}
-	// Checks errors for the branch
-	if err := client.CheckDataErrors(data.CreateBranchOrGet.Errors); err != nil {
-		return err
-	}
+		// Checks errors for the project
+		if err := client.CheckDataErrors(data.CreateProjectOrGet.Errors); err != nil {
+			return err
+		}
+		// Checks errors for the branch
+		if err := client.CheckDataErrors(data.CreateBranchOrGet.Errors); err != nil {
+			return err
+		}
 
-	// OK
-	return nil
+		// OK
+		return nil
+	},
 }
 
 func init() {
@@ -126,8 +124,8 @@ func init() {
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
-	branchSetupCmd.Flags().StringVarP(&branchSetupProject, "project", "p", "", "Project name")
+	branchSetupCmd.Flags().StringP("project", "p", "", "Project name")
 	branchSetupCmd.MarkFlagRequired("project")
-	branchSetupCmd.Flags().StringVarP(&branchSetupBranch, "branch", "b", "", "Branch name or Git branch name")
+	branchSetupCmd.Flags().StringP("branch", "b", "", "Branch name or Git branch name")
 	branchSetupCmd.MarkFlagRequired("branch")
 }

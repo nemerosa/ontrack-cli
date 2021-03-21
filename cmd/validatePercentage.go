@@ -49,6 +49,7 @@ For example:
 		if err != nil {
 			return err
 		}
+		branch = NormalizeBranchName(branch)
 
 		build, err := cmd.Flags().GetString("build")
 		if err != nil {
