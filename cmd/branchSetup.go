@@ -63,6 +63,12 @@ can directly give the name of the Git branch.
 			autoCreateVS = true
 		}
 
+		// Project auto promotion levels
+		autoCreatePL, err := cmd.Flags().GetBool("auto-create-pl")
+		if err != nil {
+			return err
+		}
+
 		// Configuration
 		config, err := config.GetSelectedConfiguration()
 		if err != nil {
@@ -91,39 +97,54 @@ can directly give the name of the Git branch.
 					Message string
 				}
 			}
+			SetProjectAutoPromotionLevelProperty struct {
+				Errors []struct {
+					Message string
+				}
+			}
 		}
 		if err := client.GraphQLCall(config, `
-		mutation ProjectSetup(
-			$project: String!, 
-			$branch: String!,
-			$autoCreateVS: Boolean!,
-			$autoCreateVSIfNotPredefined: Boolean!
-		) {
-			createProjectOrGet(input: {name: $project}) {
-				errors {
-				  message
-				}
-			}
-			createBranchOrGet(input: {projectName: $project, name: $branch}) {
-				errors {
-				  message
-				}
-			}
-			setProjectAutoValidationStampProperty(input: {
-				project: $project,
-				isAutoCreate: $autoCreateVS,
-				isAutoCreateIfNotPredefined: $autoCreateVSIfNotPredefined
-			}) {
-				errors {
+			mutation ProjectSetup(
+				$project: String!, 
+				$branch: String!,
+				$autoCreateVS: Boolean!,
+				$autoCreateVSIfNotPredefined: Boolean!,
+				$autoCreatePL: Boolean!
+			) {
+				createProjectOrGet(input: {name: $project}) {
+					errors {
 					message
+					}
+				}
+				createBranchOrGet(input: {projectName: $project, name: $branch}) {
+					errors {
+					message
+					}
+				}
+				setProjectAutoValidationStampProperty(input: {
+					project: $project,
+					isAutoCreate: $autoCreateVS,
+					isAutoCreateIfNotPredefined: $autoCreateVSIfNotPredefined
+				}) {
+					errors {
+						message
+					}
+				}
+				setProjectAutoPromotionLevelProperty(input: {
+					project: $project,
+					isAutoCreate: $autoCreatePL
+				}) {
+					errors {
+						message
+					}
 				}
 			}
-		}
-	`, map[string]interface{}{
+		`, map[string]interface{}{
 			"project":                     project,
 			"branch":                      branch,
 			"autoCreateVS":                autoCreateVS,
 			"autoCreateVSIfNotPredefined": autoCreateVSAlways,
+			"autoCreatePL":                autoCreatePL,
 		}, &data); err != nil {
 			return err
 		}
@@ -138,6 +159,10 @@ can directly give the name of the Git branch.
 		}
 		// Checks errors for the project auto validation stamp propetyu
 		if err := client.CheckDataErrors(data.SetProjectAutoValidationStampProperty.Errors); err != nil {
+			return err
+		}
+		// Checks errors for the project auto promotion level propetyu
+		if err := client.CheckDataErrors(data.SetProjectAutoPromotionLevelProperty.Errors); err != nil {
 			return err
 		}
 
@@ -162,6 +187,7 @@ func init() {
 
 	branchSetupCmd.Flags().Bool("auto-create-vs", false, "Auto creation of validation stamps if they are predefined")
 	branchSetupCmd.Flags().Bool("auto-create-vs-always", false, "Auto creation of validation stamps even if they are not predefined")
+	branchSetupCmd.Flags().Bool("auto-create-pl", false, "Auto creation of promotion levels if they are predefined")
 
 	branchSetupCmd.MarkFlagRequired("project")
 	branchSetupCmd.MarkFlagRequired("branch")
