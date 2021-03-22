@@ -67,6 +67,12 @@ func buildSetup(cmd *cobra.Command) error {
 		return err
 	}
 
+	release, err := cmd.Flags().GetString("release")
+	if err != nil {
+		return err
+	}
+	releaseProperty := release != ""
+
 	// Run info
 	runInfo, err := GetRunInfo(cmd)
 	if err != nil {
@@ -87,19 +93,45 @@ func buildSetup(cmd *cobra.Command) error {
 		}
 	}
 	if err := client.GraphQLCall(config, `
-		mutation BuildSetup($project: String!, $branch: String!, $build: String!, $description: String, $runInfo: RunInfoInput) {
-			createBuildOrGet(input: {projectName: $project, branchName: $branch, name: $build, description: $description, runInfo: $runInfo}) {
+		mutation BuildSetup(
+			$project: String!,
+			$branch: String!, 
+			$build: String!, 
+			$description: String, 
+			$runInfo: RunInfoInput,
+			$releaseProperty: Boolean!,
+			$release: String!
+		) {
+			createBuildOrGet(input: {
+				projectName: $project, 
+				branchName: $branch, 
+				name: $build, 
+				description: $description, 
+				runInfo: $runInfo
+			}) {
 				errors {
 				  message
 				}
 			}
+			setBuildReleaseProperty(input: {
+				project: $project,
+				branch: $branch,
+				build: $build,
+				release: $release
+			}) @include(if: $releaseProperty) {
+				errors {
+					message
+				}
+			}
 		}
 	`, map[string]interface{}{
-		"project":     project,
-		"branch":      branch,
-		"build":       build,
-		"description": description,
-		"runInfo":     runInfo,
+		"project":         project,
+		"branch":          branch,
+		"build":           build,
+		"description":     description,
+		"runInfo":         runInfo,
+		"releaseProperty": releaseProperty,
+		"release":         release,
 	}, &data); err != nil {
 		return err
 	}
@@ -131,6 +163,9 @@ func init() {
 
 	// Run info parameters
 	InitRunInfoCommandFlags(buildSetupCmd)
+
+	// Release property
+	buildSetupCmd.Flags().StringP("release", "r", "", "Build release property")
 
 	buildSetupCmd.MarkFlagRequired("project")
 	buildSetupCmd.MarkFlagRequired("branch")
