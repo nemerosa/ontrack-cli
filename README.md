@@ -55,6 +55,8 @@ ontrack-cli branch setup --project <project> --branch <branch>
 Here, `<project>` is the name of your project or repository, and `<branch>` is typically the Git branch name
 or the PR name (like `PR-123`). The `branch setup` operation is idempotent.
 
+> Run `ontrack-cli branch setup --help` for additional options.
+
 ### Validation stamps setup
 
 The CLI can be used to create validation stamps:
@@ -120,6 +122,13 @@ ontrack-cli build setup --project <project> --branch <branch> --build <build>
 ```
 
 where `<build>` is a unique identifier for your build (typically a build number).
+
+If you need to associated a release label to your build, you can use the `--release` option:
+
+
+```bash
+ontrack-cli build setup --project <project> --branch <branch> --build <build> --release <label>
+```
 
 ### Git integration
 
