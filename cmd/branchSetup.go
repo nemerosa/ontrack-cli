@@ -50,6 +50,20 @@ can directly give the name of the Git branch.
 		}
 		branch = NormalizeBranchName(branch)
 
+		// Project auto validation stamps
+		autoCreateVS, err := cmd.Flags().GetBool("auto-create-vs")
+		if err != nil {
+			return err
+		}
+		autoCreateVSAlways, err := cmd.Flags().GetBool("auto-create-vs-always")
+		if err != nil {
+			return err
+		}
+		if autoCreateVSAlways {
+			autoCreateVS = true
+		}
+
+		// Configuration
 		config, err := config.GetSelectedConfiguration()
 		if err != nil {
 			return err
@@ -72,29 +86,44 @@ can directly give the name of the Git branch.
 					Message string
 				}
 			}
+			SetProjectAutoValidationStampProperty struct {
+				Errors []struct {
+					Message string
+				}
+			}
 		}
 		if err := client.GraphQLCall(config, `
-		mutation ProjectSetup($project: String!, $branch: String!) {
+		mutation ProjectSetup(
+			$project: String!, 
+			$branch: String!,
+			$autoCreateVS: Boolean!,
+			$autoCreateVSIfNotPredefined: Boolean!
+		) {
 			createProjectOrGet(input: {name: $project}) {
-				project {
-				  id
-				}
 				errors {
 				  message
 				}
 			}
 			createBranchOrGet(input: {projectName: $project, name: $branch}) {
-				branch {
-				  id
-				}
 				errors {
 				  message
 				}
 			}
+			setProjectAutoValidationStampProperty(input: {
+				project: $project,
+				isAutoCreate: $autoCreateVS,
+				isAutoCreateIfNotPredefined: $autoCreateVSIfNotPredefined
+			}) {
+				errors {
+					message
+				}
+			}
 		}
 	`, map[string]interface{}{
-			"project": project,
-			"branch":  branch,
+			"project":                     project,
+			"branch":                      branch,
+			"autoCreateVS":                autoCreateVS,
+			"autoCreateVSIfNotPredefined": autoCreateVSAlways,
 		}, &data); err != nil {
 			return err
 		}
@@ -105,6 +134,10 @@ can directly give the name of the Git branch.
 		}
 		// Checks errors for the branch
 		if err := client.CheckDataErrors(data.CreateBranchOrGet.Errors); err != nil {
+			return err
+		}
+		// Checks errors for the project auto validation stamp propetyu
+		if err := client.CheckDataErrors(data.SetProjectAutoValidationStampProperty.Errors); err != nil {
 			return err
 		}
 
@@ -125,7 +158,11 @@ func init() {
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
 	branchSetupCmd.Flags().StringP("project", "p", "", "Project name")
-	branchSetupCmd.MarkFlagRequired("project")
 	branchSetupCmd.Flags().StringP("branch", "b", "", "Branch name or Git branch name")
+
+	branchSetupCmd.Flags().Bool("auto-create-vs", false, "Auto creation of validation stamps if they are predefined")
+	branchSetupCmd.Flags().Bool("auto-create-vs-always", false, "Auto creation of validation stamps even if they are not predefined")
+
+	branchSetupCmd.MarkFlagRequired("project")
 	branchSetupCmd.MarkFlagRequired("branch")
 }
