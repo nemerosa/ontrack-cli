@@ -186,6 +186,12 @@ ontrack-cli build set-property --project <project> --branch <branch> --build <bu
     --commit <full commit hash>
 ```
 
+> Note that the Git commit property on a build can be set directly using the `build setup` command and the `--commit` option:
+
+```bash
+ontrack-cli build setup --project <project> --branch <branch> --build <build> --commit <commit>
+```
+
 ## Validation
 
 One of the most important point of Ontrack is to record _validations_:

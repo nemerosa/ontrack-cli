@@ -73,6 +73,12 @@ func buildSetup(cmd *cobra.Command) error {
 	}
 	releaseProperty := release != ""
 
+	commit, err := cmd.Flags().GetString("commit")
+	if err != nil {
+		return err
+	}
+	commitProperty := commit != ""
+
 	// Run info
 	runInfo, err := GetRunInfo(cmd)
 	if err != nil {
@@ -91,6 +97,16 @@ func buildSetup(cmd *cobra.Command) error {
 				Message string
 			}
 		}
+		SetBuildReleaseProperty struct {
+			Errors []struct {
+				Message string
+			}
+		}
+		SetBuildGitCommitProperty struct {
+			Errors []struct {
+				Message string
+			}
+		}
 	}
 	if err := client.GraphQLCall(config, `
 		mutation BuildSetup(
@@ -100,7 +116,9 @@ func buildSetup(cmd *cobra.Command) error {
 			$description: String, 
 			$runInfo: RunInfoInput,
 			$releaseProperty: Boolean!,
-			$release: String!
+			$release: String!,
+			$commitProperty: Boolean!,
+			$commit: String!
 		) {
 			createBuildOrGet(input: {
 				projectName: $project, 
@@ -123,6 +141,16 @@ func buildSetup(cmd *cobra.Command) error {
 					message
 				}
 			}
+			setBuildGitCommitProperty(input: {
+				project: $project,
+				branch: $branch,
+				build: $build,
+				commit: $commit
+			}) @include(if: $commitProperty) {
+				errors {
+					message
+				}
+			}
 		}
 	`, map[string]interface{}{
 		"project":         project,
@@ -132,12 +160,20 @@ func buildSetup(cmd *cobra.Command) error {
 		"runInfo":         runInfo,
 		"releaseProperty": releaseProperty,
 		"release":         release,
+		"commitProperty":  commitProperty,
+		"commit":          commit,
 	}, &data); err != nil {
 		return err
 	}
 
 	// Checks errors for the build
 	if err := client.CheckDataErrors(data.CreateBuildOrGet.Errors); err != nil {
+		return err
+	}
+	if err := client.CheckDataErrors(data.SetBuildReleaseProperty.Errors); err != nil {
+		return err
+	}
+	if err := client.CheckDataErrors(data.SetBuildGitCommitProperty.Errors); err != nil {
 		return err
 	}
 
@@ -166,6 +202,9 @@ func init() {
 
 	// Release property
 	buildSetupCmd.Flags().StringP("release", "r", "", "Build release property")
+
+	// Commit property
+	buildSetupCmd.Flags().StringP("commit", "c", "", "Build commit property")
 
 	buildSetupCmd.MarkFlagRequired("project")
 	buildSetupCmd.MarkFlagRequired("branch")
