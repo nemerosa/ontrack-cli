@@ -25,7 +25,7 @@ jobs:
         token: ${{ secrets.ONTRACK_TOKEN }}
         config: github.com
         indexation: 120
-        github-token: ${{ secrets.token }}
+        github-token: ${{ github.token }}
         auto-validation-stamps: true
         auto-promotion-levels: true
         promotions: ./.github/ontrack/promotions.yaml
