@@ -18,7 +18,7 @@ jobs:
       with:
         go-version: 1.15
 
-    - uses: nemerosa/ontrack-github-actions-setup@v1
+    - uses: nemerosa/ontrack-github-actions-cli-setup@v1
       id: ontrack
       with:
         url: https://ontrack.nemerosa.net
@@ -39,7 +39,7 @@ jobs:
     - name: Build
       run: go build -v ./...
 
-    - uses: nemerosa/ontrack-github-actions-validation@v1
+    - uses: nemerosa/ontrack-github-actions-cli-validation@v1
       with:
         step-name: Build
         validation: BUILD
@@ -49,7 +49,7 @@ jobs:
     - name: Test
       run: go test -v ./...
 
-    - uses: nemerosa/ontrack-github-actions-validation@v1
+    - uses: nemerosa/ontrack-github-actions-cli-validation@v1
       with:
         step-name: Test
         validation: BUILD
