@@ -54,6 +54,6 @@ jobs:
       if: ${{ always() }}
       with:
         step-name: Test
-        validation: BUILD
+        validation: TESTS
         build: ${{ github.run_number }}
         token: ${{ github.token }}
