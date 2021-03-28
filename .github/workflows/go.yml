@@ -18,8 +18,40 @@ jobs:
       with:
         go-version: 1.15
 
+    - uses: nemerosa/ontrack-github-actions-setup@v1
+      id: ontrack
+      with:
+        url: https://ontrack.nemerosa.net
+        token: ${{ secrets.ONTRACK_TOKEN }}
+        config: github.com
+        indexation: 120
+        github-token: ${{ secrets.token }}
+        auto-validation-stamps: true
+        auto-promotion-levels: true
+        promotions: ./.github/ontrack/promotions.yaml
+    
+    - run: |
+        ontrack-cli build setup \
+          -p ${{ steps.ontrack.outputs.project }} \
+          -b ${{ steps.ontrack.outputs.branch }} \
+          -n ${{ github.run_number }}
+
     - name: Build
       run: go build -v ./...
 
+    - uses: nemerosa/ontrack-github-actions-validation@v1
+      with:
+        step-name: Build
+        validation: BUILD
+        build: ${{ github.run_number }}
+        token: ${{ secrets.token }}
+
     - name: Test
       run: go test -v ./...
+
+    - uses: nemerosa/ontrack-github-actions-validation@v1
+      with:
+        step-name: Test
+        validation: BUILD
+        build: ${{ github.run_number }}
+        token: ${{ secrets.token }}
