@@ -35,6 +35,8 @@ type Config struct {
 	Password string
 	// Token for the remote server (when using token-based authentication)
 	Token string
+	// Is this configuration disabled?
+	Disabled bool
 }
 
 // Gets the current configuration
@@ -53,7 +55,7 @@ func GetSelectedConfiguration() (*Config, error) {
 }
 
 // Reads the configuration
-func ReadRootConfiguration() RootConfig {
+func ReadRootConfiguration() *RootConfig {
 	var root RootConfig
 	home, _ := homedir.Dir()
 	configFilePath := filepath.Join(home, configFileName)
@@ -61,14 +63,14 @@ func ReadRootConfiguration() RootConfig {
 	// If the config file does not exist, returns an empty root config
 	if _, err := os.Stat(configFilePath); err != nil {
 		if os.IsNotExist(err) {
-			return root
+			return &root
 		}
 	}
 
 	reader, _ := os.Open(configFilePath)
 	buf, _ := ioutil.ReadAll(reader)
 	yaml.Unmarshal(buf, &root)
-	return root
+	return &root
 }
 
 // Adds a new configuration and set as default
@@ -98,13 +100,22 @@ func AddConfiguration(config Config) error {
 }
 
 // Finds an existing configuration
-func findConfigurationByName(root RootConfig, name string) *Config {
+func findConfigurationByName(root *RootConfig, name string) *Config {
 	for _, item := range root.Configurations {
 		if item.Name == name {
 			return &item
 		}
 	}
 	return nil
+}
+
+// Replacing an existing configuration
+func replaceConfigurationByName(root *RootConfig, config *Config) {
+	for index, item := range root.Configurations {
+		if item.Name == config.Name {
+			root.Configurations[index] = *config
+		}
+	}
 }
 
 // Sets the new selected configuration
@@ -122,6 +133,27 @@ func SetSelectedConfiguration(name string) error {
 	home, _ := homedir.Dir()
 	configFilePath := filepath.Join(home, configFileName)
 	buf, _ := yaml.Marshal(newRoot)
+	_, _ = os.OpenFile(configFilePath, os.O_CREATE|os.O_WRONLY, 0600)
+	_ = ioutil.WriteFile(configFilePath, buf, 0600)
+
+	// OK
+	return nil
+}
+
+// Disables or enabled a configuration
+func SetConfigurationState(name string, disabled bool) error {
+	root := ReadRootConfiguration()
+	existing := findConfigurationByName(root, name)
+	if existing == nil {
+		return fmt.Errorf("Configuration with name %s does not exist", name)
+	}
+	// Adjust the existing configuration
+	existing.Disabled = disabled
+	replaceConfigurationByName(root, existing)
+	// Saves the root configuration back
+	home, _ := homedir.Dir()
+	configFilePath := filepath.Join(home, configFileName)
+	buf, _ := yaml.Marshal(root)
 	_, _ = os.OpenFile(configFilePath, os.O_CREATE|os.O_WRONLY, 0600)
 	_ = ioutil.WriteFile(configFilePath, buf, 0600)
 

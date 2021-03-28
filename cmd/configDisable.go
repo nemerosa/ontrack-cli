@@ -22,47 +22,32 @@ THE SOFTWARE.
 package cmd
 
 import (
-	"fmt"
-
 	"github.com/spf13/cobra"
 
 	config "ontrack-cli/config"
 )
 
-// configListCmd represents the configList command
-var configListCmd = &cobra.Command{
-	Use:   "list",
-	Short: "List all configurations",
-	Long:  `Displays the list of all existing configurations.`,
-	Run: func(cmd *cobra.Command, args []string) {
-		root := config.ReadRootConfiguration()
-		for _, item := range root.Configurations {
-			var line string
-			if item.Name == root.Selected {
-				line += "* "
-			} else {
-				line += "  "
-			}
-			line += item.Name
-			if item.Disabled {
-				line += " (disabled)"
-			}
-			fmt.Println(line)
-			fmt.Printf("  %s\n", item.URL)
-		}
+// configDisableCmd represents the configDisable command
+var configDisableCmd = &cobra.Command{
+	Use:   "disable NAME",
+	Short: "Disables the NAME configuration",
+	Long:  `Disables the NAME configuration.`,
+	Args:  cobra.ExactValidArgs(1),
+	RunE: func(cmd *cobra.Command, args []string) error {
+		return config.SetConfigurationState(args[0], true)
 	},
 }
 
 func init() {
-	configCmd.AddCommand(configListCmd)
+	configCmd.AddCommand(configDisableCmd)
 
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command
 	// and all subcommands, e.g.:
-	// configListCmd.PersistentFlags().String("foo", "", "A help for foo")
+	// configDisableCmd.PersistentFlags().String("foo", "", "A help for foo")
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
-	// configListCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	// configDisableCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
