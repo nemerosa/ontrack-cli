@@ -44,7 +44,7 @@ jobs:
         step-name: Build
         validation: BUILD
         build: ${{ github.run_number }}
-        token: ${{ secrets.token }}
+        token: ${{ github.token }}
 
     - name: Test
       run: go test -v ./...
@@ -54,4 +54,4 @@ jobs:
         step-name: Test
         validation: BUILD
         build: ${{ github.run_number }}
-        token: ${{ secrets.token }}
+        token: ${{ github.token }}
