@@ -40,6 +40,7 @@ jobs:
       run: go build -v ./...
 
     - uses: nemerosa/ontrack-github-actions-cli-validation@v1
+      if: ${{ always() }}
       with:
         step-name: Build
         validation: BUILD
@@ -50,6 +51,7 @@ jobs:
       run: go test -v ./...
 
     - uses: nemerosa/ontrack-github-actions-cli-validation@v1
+      if: ${{ always() }}
       with:
         step-name: Test
         validation: BUILD
