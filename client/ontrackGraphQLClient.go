@@ -11,6 +11,12 @@ import (
 
 // GraphQLCall performs a GraphQL query/mutation to Ontrack
 func GraphQLCall(config *config.Config, query string, variables map[string]interface{}, data interface{}) error {
+
+	// If config is disabled, skips the call
+	if config.Disabled {
+		return nil
+	}
+
 	body := map[string]interface{}{
 		"query":     query,
 		"variables": variables,
