@@ -14,6 +14,7 @@ The Ontrack CLI is a Command Line Interface tool, available on many platforms, w
 * [Usage](#usage)
   * [Branch setup](#branch-setup)
   * [Validation stamps setup](#validation-stamps-setup)
+  * [Promotions and auto promotion](#promotions-and-auto-promotion)
   * [Build setup](#build-setup)
   * [Git integration](#git-integration)
 * [Integrations](#integrations)
@@ -111,6 +112,26 @@ ontrack-cli validation-stamp setup --project <project> --branch <branch> --valid
 ontrack-cli validation-stamp setup --project <project> --branch <branch> --validation <validation> \
     metrics
 ```
+
+### Promotions and auto promotion
+
+Promotions can be created using:
+
+```bash
+ontrack-cli promotion-level setup --project <project> --branch <branch> --promotion <promotion>
+```
+
+Their auto promotion can be set using:
+
+```bash
+ontrack-cli promotion-level setup --project <project> --branch <branch> --promotion <promotion> \
+   --validation <stamp1> \
+   --validation <stamp2> \
+   --depends-on <other-promotion-1> \
+   --depends-on <other-promotion-2>
+```
+
+The validation stamps and promotions this command depends on will be created if they don't exist already.
 
 ### Build setup
 
