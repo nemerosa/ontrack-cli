@@ -35,7 +35,8 @@ jobs:
         ontrack-cli build setup \
           -p ${{ steps.ontrack.outputs.project }} \
           -b ${{ steps.ontrack.outputs.branch }} \
-          -n ${{ github.run_number }}
+          -n ${{ github.run_number }} \
+          --commit ${{ github.sha }}
 
     - name: Build
       run: go build -v ./...
