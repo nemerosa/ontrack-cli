@@ -44,4 +44,4 @@ jobs:
 
     - name: Release marker in Ontrack
       run: |
-        ontrack-cli build search --project {{ steps.ontrack.output.project }} --display-branch --commit ${{ github.sha }} --count 1
+        ontrack-cli build search --project ${{ steps.ontrack.output.project }} --display-branch --commit ${{ github.sha }} --count 1
