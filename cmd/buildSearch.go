@@ -62,6 +62,7 @@ You can change the display options using additional flags - see 'ontrack-cli bui
 		if err != nil {
 			return err
 		}
+		branch = NormalizeBranchName(branch)
 
 		// Project vs. branch search
 		if branch == "" {
@@ -131,8 +132,55 @@ func projectSearch(cmd *cobra.Command, project string) error {
 }
 
 func branchSearch(cmd *cobra.Command, project string, branch string) error {
-	// TODO
-	return nil
+	// Query
+	query := `
+		query BuildBranchSearch(
+			$project: String!,
+			$branch: String!,
+			$buildBranchFilter: StandardBuildFilter!
+		) {
+			builds(
+				project: $project,
+				branch: $branch,
+				buildBranchFilter: $buildBranchFilter
+			) {
+				name
+				branch {
+					name
+				}
+			}
+		}
+	`
+
+	// Search form
+	form := make(map[string]interface{})
+	if err := fillFormWithProperty(cmd, &form, "withProperty", "withPropertyValue"); err != nil {
+		return err
+	}
+	if err := fillFormWithCount(cmd, &form, "count"); err != nil {
+		return err
+	}
+
+	// Gets the configuration
+	cfg, err := config.GetSelectedConfiguration()
+	if err != nil {
+		return err
+	}
+
+	// Result data
+	var data buildList
+
+	// Call
+	if err := client.GraphQLCall(cfg, query, map[string]interface{}{
+		"project":           project,
+		"branch":            branch,
+		"buildBranchFilter": form,
+	}, &data); err != nil {
+		return err
+	}
+
+	// Displaying the data
+	return displayBuilds(cmd, &data)
 }
 
 func displayBuilds(cmd *cobra.Command, data *buildList) error {
