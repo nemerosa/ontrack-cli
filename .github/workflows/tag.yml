@@ -23,6 +23,7 @@ jobs:
         only-for: nemerosa
         url: https://ontrack.nemerosa.net
         token: ${{ secrets.ONTRACK_TOKEN }}
+        github-token: ${{ github.token }}
 
     - name: Get version
       run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
