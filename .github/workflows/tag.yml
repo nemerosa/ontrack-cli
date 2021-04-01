@@ -17,6 +17,13 @@ jobs:
       with:
         go-version: 1.15
 
+    - uses: nemerosa/ontrack-github-actions-cli-setup@v1
+      id: ontrack
+      with:
+        only-for: nemerosa
+        url: https://ontrack.nemerosa.net
+        token: ${{ secrets.ONTRACK_TOKEN }}
+
     - name: Get version
       run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
 
@@ -33,3 +40,7 @@ jobs:
       with:
         body: Preview version of the CLI
         files: ontrack-cli-*
+
+    - name: Release marker in Ontrack
+      run: |
+        ontrack-cli build search --project {{ steps.ontrack.output.project }} --display-branch --commit ${{ github.sha }} --count 1
