@@ -44,7 +44,7 @@ jobs:
 
     - name: Release marker in Ontrack
       run: |
-        RESULT=`ontrack-cli build search --project ${{ steps.ontrack.output.project }} --display-branch --commit ${{ github.sha }} --count 1`
+        RESULT=`ontrack-cli build search --project ${{ steps.ontrack.outputs.project }} --display-branch --commit ${{ github.sha }} --count 1`
         BRANCH=(${RESULT%/*})
         BUILD=(${RESULT#*/})
-        ontrack-cli build set-property --project ${{ steps.ontrack.output.project }} --branch $BRANCH --build $BUILD release $VERSION
+        ontrack-cli build set-property --project ${{ steps.ontrack.outputs.project }} --branch $BRANCH --build $BUILD release $VERSION
