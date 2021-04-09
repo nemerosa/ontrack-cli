@@ -56,7 +56,6 @@ jobs:
         echo LAST_RELEASE=$LAST_RELEASE
         if [ $LAST_RELEASE != "" ]
         then
-          LAST_RELEASE
           LOG=`ontrack-cli build changelog export --from $LAST_RELEASE --to $BUILD_ID --grouping "Features=feature|Enhancements=enhancement|Bugs=bug"`
         else
           LOG=""
