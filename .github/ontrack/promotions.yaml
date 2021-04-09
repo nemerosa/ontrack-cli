@@ -2,3 +2,6 @@ BRONZE:
   validations:
     - BUILD
     - TESTS
+RELEASE:
+  validations:
+    - GITHUB.RELEASE
