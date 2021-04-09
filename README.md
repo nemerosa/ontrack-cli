@@ -272,8 +272,3 @@ While the Ontrack CLI can be used directly, there are direct integrations in som
 
 * [`ontrack-github-actions-cli-setup` GitHub action](https://github.com/nemerosa/ontrack-github-actions-cli-setup) - _installation of the CLI and simplified GitHub/Git setup_
 
-## TODO
-
-- Setup of the promotions
-- Setup of the auto promotions
-- Validation & build run infos (timings)
