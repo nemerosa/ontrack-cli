@@ -116,6 +116,19 @@ func projectSearch(cmd *cobra.Command, project string) error {
 		return err
 	}
 
+	name, err := cmd.Flags().GetString("name")
+	if err != nil {
+		return err
+	} else if name != "" {
+		form["buildName"] = name
+		nameExact, err := cmd.Flags().GetBool("name-exact")
+		if err != nil {
+			return err
+		} else if nameExact {
+			form["buildExactMatch"] = true
+		}
+	}
+
 	// Gets the configuration
 	cfg, err := config.GetSelectedConfiguration()
 	if err != nil {
@@ -280,6 +293,8 @@ func init() {
 	// Criteria
 	buildSearchCmd.Flags().Int("count", 10, "Number of builds to return")
 	buildSearchCmd.Flags().String("with-promotion", "", "Builds must have this promotion")
+	buildSearchCmd.Flags().String("name", "", "Builds must have this name or match this regular expression")
+	buildSearchCmd.Flags().Bool("name-exact", true, "If present together with the `name` flag, requires an exact match.")
 
 	// Property criteria
 	buildSearchCmd.Flags().String("commit", "", "Commit for the build")
