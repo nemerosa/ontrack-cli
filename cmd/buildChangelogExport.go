@@ -22,6 +22,11 @@ THE SOFTWARE.
 package cmd
 
 import (
+	"fmt"
+	"ontrack-cli/client"
+	"ontrack-cli/config"
+	"strings"
+
 	"github.com/spf13/cobra"
 )
 
@@ -40,7 +45,7 @@ Additional options are available for the formatting:
 
 	ontrack-cli build changelog --from 1 --to 2 \
 		--format markdown \
-		--grouping "Bugs=bug,Features=features" \
+		--grouping "Bugs=bug|Features=features" \
 		--alt-group "Misc" \
 		--exclude delivery
 
@@ -84,7 +89,61 @@ The change log is available directly in the standard output.
 		// Query
 
 		query := `
+			query ExportChangeLog(
+				$from: Int!,
+				$to: Int!,
+				$request: IssueChangeLogExportRequest!
+			) {
+				gitChangeLog(from: $from, to: $to) {
+					export(request: $request)
+				}
+			}
 		`
+
+		// Request
+
+		request := make(map[string]interface{})
+
+		if format != "" {
+			request["format"] = format
+		}
+		if grouping != "" {
+			request["grouping"] = grouping
+		}
+		if altGroup != "" {
+			request["altGroup"] = altGroup
+		}
+		if exclude != "" {
+			request["exclude"] = exclude
+		}
+
+		// Data
+
+		var data struct {
+			GitChangeLog struct {
+				Export string
+			}
+		}
+
+		// Getting the configuration
+
+		cfg, err := config.GetSelectedConfiguration()
+		if err != nil {
+			return err
+		}
+
+		// Call
+
+		if err := client.GraphQLCall(cfg, query, map[string]interface{}{
+			"from":    from,
+			"to":      to,
+			"request": request,
+		}, &data); err != nil {
+			return err
+		}
+
+		// Print the exported change log
+		fmt.Println(strings.TrimSpace(data.GitChangeLog.Export))
 
 		// OK
 		return nil
