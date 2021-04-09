@@ -75,6 +75,7 @@ You can change the display options using additional flags - see 'ontrack-cli bui
 
 type buildList struct {
 	Builds []struct {
+		Id     int
 		Name   string
 		Branch struct {
 			Name string
@@ -93,6 +94,7 @@ func projectSearch(cmd *cobra.Command, project string) error {
 				project: $project,
 				buildProjectFilter: $buildProjectFilter
 			) {
+				id
 				name
 				branch {
 					name
@@ -196,12 +198,20 @@ func displayBuilds(cmd *cobra.Command, data *buildList) error {
 	if err != nil {
 		return err
 	}
+	displayId, err := cmd.Flags().GetBool("display-id")
+	if err != nil {
+		return err
+	}
 
 	for _, build := range data.Builds {
 		if displayBranch {
 			fmt.Printf("%s/", build.Branch.Name)
 		}
-		fmt.Println(build.Name)
+		if displayId {
+			fmt.Println(build.Id)
+		} else {
+			fmt.Println(build.Name)
+		}
 	}
 
 	return nil
@@ -276,4 +286,5 @@ func init() {
 
 	// Display criteria
 	buildSearchCmd.Flags().Bool("display-branch", false, "Displays branch information: <branch name>/<build name>. Used only for project-based searches.")
+	buildSearchCmd.Flags().Bool("display-id", false, "Displays the build ID instead of its name.")
 }
