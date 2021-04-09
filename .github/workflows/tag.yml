@@ -60,14 +60,18 @@ jobs:
         else
           LOG=""
         fi
-        echo LOG$LOG
+        echo LOG=$LOG
+        echo "LOG=$LOG" >> $GITHUB_ENV
 
     - name: Release
       uses: softprops/action-gh-release@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        body: Preview version of the CLI
+        body: |
+          Version ${{ env.VERSION }}
+
+          ${{ env.LOG }}
         files: ontrack-cli-*
 
     # TODO Release validation
