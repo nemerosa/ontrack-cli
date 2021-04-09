@@ -110,6 +110,10 @@ func projectSearch(cmd *cobra.Command, project string) error {
 		return err
 	}
 
+	if err := fillFormWithWithPromotion(cmd, &form, "promotionName"); err != nil {
+		return err
+	}
+
 	// Gets the configuration
 	cfg, err := config.GetSelectedConfiguration()
 	if err != nil {
@@ -158,6 +162,10 @@ func branchSearch(cmd *cobra.Command, project string, branch string) error {
 		return err
 	}
 	if err := fillFormWithCount(cmd, &form, "count"); err != nil {
+		return err
+	}
+
+	if err := fillFormWithWithPromotion(cmd, &form, "withPromotionLevel"); err != nil {
 		return err
 	}
 
@@ -226,6 +234,23 @@ func fillFormWithProperty(cmd *cobra.Command, form *map[string]interface{}, prop
 	return nil
 }
 
+func fillFormWithWithPromotion(cmd *cobra.Command, form *map[string]interface{}, fieldName string) error {
+	return fillForm(cmd, form, "with-promotion", fieldName)
+}
+
+func fillForm(cmd *cobra.Command, form *map[string]interface{}, argName string, fieldName string) error {
+	value, err := cmd.Flags().GetString(argName)
+	if err != nil {
+		return err
+	}
+
+	if value != "" {
+		(*form)[fieldName] = value
+	}
+
+	return nil
+}
+
 func init() {
 	buildCmd.AddCommand(buildSearchCmd)
 
@@ -244,6 +269,7 @@ func init() {
 
 	// Criteria
 	buildSearchCmd.Flags().Int("count", 10, "Number of builds to return")
+	buildSearchCmd.Flags().String("with-promotion", "", "Builds must have this promotion")
 
 	// Property criteria
 	buildSearchCmd.Flags().String("commit", "", "Commit for the build")
