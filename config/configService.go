@@ -74,19 +74,30 @@ func ReadRootConfiguration() *RootConfig {
 }
 
 // Adds a new configuration and set as default
-func AddConfiguration(config Config) error {
+func AddConfiguration(config Config, override bool) error {
 	root := ReadRootConfiguration()
+	configurations := root.Configurations
+	existing := false
 	// Check if the configuration name already exists
-	for _, item := range root.Configurations {
+	for index, item := range configurations {
 		if item.Name == config.Name {
-			return fmt.Errorf("Configuration with name %s already exists", config.Name)
+			if override {
+				configurations[index] = config
+				existing = true
+			} else {
+				return fmt.Errorf("Configuration with name %s already exists", config.Name)
+			}
 		}
 	}
 	// Default selected configuration is the added one
-	// Adds the configuration to the list
+	// Adds the configuration to the list if not existing already
+
+	if !existing {
+		configurations = append(root.Configurations, config)
+	}
 	newRoot := RootConfig{
 		Selected:       config.Name,
-		Configurations: append(root.Configurations, config),
+		Configurations: configurations,
 	}
 	// Saves the root configuration back
 	home, _ := homedir.Dir()

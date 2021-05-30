@@ -47,14 +47,20 @@ or to create a 'prod' configuration using a token:
 `,
 	Args: cobra.ExactValidArgs(2),
 	RunE: func(cmd *cobra.Command, args []string) error {
-		return createConfig(args)
+		return createConfig(cmd, args)
 	},
 }
 
-func createConfig(args []string) error {
+func createConfig(cmd *cobra.Command, args []string) error {
 	// Arguments have already been validated by ExactValidArgs(2) in the command definition
 	name := args[0]
 	url := args[1]
+
+	// Override parameter
+	override, err := cmd.Flags().GetBool("override")
+	if err != nil {
+		return err
+	}
 
 	// Creates the configuration
 	var cfg = config.Config{
@@ -67,8 +73,12 @@ func createConfig(args []string) error {
 
 	// Adds this configuration to the file
 	// and sets as default
-	err := config.AddConfiguration(cfg)
-	return err
+	if err := config.AddConfiguration(cfg, override); err != nil {
+		return err
+	}
+
+	// OK
+	return nil
 }
 
 func init() {
@@ -88,4 +98,5 @@ func init() {
 	configCreateCmd.Flags().StringVarP(&username, "username", "u", "", "Username for basic authentication")
 	configCreateCmd.Flags().StringVarP(&password, "password", "p", "", "Password for basic authentication")
 	configCreateCmd.Flags().StringVarP(&token, "token", "t", "", "Token based authentication (if defined, takes priority over username/password authentication)")
+	configCreateCmd.Flags().BoolP("override", "o", false, "Overrides the configuration if it already exists")
 }
