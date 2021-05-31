@@ -10,10 +10,10 @@ import (
 )
 
 // GraphQLCall performs a GraphQL query/mutation to Ontrack
-func GraphQLCall(config *config.Config, query string, variables map[string]interface{}, data interface{}) error {
+func GraphQLCall(cfg *config.Config, query string, variables map[string]interface{}, data interface{}) error {
 
 	// If config is disabled, skips the call
-	if config.Disabled {
+	if cfg.Disabled {
 		return nil
 	}
 
@@ -23,17 +23,17 @@ func GraphQLCall(config *config.Config, query string, variables map[string]inter
 	}
 
 	client := resty.New()
-	// client.SetDebug(true)
-	if config.Token != "" {
-		client.SetHeader("X-Ontrack-Token", config.Token)
-	} else if config.Username != "" {
-		client.SetBasicAuth(config.Username, config.Password)
+	client.SetDebug(config.GraphQLLogging)
+	if cfg.Token != "" {
+		client.SetHeader("X-Ontrack-Token", cfg.Token)
+	} else if cfg.Username != "" {
+		client.SetBasicAuth(cfg.Username, cfg.Password)
 	}
 
 	resp, err := client.R().
 		SetHeader("Content-Type", "application/json").
 		SetBody(body).
-		Post(config.URL + "/graphql")
+		Post(cfg.URL + "/graphql")
 	if err != nil {
 		return err
 	}

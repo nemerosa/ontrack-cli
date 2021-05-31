@@ -7,19 +7,6 @@ Ontrack CLI
 
 The Ontrack CLI is a Command Line Interface tool, available on many platforms, which allows you to feed information into Ontrack from any shell platform.
 
-## Table of contents
-
-* [Installation](#installation)
-* [Setup](#setup)
-* [Usage](#usage)
-  * [Branch setup](#branch-setup)
-  * [Validation stamps setup](#validation-stamps-setup)
-  * [Promotions and auto promotion](#promotions-and-auto-promotion)
-  * [Build setup](#build-setup)
-  * [Git integration](#git-integration)
-* [Integrations](#integrations)
-* [TODO](#todo)
-
 ## Installation
 
 Download the latest version for your platform from the [releases](https://github.com/nemerosa/ontrack-cli/releases) page.
@@ -265,6 +252,10 @@ ontrack-cli graphql \
     --query 'query ProjectList($name: String!) { projects(name: $name) { id name branches { name } } }' \
     --var name=ontrack-cli
 ```
+
+### General options
+
+The `--graphqh-log` flag is available for all commands, to enable some tracing on the console for the GraphQL requests and responses.
 
 ## Integrations
 
