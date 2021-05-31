@@ -22,9 +22,8 @@ THE SOFTWARE.
 package cmd
 
 import (
-	"bytes"
+	"encoding/json"
 	"errors"
-	"text/template"
 
 	"github.com/spf13/cobra"
 
@@ -114,62 +113,34 @@ Type 'ontrack-cli validate --help' to get a list of all options.
 			}
 		}
 
-		// Null conversions
-		var inputs struct {
-			Status      string
-			Description string
-			DataType    string
-			Data        string
-		}
-
-		if status == "" {
-			inputs.Status = "null"
-		} else {
-			inputs.Status = `"` + status + `"`
-		}
-
-		if description == "" {
-			inputs.Description = "null"
-		} else {
-			inputs.Description = `"` + description + `"`
-		}
-
-		if dataType == "" {
-			inputs.DataType = "null"
-		} else {
-			inputs.DataType = `"` + dataType + `"`
-		}
-
-		if data == "" {
-			inputs.Data = "null"
-		} else {
-			inputs.Data = data // Pure JSON
-		}
-
 		// Run info
 		runInfo, err := GetRunInfo(cmd)
 		if err != nil {
 			return err
 		}
 
-		// Query template
-		tmpl, err := template.New("mutation").Parse(`
+		// Query
+		query := `
 			mutation CreateValidationRun(
 				$project: String!,
 				$branch: String!,
 				$build: String!,
 				$validationStamp: String!,
-				$runInfo: RunInfoInput
+				$validationRunStatus: String,
+				$description: String,
+				$runInfo: RunInfoInput,
+				$dataTypeId: String,
+				$data: JSON
 			) {
 				createValidationRun(input: {
 					project: $project,
 					branch: $branch,
 					build: $build,
 					validationStamp: $validationStamp,
-					validationRunStatus: {{ .Status }},
-					description: {{ .Description }}
-					dataTypeId: {{ .DataType }},
-					data: {{ .Data }},
+					validationRunStatus: $validationRunStatus,
+					description: $description,
+					dataTypeId: $dataTypeId,
+					data: $data,
 					runInfo: $runInfo
 				}) {
 					errors {
@@ -177,18 +148,43 @@ Type 'ontrack-cli validate --help' to get a list of all options.
 					}
 				}
 			}
-		`)
-		if err != nil {
-			return err
+		`
+
+		// Variables
+		variables := make(map[string]interface{})
+		variables["project"] = project
+		variables["branch"] = branch
+		variables["build"] = build
+		variables["validationStamp"] = validation
+
+		// Status variable
+		if status != "" {
+			variables["validationRunStatus"] = status
 		}
 
-		// Query rendering
-		var query bytes.Buffer
-		if err := tmpl.Execute(&query, inputs); err != nil {
-			return err
+		// Description variable
+		if description != "" {
+			variables["description"] = description
 		}
 
-		// fmt.Println(query.String())
+		// Data type ID variable
+		if dataType != "" {
+			variables["dataTypeId"] = dataType
+		}
+
+		// Data variable
+		if data != "" {
+			var dataJson interface{}
+			if err := json.Unmarshal([]byte(data), &dataJson); err != nil {
+				return err
+			}
+			variables["data"] = dataJson
+		}
+
+		// Run info
+		if runInfo != nil {
+			variables["runInfo"] = runInfo
+		}
 
 		// Get the configuration
 		cfg, err := config.GetSelectedConfiguration()
@@ -206,17 +202,7 @@ Type 'ontrack-cli validate --help' to get a list of all options.
 		}
 
 		// Runs the mutation
-		if err := client.GraphQLCall(cfg, query.String(), map[string]interface{}{
-			"project":             project,
-			"branch":              branch,
-			"build":               build,
-			"validationStamp":     validation,
-			"validationRunStatus": status,
-			"description":         description,
-			"dataTypeId":          dataType,
-			"data":                data,
-			"runInfo":             runInfo,
-		}, &payload); err != nil {
+		if err := client.GraphQLCall(cfg, query, variables, &payload); err != nil {
 			return err
 		}
 
