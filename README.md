@@ -9,13 +9,13 @@ The Ontrack CLI is a Command Line Interface tool, available on many platforms, w
 
 > The Ontrack CLI works only with the version 4 of [Ontrack](https://github.com/nemerosa/ontrack).
 
-## Installation
+# Installation
 
 Download the latest version for your platform from the [releases](https://github.com/nemerosa/ontrack-cli/releases) page.
 
 No further installation step is needed; the CLI is coded in Golang and does not need any dependency.
 
-## Setup
+# Setup
 
 You need to register a configuration:
 
@@ -29,11 +29,11 @@ The configuration is stored on disk, in `~/.ontrack-cli-config.yaml` and the `co
 
 > The Ontrack CLI supports only version 4.x and beyond of Ontrack.
 
-## Usage
+# Usage
 
 After the configuratio has been set, injection of data into Ontrack from a CI pipeline can be typically done this way.
 
-### Branch setup
+## Branch setup
 
 We make sure the branch managed by the pipeline is registered into Ontrack:
 
@@ -47,7 +47,7 @@ or the PR name (like `PR-123`). The `branch setup` operation is idempotent.
 
 > Run `ontrack-cli branch setup --help` for additional options.
 
-### Validation stamps setup
+## Validation stamps setup
 
 The CLI can be used to create validation stamps:
 
@@ -102,7 +102,7 @@ ontrack-cli validation-stamp setup --project <project> --branch <branch> --valid
     metrics
 ```
 
-### Promotions and auto promotion
+## Promotions and auto promotion
 
 Promotions can be created using:
 
@@ -122,7 +122,7 @@ ontrack-cli promotion-level setup --project <project> --branch <branch> --promot
 
 The validation stamps and promotions this command depends on will be created if they don't exist already.
 
-### Build setup
+## Build setup
 
 Then, you can create a build entry the same way:
 
@@ -140,7 +140,7 @@ If you need to associated a release label to your build, you can use the `--rele
 ontrack-cli build setup --project <project> --branch <branch> --build <build> --release <label>
 ```
 
-### Git integration
+## Git integration
 
 Ontrack can leverage SCM information stored in its model, in order to compute change logs or to allow searches based on commits.
 
@@ -181,7 +181,7 @@ ontrack-cli build set-property --project <project> --branch <branch> --build <bu
 ontrack-cli build setup --project <project> --branch <branch> --build <build> --commit <commit>
 ```
 
-## Validation
+# Validation
 
 One of the most important point of Ontrack is to record _validations_:
 
@@ -241,9 +241,9 @@ ontrack-cli validate --project <project> --branch <branch> --build <build> --val
         --metrics weight=145,height=185.1
 ```
 
-## Misc
+# Misc
 
-### Direct GraphQL calls
+## Direct GraphQL calls
 
 The Ontrack CLI uses the GraphQL API of Ontrack for its communication. The `graphql` command allows to run raw GraphQL queries.
 
@@ -255,11 +255,11 @@ ontrack-cli graphql \
     --var name=ontrack-cli
 ```
 
-### General options
+## General options
 
 The `--graphqh-log` flag is available for all commands, to enable some tracing on the console for the GraphQL requests and responses.
 
-## Integrations
+# Integrations
 
 While the Ontrack CLI can be used directly, there are direct integrations in some environments:
 
