@@ -191,6 +191,8 @@ ontrack-cli validate --project <project> --branch <branch> --build <build> --val
 
 where `<status>` is an Ontrack validation run status like `PASSED`, `WARNING` or `FAILED`.
 
+## Data validation
+
 Additionally, a validation run can be created with some
 [data](https://static.nemerosa.net/ontrack/release/latest/docs/doc/index.html#validation-stamps-data). For example, to create a test summary validation:
 
@@ -241,6 +243,28 @@ ontrack-cli validate --project <project> --branch <branch> --build <build> --val
         --metrics weight=145,height=185.1
 ```
 
+## Run info
+
+The `validate` commands accept additional flags to set the run info on a validation (source & trigger, duration):
+
+* `--run-time` - duration of the validation in seconds
+* `--source-type` - type of source for the validation, for example, the CI name like `jenkins`
+* `--source-uri` - the URI to the source of the validation, for example, the URL to a Jenkins job
+* `--trigger-type` - how the validation was triggered (for example: `scm`)
+* `--trigger-data` - data associated with the trigger (for example, a Git commit)
+
+For example, to set the validation duration on a test summary validation:
+
+```bash
+ontrack-cli validate --project <project> --branch <branch> --build <build> --validation <validation> \
+    --run-time 80 \
+    tests \
+        --passed 20 \
+        --skipped 2 \
+        --failed 1
+```
+
+
 # Misc
 
 ## Direct GraphQL calls
@@ -261,7 +285,13 @@ The `--graphqh-log` flag is available for all commands, to enable some tracing o
 
 # Integrations
 
-While the Ontrack CLI can be used directly, there are direct integrations in some environments:
+While the Ontrack CLI can be used directly, there are direct integrations in some environments.
 
-* [`ontrack-github-actions-cli-setup` GitHub action](https://github.com/nemerosa/ontrack-github-actions-cli-setup) - _installation of the CLI and simplified GitHub/Git setup_
+## Jenkins
 
+The [`ontrack-jenkins-cli-pipeline`](https://github.com/nemerosa/ontrack-jenkins-cli-pipeline/) Jenkins pipeline library allows an easy integration between your `Jenkinsfile` pipelines and Ontrack.
+
+## GitHub actions
+
+* [`ontrack-github-actions-cli-setup`](https://github.com/nemerosa/ontrack-github-actions-cli-setup) - _installation of the CLI and simplified GitHub/Git setup_
+* [`ontrack-github-actions-cli-validation`](https://github.com/nemerosa/ontrack-github-actions-cli-validation) - _creation of validation runs based on GitHub workflow information_
