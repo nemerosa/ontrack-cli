@@ -135,9 +135,14 @@ where `<build>` is a unique identifier for your build (typically a build number)
 
 If you need to associated a release label to your build, you can use the `--release` option:
 
-
 ```bash
 ontrack-cli build setup --project <project> --branch <branch> --build <build> --release <label>
+```
+
+The same way, you can associate a Git commit property to the build with the `--commit` option:
+
+```bash
+ontrack-cli build setup --project <project> --branch <branch> --build <build> --commit <commit>
 ```
 
 ## Git integration
