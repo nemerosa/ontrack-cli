@@ -9,7 +9,7 @@ echo version=$version
 
 package_name=ontrack-cli
 
-platforms=("windows/amd64" "darwin/amd64" "linux/amd64", "linux/x86_64")
+platforms=("windows/amd64" "darwin/amd64" "linux/amd64", "linux/386")
 
 for platform in "${platforms[@]}"
 do
