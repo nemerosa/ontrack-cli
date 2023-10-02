@@ -185,9 +185,9 @@ func init() {
 	branchSetupCmd.Flags().StringP("project", "p", "", "Project name")
 	branchSetupCmd.Flags().StringP("branch", "b", "", "Branch name or Git branch name")
 
-	branchSetupCmd.Flags().Bool("auto-create-vs", false, "Auto creation of validation stamps if they are predefined")
+	branchSetupCmd.Flags().Bool("auto-create-vs", true, "Auto creation of validation stamps if they are predefined")
 	branchSetupCmd.Flags().Bool("auto-create-vs-always", false, "Auto creation of validation stamps even if they are not predefined")
-	branchSetupCmd.Flags().Bool("auto-create-pl", false, "Auto creation of promotion levels if they are predefined")
+	branchSetupCmd.Flags().Bool("auto-create-pl", true, "Auto creation of promotion levels if they are predefined")
 
 	branchSetupCmd.MarkFlagRequired("project")
 	branchSetupCmd.MarkFlagRequired("branch")
