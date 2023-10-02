@@ -40,7 +40,10 @@ type Config struct {
 
 // Gets the current configuration
 func GetSelectedConfiguration() (*Config, error) {
-	root := ReadRootConfiguration()
+	root, err := ReadRootConfiguration()
+	if err != nil {
+		return nil, err
+	}
 	selected := root.Selected
 	if selected != "" {
 		for _, item := range root.Configurations {
@@ -58,7 +61,7 @@ func ReadRootConfiguration() (*RootConfig, error) {
 	var root RootConfig
 	configFilePath, err := getConfigFilePath()
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	// If the config file does not exist, returns an empty root config
@@ -76,7 +79,10 @@ func ReadRootConfiguration() (*RootConfig, error) {
 
 // Adds a new configuration and set as default
 func AddConfiguration(config Config, override bool) error {
-	root := ReadRootConfiguration()
+	root, err := ReadRootConfiguration()
+	if err != nil {
+		return err
+	}
 	configurations := root.Configurations
 	existing := false
 	// Check if the configuration name already exists
@@ -134,7 +140,10 @@ func replaceConfigurationByName(root *RootConfig, config *Config) {
 
 // Sets the new selected configuration
 func SetSelectedConfiguration(name string) error {
-	root := ReadRootConfiguration()
+	root, err := ReadRootConfiguration()
+	if err != nil {
+		return err
+	}
 	existing := findConfigurationByName(root, name)
 	if existing == nil {
 		return fmt.Errorf("Configuration with name %s does not exist", name)
