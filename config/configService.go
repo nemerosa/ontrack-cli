@@ -54,7 +54,7 @@ func GetSelectedConfiguration() (*Config, error) {
 }
 
 // Reads the configuration
-func ReadRootConfiguration() *RootConfig, error {
+func ReadRootConfiguration() (*RootConfig, error) {
 	var root RootConfig
 	configFilePath, err := getConfigFilePath()
 	if err != nil {
@@ -180,7 +180,7 @@ func SetConfigurationState(name string, disabled bool) error {
 }
 
 // Gets the path to the configuration file
-func getConfigFilePath() string, error {
+func getConfigFilePath() (string, error) {
 	path, err := os.Getwd()
 	if err != nil {
 		return "", err
