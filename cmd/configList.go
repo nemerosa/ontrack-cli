@@ -34,8 +34,11 @@ var configListCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List all configurations",
 	Long:  `Displays the list of all existing configurations.`,
-	Run: func(cmd *cobra.Command, args []string) {
-		root := config.ReadRootConfiguration()
+	RunE: func(cmd *cobra.Command, args []string) error {
+		root, err := config.ReadRootConfiguration()
+		if err != nil {
+			return err
+		}
 		for _, item := range root.Configurations {
 			var line string
 			if item.Name == root.Selected {
@@ -50,6 +53,7 @@ var configListCmd = &cobra.Command{
 			fmt.Println(line)
 			fmt.Printf("  %s\n", item.URL)
 		}
+		return nil
 	},
 }
 
