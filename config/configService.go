@@ -167,7 +167,10 @@ func SetSelectedConfiguration(name string) error {
 
 // Disables or enabled a configuration
 func SetConfigurationState(name string, disabled bool) error {
-	root := ReadRootConfiguration()
+	root, err := ReadRootConfiguration()
+	if err != nil {
+		return err
+	}
 	existing := findConfigurationByName(root, name)
 	if existing == nil {
 		return fmt.Errorf("Configuration with name %s does not exist", name)
