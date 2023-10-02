@@ -7,7 +7,6 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/mitchellh/go-homedir"
 	"gopkg.in/yaml.v2"
 )
 
@@ -55,22 +54,24 @@ func GetSelectedConfiguration() (*Config, error) {
 }
 
 // Reads the configuration
-func ReadRootConfiguration() *RootConfig {
+func ReadRootConfiguration() *RootConfig, error {
 	var root RootConfig
-	home, _ := homedir.Dir()
-	configFilePath := filepath.Join(home, configFileName)
+	configFilePath, err := getConfigFilePath()
+	if err != nil {
+		return err
+	}
 
 	// If the config file does not exist, returns an empty root config
 	if _, err := os.Stat(configFilePath); err != nil {
 		if os.IsNotExist(err) {
-			return &root
+			return &root, nil
 		}
 	}
 
 	reader, _ := os.Open(configFilePath)
 	buf, _ := ioutil.ReadAll(reader)
 	yaml.Unmarshal(buf, &root)
-	return &root
+	return &root, nil
 }
 
 // Adds a new configuration and set as default
@@ -100,8 +101,10 @@ func AddConfiguration(config Config, override bool) error {
 		Configurations: configurations,
 	}
 	// Saves the root configuration back
-	home, _ := homedir.Dir()
-	configFilePath := filepath.Join(home, configFileName)
+	configFilePath, err := getConfigFilePath()
+	if err != nil {
+		return err
+	}
 	buf, _ := yaml.Marshal(newRoot)
 	_, _ = os.OpenFile(configFilePath, os.O_CREATE|os.O_WRONLY, 0600)
 	_ = ioutil.WriteFile(configFilePath, buf, 0600)
@@ -141,8 +144,10 @@ func SetSelectedConfiguration(name string) error {
 		Configurations: root.Configurations,
 	}
 	// Saves the root configuration back
-	home, _ := homedir.Dir()
-	configFilePath := filepath.Join(home, configFileName)
+	configFilePath, err := getConfigFilePath()
+	if err != nil {
+		return err
+	}
 	buf, _ := yaml.Marshal(newRoot)
 	_, _ = os.OpenFile(configFilePath, os.O_CREATE|os.O_WRONLY, 0600)
 	_ = ioutil.WriteFile(configFilePath, buf, 0600)
@@ -162,12 +167,24 @@ func SetConfigurationState(name string, disabled bool) error {
 	existing.Disabled = disabled
 	replaceConfigurationByName(root, existing)
 	// Saves the root configuration back
-	home, _ := homedir.Dir()
-	configFilePath := filepath.Join(home, configFileName)
+	configFilePath, err := getConfigFilePath()
+	if err != nil {
+		return err
+	}
 	buf, _ := yaml.Marshal(root)
 	_, _ = os.OpenFile(configFilePath, os.O_CREATE|os.O_WRONLY, 0600)
 	_ = ioutil.WriteFile(configFilePath, buf, 0600)
 
 	// OK
 	return nil
+}
+
+// Gets the path to the configuration file
+func getConfigFilePath() string, error {
+	path, err := os.Getwd()
+	if err != nil {
+		return "", err
+	}
+	configFilePath := filepath.Join(path, configFileName)
+	return configFilePath, nil
 }
