@@ -81,89 +81,26 @@ The promotion can be set to be in "auto promotion" mode by using addtional optio
 			return err
 		}
 
-		autoPromotion := len(validations) > 0 || len(promotions) > 0 || include != "" || exclude != ""
-
 		// Configuration
 		cfg, err := config.GetSelectedConfiguration()
 		if err != nil {
 			return err
 		}
 
-		// Data
-		var data struct {
-			SetupPromotionLevel struct {
-				Errors []struct {
-					Message string
-				}
-			}
-			SetPromotionLevelAutoPromotionProperty struct {
-				Errors []struct {
-					Message string
-				}
-			}
-		}
+		autoPromotion := len(validations) > 0 || len(promotions) > 0 || include != "" || exclude != ""
 
-		// Call
-		if err := client.GraphQLCall(cfg, `
-			mutation SetupPromotionLevel(
-				$project: String!,
-				$branch: String!,
-				$promotion: String!,
-				$description: String,
-				$autoPromotion: Boolean!,
-				$validationStamps: [String!],
-				$include: String,
-				$exclude: String,
-				$promotionLevels: [String!]
-			) {
-				setupPromotionLevel(input: {
-					project: $project,
-					branch: $branch,
-					promotion: $promotion,
-					description: $description
-				}) {
-					errors {
-						message
-					}
-				}
-				setPromotionLevelAutoPromotionProperty(input: {
-					project: $project,
-					branch: $branch,
-					promotion: $promotion,
-					validationStamps: $validationStamps,
-					include: $include,
-					exclude: $exclude,
-					promotionLevels: $promotionLevels
-				}) @include(if: $autoPromotion) {
-					errors {
-						message
-					}
-				}
-			}
-		`, map[string]interface{}{
-			"project":          project,
-			"branch":           branch,
-			"promotion":        promotion,
-			"description":      description,
-			"autoPromotion":    autoPromotion,
-			"validationStamps": validations,
-			"promotionLevels":  promotions,
-			"include":          include,
-			"exclude":          exclude,
-		}, &data); err != nil {
-			return err
-		}
-
-		// Error checks
-		if err := client.CheckDataErrors(data.SetupPromotionLevel.Errors); err != nil {
-			return err
-		}
-		if err := client.CheckDataErrors(data.SetPromotionLevelAutoPromotionProperty.Errors); err != nil {
-			return err
-		}
-
-		// OK
-		return nil
+		return client.SetupPromotionLevel(
+			cfg,
+			project,
+			branch,
+			promotion,
+			description,
+			autoPromotion,
+			validations,
+			promotions,
+			include,
+			exclude,
+		)
 	},
 }
 
