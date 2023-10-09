@@ -143,5 +143,5 @@ promotions:
 
 func init() {
 	promotionLevelCmd.AddCommand(promotionLevelAutoCmd)
-	promotionLevelSetupCmd.Flags().StringP("yaml", "y", ".ontrack/promotions.yaml", "Path to the YAML file")
+	promotionLevelAutoCmd.Flags().StringP("yaml", "y", ".ontrack/promotions.yaml", "Path to the YAML file")
 }
