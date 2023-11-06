@@ -1,6 +1,8 @@
 package cmd
 
 import (
+	client "ontrack-cli/client"
+
 	"github.com/spf13/cobra"
 )
 
@@ -12,7 +14,7 @@ func InitRunInfoCommandFlags(cmd *cobra.Command) {
 	cmd.PersistentFlags().Int("run-time", 0, "Run info run time (in seconds)")
 }
 
-func GetRunInfo(cmd *cobra.Command) (*RunInfo, error) {
+func GetRunInfo(cmd *cobra.Command) (*client.RunInfo, error) {
 	sourceType, err := cmd.Flags().GetString("source-type")
 	if err != nil {
 		return nil, err
@@ -35,7 +37,7 @@ func GetRunInfo(cmd *cobra.Command) (*RunInfo, error) {
 	}
 
 	if sourceType != "" || sourceURI != "" || triggerType != "" || triggerData != "" || runTime != 0 {
-		var info = RunInfo{
+		var info = client.RunInfo{
 			SourceType:  sourceType,
 			SourceURI:   sourceURI,
 			TriggerType: triggerType,
@@ -46,13 +48,4 @@ func GetRunInfo(cmd *cobra.Command) (*RunInfo, error) {
 	} else {
 		return nil, nil
 	}
-}
-
-// RunInfo defines the input for the run info for a build or validation run
-type RunInfo struct {
-	SourceType  string `json:"sourceType"`
-	SourceURI   string `json:"sourceUri"`
-	TriggerType string `json:"triggerType"`
-	TriggerData string `json:"triggerData"`
-	RunTime     int    `json:"runTime"`
 }
