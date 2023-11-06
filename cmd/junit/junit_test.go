@@ -6,7 +6,7 @@ import (
 
 func TestJUnitParsing(t *testing.T) {
 
-	pattern := "./cmd/junit/junit_reports/*.xml"
+	pattern := "junit_reports/*.xml"
 
 	passed, skipped, failed, err := GetSummaryJUnitTestReports(pattern)
 	if err != nil {
