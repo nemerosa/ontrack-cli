@@ -5,14 +5,35 @@ import (
 	client "ontrack-cli/client"
 	config "ontrack-cli/config"
 	"os"
+	"slices"
 
 	"github.com/spf13/cobra"
 	"gopkg.in/yaml.v2"
 )
 
 type AutoPromotions struct {
+	// List of validations and their configuration
+	Validations []ValidationConfig
 	// List of promotions
 	Promotions []PromotionConfig
+}
+
+type ValidationConfig struct {
+	// Name of the validation
+	Name string
+	// Optional description for the validation
+	Description string
+	// Optional data type
+	DataType *string
+	// Optional data type config
+	DataTypeConfig *string
+	// Test configuration
+	Tests *TestSummaryValidationConfig
+}
+
+type TestSummaryValidationConfig struct {
+	// Warning if skipped tests
+	WarningIfSkipped bool
 }
 
 type PromotionConfig struct {
@@ -38,6 +59,11 @@ By default, the definition of the promotions and their auto promotion is availab
 
 This YAML file has the following structure (example):
 
+validations:
+	- name: unit-tests
+	  description: Unit tests
+	  tests:
+		warningIfSkipped: false
 promotions:
 	- name: BRONZE
 	  validations:
@@ -87,32 +113,53 @@ promotions:
 		}
 		yaml.Unmarshal(buf, &root)
 
+		// Setup of validations
+		var createdValidations []string
+		for _, validation := range root.Validations {
+			createdValidations = append(createdValidations, validation.Name)
+			// TODO Generic data type
+			// Tests data type
+			if validation.Tests != nil {
+				err = SetupTestValidationStamp(
+					project,
+					branch,
+					validation.Name,
+					validation.Description,
+					validation.Tests.WarningIfSkipped,
+				)
+				if err != nil {
+					return err
+				}
+			}
+		}
+
 		// List of validations and promotions to setup
 		var validationStamps []string
 
 		// Going over all promotions
 		for _, promotion := range root.Promotions {
 			if len(promotion.Validations) > 0 {
-				for _, validation := range promotion.Validations {
-					validationStamps = append(validationStamps, validation)
-				}
+				validationStamps = append(validationStamps, promotion.Validations...)
 			}
 		}
 
 		// Creates all the validations
 		for _, validation := range validationStamps {
-			// Setup the validation stamp
-			err := client.SetupValidationStamp(
-				cfg,
-				project,
-				branch,
-				validation,
-				"",
-				"",
-				"",
-			)
-			if err != nil {
-				return err
+			// Check if not already created
+			if slices.Index(createdValidations, validation) < 0 {
+				// Setup the validation stamp
+				err := client.SetupValidationStamp(
+					cfg,
+					project,
+					branch,
+					validation,
+					"",
+					"",
+					"",
+				)
+				if err != nil {
+					return err
+				}
 			}
 		}
 

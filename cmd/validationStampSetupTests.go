@@ -22,9 +22,6 @@ THE SOFTWARE.
 package cmd
 
 import (
-	client "ontrack-cli/client"
-	config "ontrack-cli/config"
-
 	"github.com/spf13/cobra"
 )
 
@@ -66,54 +63,13 @@ For example:
 			return err
 		}
 
-		cfg, err := config.GetSelectedConfiguration()
-		if err != nil {
-			return err
-		}
-
-		var data struct {
-			SetupTestSummaryValidationStamp struct {
-				Errors []struct {
-					Message string
-				}
-			}
-		}
-		if err := client.GraphQLCall(cfg, `
-			mutation SetupTestSummaryValidationStamp(
-				$project: String!,
-				$branch: String!,
-				$validation: String!,
-				$description: String,
-				$warningIfSkipped: Boolean!
-			) {
-				setupTestSummaryValidationStamp(input: {
-					project: $project,
-					branch: $branch,
-					validation: $validation,
-					description: $description,
-					warningIfSkipped: $warningIfSkipped
-				}) {
-					errors {
-						message
-					}
-				}
-			}
-		`, map[string]interface{}{
-			"project":          project,
-			"branch":           branch,
-			"validation":       validation,
-			"description":      description,
-			"warningIfSkipped": warningIfSkipped,
-		}, &data); err != nil {
-			return err
-		}
-
-		if err := client.CheckDataErrors(data.SetupTestSummaryValidationStamp.Errors); err != nil {
-			return err
-		}
-
-		// OK
-		return nil
+		return SetupTestValidationStamp(
+			project,
+			branch,
+			validation,
+			description,
+			warningIfSkipped,
+		)
 	},
 }
 

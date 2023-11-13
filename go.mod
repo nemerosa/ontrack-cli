@@ -1,6 +1,6 @@
 module ontrack-cli
 
-go 1.15
+go 1.21.1
 
 require (
 	github.com/mitchellh/go-homedir v1.1.0

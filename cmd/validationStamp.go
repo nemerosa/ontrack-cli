@@ -23,6 +23,9 @@ package cmd
 
 import (
 	"github.com/spf13/cobra"
+
+	client "ontrack-cli/client"
+	config "ontrack-cli/config"
 )
 
 // validationStampCmd represents the validationStamp command
@@ -51,4 +54,61 @@ func init() {
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
 	// validationStampCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+}
+
+// Utility method to setup a "tests" validation stamp
+func SetupTestValidationStamp(
+	project string,
+	branch string,
+	validation string,
+	description string,
+	warningIfSkipped bool,
+) error {
+
+	cfg, err := config.GetSelectedConfiguration()
+	if err != nil {
+		return err
+	}
+
+	var data struct {
+		SetupTestSummaryValidationStamp struct {
+			Errors []struct {
+				Message string
+			}
+		}
+	}
+
+	err = client.GraphQLCall(cfg, `
+		mutation SetupTestSummaryValidationStamp(
+			$project: String!,
+			$branch: String!,
+			$validation: String!,
+			$description: String,
+			$warningIfSkipped: Boolean!
+		) {
+			setupTestSummaryValidationStamp(input: {
+				project: $project,
+				branch: $branch,
+				validation: $validation,
+				description: $description,
+				warningIfSkipped: $warningIfSkipped
+			}) {
+				errors {
+					message
+				}
+			}
+		}
+	`, map[string]interface{}{
+		"project":          project,
+		"branch":           branch,
+		"validation":       validation,
+		"description":      description,
+		"warningIfSkipped": warningIfSkipped,
+	}, &data)
+
+	if err != nil {
+		return err
+	}
+
+	return client.CheckDataErrors(data.SetupTestSummaryValidationStamp.Errors)
 }
