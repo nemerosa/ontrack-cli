@@ -18,12 +18,12 @@ jobs:
       with:
         go-version: 1.21.1
 
-    - uses: nemerosa/ontrack-github-actions-cli-setup@v1
+    - uses: nemerosa/ontrack-github-actions-cli-setup@v2.0.3
       id: ontrack
       with:
         only-for: nemerosa
         url: https://ontrack.nemerosa.net
-        token: ${{ secrets.ONTRACK_TOKEN }}
+        token: "${{ secrets.ONTRACK_TOKEN }}"
         config: github.com
         indexation: 120
         github-token: ${{ github.token }}
@@ -41,7 +41,7 @@ jobs:
     - name: Build
       run: go build -v ./...
 
-    - uses: nemerosa/ontrack-github-actions-cli-validation@v1
+    - uses: nemerosa/ontrack-github-actions-cli-validation@v2.0.1
       if: ${{ always() }}
       with:
         step-name: Build
@@ -52,7 +52,7 @@ jobs:
     - name: Test
       run: go test -v ./...
 
-    - uses: nemerosa/ontrack-github-actions-cli-validation@v1
+    - uses: nemerosa/ontrack-github-actions-cli-validation@v2.0.1
       if: ${{ always() }}
       with:
         step-name: Test
