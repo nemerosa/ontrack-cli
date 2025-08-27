@@ -31,7 +31,7 @@ The configuration is stored on disk, in `~/.ontrack-cli-config.yaml` and the `co
 
 # Usage
 
-After the configuratio has been set, injection of data into Ontrack from a CI pipeline can be typically done this way.
+After the configuration has been set, injection of data into Ontrack from a CI pipeline can be typically done this way.
 
 ## Branch setup
 
@@ -269,6 +269,34 @@ ontrack-cli validate --project <project> --branch <branch> --build <build> --val
         --failed 1
 ```
 
+# Auto-versioning
+
+The Ontrack CLI can be used to set up the auto-versioning configuration for a branch.
+
+Given the `auto-versioning.yaml` file containing the configuration, the call looks like:
+
+```bash
+ontrack-cli branch --project <project> --branch <branch> auto-versioning \
+    --file auto-versioning.yaml
+```
+
+The `auto-versioning.yaml` file looks like:
+
+```yaml
+dependencies:
+  - sourceProject: my-library
+    sourceBranch: release-1.3
+    sourcePromotion: IRON
+    targetPath: gradle.properties
+    targetProperty: my-version
+    postProcessing: jenkins
+    postProcessingConfig:
+      dockerImage  : openjdk:8
+      dockerCommand: ./gradlew clean
+```
+
+> The format of this file is fully described in the Ontrack documentation at
+> https://static.nemerosa.net/ontrack/release/latest/docs/doc/index.html#auto-versioning-config
 
 # Misc
 
@@ -300,3 +328,7 @@ The [`ontrack-jenkins-cli-pipeline`](https://github.com/nemerosa/ontrack-jenkins
 
 * [`ontrack-github-actions-cli-setup`](https://github.com/nemerosa/ontrack-github-actions-cli-setup) - _installation of the CLI and simplified GitHub/Git setup_
 * [`ontrack-github-actions-cli-validation`](https://github.com/nemerosa/ontrack-github-actions-cli-validation) - _creation of validation runs based on GitHub workflow information_
+
+# Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md).
