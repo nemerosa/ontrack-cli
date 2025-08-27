@@ -28,23 +28,23 @@ jobs:
     - name: Get version
       run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
     
-    - name: Get Ontrack information
-      # TODO Use a built-in action, included into the setup
-      run: |
-        RESULT=`ontrack-cli build search --project ${{ steps.ontrack.outputs.project }} --display-branch --commit ${{ github.sha }} --count 1`
-        BRANCH=(${RESULT%/*})
-        BUILD=(${RESULT#*/})
-        BUILD_ID=`ontrack-cli build search --project ${{ steps.ontrack.outputs.project }} --display-id --name $BUILD --count 1`
-        echo "BRANCH=$BRANCH" >> $GITHUB_ENV
-        echo "BUILD=$BUILD" >> $GITHUB_ENV
-        echo "BUILD_ID=$BUILD_ID" >> $GITHUB_ENV
-
-    - name: Displays version and build
-      run: |
-        echo VERSION=${VERSION}
-        echo BRANCH=$BRANCH
-        echo BUILD=$BUILD
-        echo BUILD_ID=$BUILD_ID
+#    - name: Get Ontrack information
+#      # TODO Use a built-in action, included into the setup
+#      run: |
+#        RESULT=`ontrack-cli build search --project ${{ steps.ontrack.outputs.project }} --display-branch --commit ${{ github.sha }} --count 1`
+#        BRANCH=(${RESULT%/*})
+#        BUILD=(${RESULT#*/})
+#        BUILD_ID=`ontrack-cli build search --project ${{ steps.ontrack.outputs.project }} --display-id --name $BUILD --count 1`
+#        echo "BRANCH=$BRANCH" >> $GITHUB_ENV
+#        echo "BUILD=$BUILD" >> $GITHUB_ENV
+#        echo "BUILD_ID=$BUILD_ID" >> $GITHUB_ENV
+#
+#    - name: Displays version and build
+#      run: |
+#        echo VERSION=${VERSION}
+#        echo BRANCH=$BRANCH
+#        echo BUILD=$BUILD
+#        echo BUILD_ID=$BUILD_ID
 
     - name: Build packages
       run: ./go-executable-build.bash ${VERSION}
@@ -74,8 +74,6 @@ jobs:
           ${{ env.LOG }}
         files: ontrack-cli-*
 
-    # TODO Release validation
-
-    - name: Release marker in Ontrack
-      run: |
-        ontrack-cli build set-property --project ${{ steps.ontrack.outputs.project }} --branch $BRANCH --build $BUILD release $VERSION
+#    - name: Release marker in Ontrack
+#      run: |
+#        ontrack-cli build set-property --project ${{ steps.ontrack.outputs.project }} --branch $BRANCH --build $BUILD release $VERSION
