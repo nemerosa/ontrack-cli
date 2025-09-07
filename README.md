@@ -277,7 +277,7 @@ Given the `auto-versioning.yaml` file containing the configuration, the call loo
 
 ```bash
 ontrack-cli branch --project <project> --branch <branch> auto-versioning \
-    --file auto-versioning.yaml
+    --yaml auto-versioning.yaml
 ```
 
 The `auto-versioning.yaml` file looks like:
@@ -297,6 +297,15 @@ dependencies:
 
 > The format of this file is fully described in the Ontrack documentation at
 > https://static.nemerosa.net/ontrack/release/latest/docs/doc/index.html#auto-versioning-config
+
+In a parent repository, you can use the auto-versioning check to automatically create the dependency links.
+
+```yaml
+ontrack-cli build auto-versioning-check \
+  --project <project> \
+  --branch <branch> \
+  --build <build>
+```
 
 # Misc
 
