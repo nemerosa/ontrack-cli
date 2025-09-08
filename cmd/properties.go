@@ -16,8 +16,8 @@ func SetProperty(entityType string, entityNames map[string]string, typeName stri
 	}
 
 	tmpl, err := template.New("mutation").Parse(`
-		mutation SetProperty {
-			set{{.EntityTypeName}}Property(input: { {{.EntityInput}}, property: "{{.PropertyTypeName}}", value: {{.PropertyTypeValue}} }) {
+		mutation SetProperty($propertyName: String!, $propertyValue: JSON) {
+			set{{.EntityTypeName}}Property(input: { {{.EntityInput}}, property: $propertyName, value: $propertyValue }) {
 				errors {
 					message
 				}
@@ -29,11 +29,9 @@ func SetProperty(entityType string, entityNames map[string]string, typeName stri
 	}
 
 	var queryTmplInput = setPropertyQueryTmplInput{
-		EntityTypeName:    strings.Title(entityType),
-		EntityTypeVar:     entityType,
-		EntityInput:       entityInput(entityNames),
-		PropertyTypeName:  typeName,
-		PropertyTypeValue: value,
+		EntityTypeName: strings.Title(entityType),
+		EntityTypeVar:  entityType,
+		EntityInput:    entityInput(entityNames),
 	}
 	var query bytes.Buffer
 	if err := tmpl.Execute(&query, queryTmplInput); err != nil {
@@ -42,7 +40,14 @@ func SetProperty(entityType string, entityNames map[string]string, typeName stri
 
 	// nodeName --> errors --> []error
 	var data map[string]setPropertyPayload
-	if err := client.GraphQLCall(cfg, query.String(), map[string]interface{}{}, &data); err != nil {
+	if err := client.GraphQLCall(
+		cfg,
+		query.String(),
+		map[string]interface{}{
+			"propertyName":  typeName,
+			"propertyValue": value,
+		},
+		&data); err != nil {
 		return err
 	}
 
