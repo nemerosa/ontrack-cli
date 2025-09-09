@@ -20,6 +20,7 @@ jobs:
 
     - uses: nemerosa/ontrack-github-actions-cli-setup@v2.0.3
       id: ontrack
+      if: github.event_name != 'pull_request'
       with:
         only-for: nemerosa
         url: https://ontrack.nemerosa.net
@@ -37,12 +38,13 @@ jobs:
           -b ${{ steps.ontrack.outputs.branch }} \
           -n ${{ github.run_number }} \
           --commit ${{ github.sha }}
+      if: github.event_name != 'pull_request'
 
     - name: Build
       run: go build -v ./...
 
     - uses: nemerosa/ontrack-github-actions-cli-validation@v2.0.1
-      if: ${{ always() }}
+      if: ${{ always() && github.event_name != 'pull_request' }}
       with:
         step-name: Build
         validation: BUILD
@@ -53,7 +55,7 @@ jobs:
       run: go test -v ./...
 
     - uses: nemerosa/ontrack-github-actions-cli-validation@v2.0.1
-      if: ${{ always() }}
+      if: ${{ always() && github.event_name != 'pull_request' }}
       with:
         step-name: Test
         validation: TESTS
