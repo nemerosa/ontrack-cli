@@ -2,14 +2,27 @@ package junit
 
 import (
 	"encoding/xml"
+	"github.com/gobwas/glob"
 	"io"
+	"io/fs"
 	"os"
 	"path/filepath"
 )
 
 func GetSummaryJUnitTestReports(pattern string) (int, int, int, error) {
-	// Gets all the matching fields
-	matches, err := filepath.Glob(pattern)
+	g := glob.MustCompile(pattern, '/')
+	var matches []string
+
+	err := filepath.Walk(".", func(path string, info fs.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+		if g.Match(path) {
+			matches = append(matches, path)
+		}
+		return nil
+	})
+
 	if err != nil {
 		return 0, 0, 0, err
 	}
