@@ -307,6 +307,50 @@ ontrack-cli build auto-versioning-check \
   --build <build>
 ```
 
+# Notifications
+
+The CLI can be used to setup subscriptions on some entities.
+
+For example, to send a Slack message each time a promotion is granted:
+
+```shell
+ontrack-cli promotion subscribe \
+  --project <project> \
+  --branch <branch> \
+  --promotion BRONZE \
+  --name "My subscription" \
+  slack \
+  --channel "#test" \
+  --type "SUCCESS"
+```
+
+You can also use generic notifications. The code below is equivalent to the one above:
+
+```shell
+ontrack-cli promotion subscribe \
+  --project <project> \
+  --branch <branch> \
+  --promotion BRONZE \
+  --name "My subscription" \
+  generic \
+  --channel slack \
+  --channel-config '{"channel":"#test","type":"SUCCESS"}'
+```
+
+You can also use a specific content template by using the `--template` argument:
+
+```shell
+ontrack-cli promotion subscribe \
+  --project <project> \
+  --branch <branch> \
+  --promotion BRONZE \
+  --name "My subscription" \
+  slack \
+  --channel "#test" \
+  --type "SUCCESS" \
+  --template 'Build ${build} has been promoted to ${promotionLevel}. Well done :)'
+```
+
 # Misc
 
 ## Direct GraphQL calls

@@ -91,3 +91,69 @@ func SetupPromotionLevel(
 	// OK
 	return nil
 }
+
+func SubscribePromotionLevel(
+	cfg *config.Config,
+	project string,
+	branch string,
+	promotion string,
+	name string,
+	events []string,
+	channel string,
+	channelConfig interface{},
+	template string,
+) error {
+
+	var data struct {
+		SubscribePromotionLevelToEvents struct {
+			Errors []struct {
+				Message string
+			}
+		}
+	}
+
+	if err := GraphQLCall(cfg, `
+		mutation SubscribePromotionLevelToEvents(
+			$project: String!,
+			$branch: String!,
+			$promotion: String!,
+			$name: String!,
+			$events: [String!]!,
+			$channel: String!,
+			$channelConfig: JSON!,
+			$template: String,		
+		) {
+		  subscribePromotionLevelToEvents(input: {
+			project: $project,
+			branch: $branch,
+			promotion: $promotion,
+			name: $name,
+			events: $events,
+			channel: $channel,
+			channelConfig: $channelConfig,
+			contentTemplate: $template,
+		  }) {
+			errors {
+			  message
+			}
+		  }
+		}
+	`, map[string]interface{}{
+		"project":       project,
+		"branch":        branch,
+		"promotion":     promotion,
+		"name":          name,
+		"events":        events,
+		"channel":       channel,
+		"channelConfig": channelConfig,
+		"template":      template,
+	}, &data); err != nil {
+		return err
+	}
+
+	if err := CheckDataErrors(data.SubscribePromotionLevelToEvents.Errors); err != nil {
+		return err
+	}
+
+	return nil
+}
