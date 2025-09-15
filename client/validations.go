@@ -15,6 +15,7 @@ func ValidateWithTests(
 	passed int,
 	skipped int,
 	failed int,
+	status *string,
 ) error {
 
 	// Mutation payload
@@ -37,7 +38,8 @@ func ValidateWithTests(
 				$runInfo: RunInfoInput,
 				$passed: Int!,
 				$skipped: Int!,
-				$failed: Int!
+				$failed: Int!,
+				$status: String
 			) {
 				validateBuildWithTests(input: {
 					project: $project,
@@ -48,7 +50,8 @@ func ValidateWithTests(
 					runInfo: $runInfo,
 					passed: $passed,
 					skipped: $skipped,
-					failed: $failed
+					failed: $failed,
+					status: $status
 				}) {
 					errors {
 						message
@@ -65,6 +68,7 @@ func ValidateWithTests(
 		"passed":          passed,
 		"skipped":         skipped,
 		"failed":          failed,
+		"status":          status,
 	}, &payload); err != nil {
 		return err
 	}

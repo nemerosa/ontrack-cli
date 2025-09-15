@@ -103,6 +103,7 @@ For example:
 			passed,
 			skipped,
 			failed,
+			nil,
 		)
 	},
 }

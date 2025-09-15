@@ -15,7 +15,7 @@ var validateJUnitTestsCmd = &cobra.Command{
 
 For example:
 
-    ontrack-cli validate -p PROJECT -b BRANCH -n BUILD -v VALIDATION junit --pattern "**/results/*.xml"
+    ontrack-cli validate -p PROJECT -b BRANCH -n BUILD -v VALIDATION junit --pattern "**/results/*.xml" --fail-when-no-results
 `,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		project, err := cmd.Flags().GetString("project")
@@ -66,6 +66,17 @@ For example:
 			return err
 		}
 
+		failWhenNoResults, err := cmd.Flags().GetBool("fail-when-no-results")
+		if err != nil {
+			return err
+		}
+
+		var status *string
+		if failWhenNoResults && passed == 0 && skipped == 0 && failed == 0 {
+			FAILED := "FAILED"
+			status = &FAILED
+		}
+
 		// Call
 		return client.ValidateWithTests(
 			cfg,
@@ -78,6 +89,7 @@ For example:
 			passed,
 			skipped,
 			failed,
+			status,
 		)
 	},
 }
@@ -85,6 +97,7 @@ For example:
 func init() {
 	validateCmd.AddCommand(validateJUnitTestsCmd)
 	validateJUnitTestsCmd.Flags().String("pattern", "", "Pattern (glob) to the JUnit XML tests")
+	validateJUnitTestsCmd.Flags().Bool("fail-when-no-results", false, "Fail validation check in case no test results found")
 	// Run info arguments
 	InitRunInfoCommandFlags(validateJUnitTestsCmd)
 }
