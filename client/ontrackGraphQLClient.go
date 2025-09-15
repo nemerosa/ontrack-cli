@@ -38,6 +38,10 @@ func GraphQLCall(cfg *config.Config, query string, variables map[string]interfac
 		return err
 	}
 
+	if resp.IsError() {
+		return fmt.Errorf("%s:\n%s", resp.Status(), resp.Body())
+	}
+
 	// Error returned
 	var error struct {
 		Status  int
