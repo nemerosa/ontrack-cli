@@ -4,9 +4,10 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	config "ontrack-cli/config"
-
 	resty "github.com/go-resty/resty/v2"
+	"net/http"
+	config "ontrack-cli/config"
+	"time"
 )
 
 // GraphQLCall performs a GraphQL query/mutation to Ontrack
@@ -28,6 +29,14 @@ func GraphQLCall(cfg *config.Config, query string, variables map[string]interfac
 		client.SetHeader("X-Ontrack-Token", cfg.Token)
 	} else if cfg.Username != "" {
 		client.SetBasicAuth(cfg.Username, cfg.Password)
+	}
+
+	if cfg.ConnectionRetry.MaxCount != 0 {
+		client.SetRetryCount(cfg.ConnectionRetry.MaxCount).
+			SetRetryMaxWaitTime(time.Duration(cfg.ConnectionRetry.MaxWaitTimeSec) * time.Second).
+			AddRetryCondition(func(r *resty.Response, err error) bool {
+				return r.StatusCode() == http.StatusRequestTimeout || r.StatusCode() >= 500
+			})
 	}
 
 	resp, err := client.R().

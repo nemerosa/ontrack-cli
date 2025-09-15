@@ -3,11 +3,10 @@ package config
 import (
 	"errors"
 	"fmt"
+	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"os"
 	"path/filepath"
-
-	"gopkg.in/yaml.v2"
 )
 
 const (
@@ -36,6 +35,13 @@ type Config struct {
 	Token string
 	// Is this configuration disabled?
 	Disabled bool
+	// Connection retry configuration
+	ConnectionRetry `yaml:"connectionRetry"`
+}
+
+type ConnectionRetry struct {
+	MaxWaitTimeSec int `yaml:"maxWaitTimeSec"`
+	MaxCount       int `yaml:"maxcount"`
 }
 
 // Gets the current configuration

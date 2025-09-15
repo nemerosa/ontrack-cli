@@ -31,6 +31,7 @@ import (
 var username string
 var password string
 var token string
+var connectionRetry config.ConnectionRetry
 
 // configCreateCmd represents the configCreate command
 var configCreateCmd = &cobra.Command{
@@ -64,11 +65,12 @@ func createConfig(cmd *cobra.Command, args []string) error {
 
 	// Creates the configuration
 	var cfg = config.Config{
-		Name:     name,
-		URL:      url,
-		Username: username,
-		Password: password,
-		Token:    token,
+		Name:            name,
+		URL:             url,
+		Username:        username,
+		Password:        password,
+		Token:           token,
+		ConnectionRetry: connectionRetry,
 	}
 
 	// Adds this configuration to the file
@@ -99,4 +101,6 @@ func init() {
 	configCreateCmd.Flags().StringVarP(&password, "password", "p", "", "Password for basic authentication")
 	configCreateCmd.Flags().StringVarP(&token, "token", "t", "", "Token based authentication (if defined, takes priority over username/password authentication)")
 	configCreateCmd.Flags().BoolP("override", "o", false, "Overrides the configuration if it already exists")
+	configCreateCmd.Flags().IntVarP(&connectionRetry.MaxWaitTimeSec, "conn-retry-wait", "", 2, "Max connection retry wait time between attempts in seconds")
+	configCreateCmd.Flags().IntVarP(&connectionRetry.MaxCount, "conn-retry-count", "", 5, "Max connection retry attempts")
 }
