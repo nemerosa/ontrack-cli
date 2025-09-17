@@ -63,6 +63,7 @@ func SetupTestValidationStamp(
 	validation string,
 	description string,
 	warningIfSkipped bool,
+	failWhenNoResults bool,
 ) error {
 
 	cfg, err := config.GetSelectedConfiguration()
@@ -84,14 +85,16 @@ func SetupTestValidationStamp(
 			$branch: String!,
 			$validation: String!,
 			$description: String,
-			$warningIfSkipped: Boolean!
+			$warningIfSkipped: Boolean!,
+			$failWhenNoResults: Boolean!,
 		) {
 			setupTestSummaryValidationStamp(input: {
 				project: $project,
 				branch: $branch,
 				validation: $validation,
 				description: $description,
-				warningIfSkipped: $warningIfSkipped
+				warningIfSkipped: $warningIfSkipped,
+				failWhenNoResults: $failWhenNoResults,
 			}) {
 				errors {
 					message
@@ -99,11 +102,12 @@ func SetupTestValidationStamp(
 			}
 		}
 	`, map[string]interface{}{
-		"project":          project,
-		"branch":           branch,
-		"validation":       validation,
-		"description":      description,
-		"warningIfSkipped": warningIfSkipped,
+		"project":           project,
+		"branch":            branch,
+		"validation":        validation,
+		"description":       description,
+		"warningIfSkipped":  warningIfSkipped,
+		"failWhenNoResults": failWhenNoResults,
 	}, &data)
 
 	if err != nil {

@@ -34,6 +34,8 @@ type ValidationConfig struct {
 type TestSummaryValidationConfig struct {
 	// Warning if skipped tests
 	WarningIfSkipped bool
+	// Failure if no tests
+	FailWhenNoResults bool
 }
 
 type PromotionConfig struct {
@@ -64,6 +66,7 @@ validations:
 	  description: Unit tests
 	  tests:
 		warningIfSkipped: false
+		failWhenNoResults: false
 promotions:
 	- name: BRONZE
 	  validations:
@@ -126,6 +129,7 @@ promotions:
 					validation.Name,
 					validation.Description,
 					validation.Tests.WarningIfSkipped,
+					validation.Tests.FailWhenNoResults,
 				)
 				if err != nil {
 					return err

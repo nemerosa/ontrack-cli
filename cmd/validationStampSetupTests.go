@@ -63,12 +63,18 @@ For example:
 			return err
 		}
 
+		failWhenNoResults, err := cmd.Flags().GetBool("fail-when-no-results")
+		if err != nil {
+			return err
+		}
+
 		return SetupTestValidationStamp(
 			project,
 			branch,
 			validation,
 			description,
 			warningIfSkipped,
+			failWhenNoResults,
 		)
 	},
 }
@@ -85,5 +91,6 @@ func init() {
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
 	// validationStampSetupTestsCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
-	validationStampSetupTestsCmd.Flags().BoolP("warning-if-skipped", "w", false, "Configures the validation stamp to fail if there are some skipped tests.")
+	validationStampSetupTestsCmd.Flags().BoolP("warning-if-skipped", "w", false, "Configures the validation stamp to warning if there are some skipped tests.")
+	validationStampSetupTestsCmd.Flags().BoolP("fail-when-no-results", "", false, "Configures the validation stamp to failure if there are no tests.")
 }
