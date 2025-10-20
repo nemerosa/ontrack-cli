@@ -33,6 +33,58 @@ The configuration is stored on disk, in `~/.ontrack-cli-config.yaml` and the `co
 
 After the configuration has been set, injection of data into Ontrack from a CI pipeline can be typically done this way.
 
+## CI setup
+
+> This step supersedes most of the "setup" commands.
+
+An easy way to setup the project, branch and build is to use the `ci config` command:
+
+```shell
+ontrack-cli ci config
+```
+
+By default, the `ci config` command will use a file at `.yontrack/ci.yaml` in the current directory
+but this can be changed using the `--file` option.
+
+The `ci config` command will create the project, branch and build if they do not exist, based on local 
+information extracted from the environment. For security reasons, no environment variable is used by default
+and they must be passed explicitly using the `--env` options:
+
+```shell
+ontrack-cli ci config \
+  --env GIT_URL=git@github.com:nemerosa/ontrack.git \
+  --env GIT_BRANCH=release/5.0
+```
+
+The very minimal YAML configuration is:
+
+```yaml
+version: v1
+configuration: { }
+```
+
+When using this configuration, Yontrack will create the project, the branch and the build, based on the information
+found in the CI context (mostly, the environment variables provided by Jenkins).
+
+You can of course configure way more, like the promotions and validation stamps at the branch level,
+with some additional configuration for the release branches:
+
+```yaml
+version: v1
+configuration:
+  branch:
+    validations:
+      unit-tests:
+        tests: { }
+    promotions:
+      BRONZE:
+        validations:
+          - unit-tests
+```
+
+> For more information about the configuration, see the Yontrack documentation to see how to configure:
+> properties, promotions, validation stamps, notifications, workflows, auto-versioning, custom setup, etc.
+
 ## Branch setup
 
 We make sure the branch managed by the pipeline is registered into Ontrack:
