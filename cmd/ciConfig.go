@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/spf13/cobra"
 )
@@ -49,6 +50,15 @@ environment variables.
 			fmt.Printf("Env: %s=%s\n", key, value)
 		}
 
+		// Reading the configuration file
+		contentBytes, err := os.ReadFile(file)
+		if err != nil {
+			return fmt.Errorf("failed to read configuration file: %w", err)
+		}
+		configContent := string(contentBytes)
+
+		fmt.Printf("Configuration content:\n%s\n", configContent)
+
 		//project, err := cmd.Flags().GetString("project")
 		//if err != nil {
 		//	return err
@@ -77,12 +87,13 @@ environment variables.
 		//if err != nil {
 		//	return err
 		//}
-		//
-		//// Configuration
+
+		// Configuration
 		//config, err := config.GetSelectedConfiguration()
 		//if err != nil {
 		//	return err
 		//}
+
 		//// Creates or get the project
 		//var data struct {
 		//	CreateProjectOrGet struct {
@@ -112,8 +123,10 @@ environment variables.
 		//		}
 		//	}
 		//}
+
 		//if err := client.GraphQLCall(config, `
-		//	mutation ProjectSetup(
+		//	mutation CIConfig(
+		//		$config: String!,
 		//		$project: String!,
 		//		$branch: String!,
 		//		$autoCreateVS: Boolean!,
@@ -157,7 +170,7 @@ environment variables.
 		//}, &data); err != nil {
 		//	return err
 		//}
-		//
+
 		//// Checks errors for the project
 		//if err := client.CheckDataErrors(data.CreateProjectOrGet.Errors); err != nil {
 		//	return err
