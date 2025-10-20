@@ -2,6 +2,8 @@ package cmd
 
 import (
 	"fmt"
+	"ontrack-cli/client"
+	"ontrack-cli/config"
 	"os"
 
 	"github.com/spf13/cobra"
@@ -38,6 +40,18 @@ environment variables.
 		}
 
 		fmt.Printf("File: %s\n", file)
+
+		ci, err := cmd.Flags().GetString("ci")
+		if err != nil {
+			return err
+		}
+		fmt.Printf("CI: %s\n", ci)
+
+		scm, err := cmd.Flags().GetString("scm")
+		if err != nil {
+			return err
+		}
+		fmt.Printf("SCM: %s\n", scm)
 
 		// Get the env values as a map
 		envVars, err := getEnvMap(cmd)
@@ -89,87 +103,75 @@ environment variables.
 		//}
 
 		// Configuration
-		//config, err := config.GetSelectedConfiguration()
-		//if err != nil {
-		//	return err
-		//}
+		config, err := config.GetSelectedConfiguration()
+		if err != nil {
+			return err
+		}
 
-		//// Creates or get the project
-		//var data struct {
-		//	CreateProjectOrGet struct {
-		//		Project struct {
-		//			ID int
-		//		}
-		//		Errors []struct {
-		//			Message string
-		//		}
-		//	}
-		//	CreateBranchOrGet struct {
-		//		Branch struct {
-		//			ID int
-		//		}
-		//		Errors []struct {
-		//			Message string
-		//		}
-		//	}
-		//	SetProjectAutoValidationStampProperty struct {
-		//		Errors []struct {
-		//			Message string
-		//		}
-		//	}
-		//	SetProjectAutoPromotionLevelProperty struct {
-		//		Errors []struct {
-		//			Message string
-		//		}
-		//	}
-		//}
+		// Returned data
+		var data struct {
+			ConfigureBuild struct {
+				Build struct {
+					ID          int
+					Name        string
+					DisplayName string
+					Branch      struct {
+						ID          int
+						Name        string
+						DisplayName string
+						Project     struct {
+							ID   int
+							Name string
+						}
+					}
+				}
+				Errors []struct {
+					Message string
+				}
+			}
+		}
 
-		//if err := client.GraphQLCall(config, `
-		//	mutation CIConfig(
-		//		$config: String!,
-		//		$project: String!,
-		//		$branch: String!,
-		//		$autoCreateVS: Boolean!,
-		//		$autoCreateVSIfNotPredefined: Boolean!,
-		//		$autoCreatePL: Boolean!
-		//	) {
-		//		createProjectOrGet(input: {name: $project}) {
-		//			errors {
-		//			message
-		//			}
-		//		}
-		//		createBranchOrGet(input: {projectName: $project, name: $branch}) {
-		//			errors {
-		//			message
-		//			}
-		//		}
-		//		setProjectAutoValidationStampProperty(input: {
-		//			project: $project,
-		//			isAutoCreate: $autoCreateVS,
-		//			isAutoCreateIfNotPredefined: $autoCreateVSIfNotPredefined
-		//		}) {
-		//			errors {
-		//				message
-		//			}
-		//		}
-		//		setProjectAutoPromotionLevelProperty(input: {
-		//			project: $project,
-		//			isAutoCreate: $autoCreatePL
-		//		}) {
-		//			errors {
-		//				message
-		//			}
-		//		}
-		//	}
-		//`, map[string]interface{}{
-		//	"project":                     project,
-		//	"branch":                      branch,
-		//	"autoCreateVS":                autoCreateVS,
-		//	"autoCreateVSIfNotPredefined": autoCreateVSAlways,
-		//	"autoCreatePL":                autoCreatePL,
-		//}, &data); err != nil {
-		//	return err
-		//}
+		if err := client.GraphQLCall(config, `
+                mutation OntrackCliCIConfig(
+                    $config: String!,
+                    $ci: String,
+                    $scm: String,
+                    $env: [CIEnv!]!,
+                ) {
+                    configureBuild(input: {
+                        config: $config,
+                        ci: $ci,
+                        scm: $scm,
+                        env: $env,
+                    }) {
+                        errors {
+                            message
+                            exception
+                        }
+                        build {
+                            id
+                            name
+                            displayName
+                            branch {
+                                id
+                                name
+                                displayName
+                                project {
+                                    id
+                                    name
+                                }
+                            }
+                        }
+                    }
+                }
+		`, map[string]interface{}{
+			"config": configContent,
+			"ci":     ci,
+			"scm":    scm,
+			"env":    envList,
+		}, &data); err != nil {
+			return err
+		}
 
 		//// Checks errors for the project
 		//if err := client.CheckDataErrors(data.CreateProjectOrGet.Errors); err != nil {
@@ -198,6 +200,8 @@ func init() {
 
 	ciConfigCmd.Flags().StringP("file", "f", ".yontrack/ci.yaml", "Configuration file")
 	ciConfigCmd.Flags().StringSliceP("env", "e", []string{}, "Environment variables in KEY=VALUE format (can be used multiple times)")
+	ciConfigCmd.Flags().String("ci", "", "ID of the CI engine to use. If not specified, Yontrack will try to guess it based on the provided environment variables.")
+	ciConfigCmd.Flags().String("scm", "", "ID of the SCM engine to use. If not specified, Yontrack will try to guess it based on the provided environment variables.")
 
 	// _ = ciConfigCmd.MarkFlagRequired("file")
 }
