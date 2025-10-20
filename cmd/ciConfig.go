@@ -64,6 +64,15 @@ environment variables.
 			fmt.Printf("Env: %s=%s\n", key, value)
 		}
 
+		// Convert envVars map to a list of CIEnv objects
+		envList := make([]map[string]interface{}, 0, len(envVars))
+		for key, value := range envVars {
+			envList = append(envList, map[string]interface{}{
+				"name":  key,
+				"value": value,
+			})
+		}
+
 		// Reading the configuration file
 		contentBytes, err := os.ReadFile(file)
 		if err != nil {
@@ -72,35 +81,6 @@ environment variables.
 		configContent := string(contentBytes)
 
 		fmt.Printf("Configuration content:\n%s\n", configContent)
-
-		//project, err := cmd.Flags().GetString("project")
-		//if err != nil {
-		//	return err
-		//}
-		//branch, err := cmd.Flags().GetString("branch")
-		//if err != nil {
-		//	return err
-		//}
-		//branch = NormalizeBranchName(branch)
-		//
-		//// Project auto validation stamps
-		//autoCreateVS, err := cmd.Flags().GetBool("auto-create-vs")
-		//if err != nil {
-		//	return err
-		//}
-		//autoCreateVSAlways, err := cmd.Flags().GetBool("auto-create-vs-always")
-		//if err != nil {
-		//	return err
-		//}
-		//if autoCreateVSAlways {
-		//	autoCreateVS = true
-		//}
-		//
-		//// Project auto promotion levels
-		//autoCreatePL, err := cmd.Flags().GetBool("auto-create-pl")
-		//if err != nil {
-		//	return err
-		//}
 
 		// Configuration
 		config, err := config.GetSelectedConfiguration()
@@ -173,22 +153,10 @@ environment variables.
 			return err
 		}
 
-		//// Checks errors for the project
-		//if err := client.CheckDataErrors(data.CreateProjectOrGet.Errors); err != nil {
-		//	return err
-		//}
-		//// Checks errors for the branch
-		//if err := client.CheckDataErrors(data.CreateBranchOrGet.Errors); err != nil {
-		//	return err
-		//}
-		//// Checks errors for the project auto validation stamp propetyu
-		//if err := client.CheckDataErrors(data.SetProjectAutoValidationStampProperty.Errors); err != nil {
-		//	return err
-		//}
-		//// Checks errors for the project auto promotion level propetyu
-		//if err := client.CheckDataErrors(data.SetProjectAutoPromotionLevelProperty.Errors); err != nil {
-		//	return err
-		//}
+		// Checks errors
+		if err := client.CheckDataErrors(data.ConfigureBuild.Errors); err != nil {
+			return err
+		}
 
 		// OK
 		return nil
