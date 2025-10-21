@@ -50,8 +50,17 @@ jobs:
     - name: Build
       run: ./go-executable-build.bash ${VERSION}
 
-    - name: List of files
-      run: ls -la
+    - name: Yontrack setup
+      run: |
+        ./ontrack-cli-linux-amd64 config create \
+            local \
+            ${{ vars.YONTRACK_DEMO_URL }} \
+            --token ${{ secrets.YONTRACK_DEMO_TOKEN }}
+        
+        eval $(./ontrack-cli-linux-amd64 ci config \
+          --env-all GITHUB_ \
+          --output \
+        )
 
 #    - uses: nemerosa/ontrack-github-actions-cli-validation@v2.0.1
 #      if: ${{ always() && github.event_name != 'pull_request' }}
