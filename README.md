@@ -56,6 +56,23 @@ ontrack-cli ci config \
   --env GIT_BRANCH=release/5.0
 ```
 
+The environment variables can also be be set into 
+a local environment file, for example:
+
+```text
+GIT_URL=git@github.com:nemerosa/ontrack.git
+GIT_BRANCH=release/5.0
+```
+
+and then passed to the `ci config` command using the `--env-file` option:
+
+```shell
+ontrack-cli ci config \
+  --env-file .env
+```
+
+where `.env` is the name of the file containing the environment variables above.
+
 The very minimal YAML configuration is:
 
 ```yaml
@@ -84,6 +101,28 @@ configuration:
 
 > For more information about the configuration, see the Yontrack documentation to see how to configure:
 > properties, promotions, validation stamps, notifications, workflows, auto-versioning, custom setup, etc.
+
+## Configuration and using it in other commands
+
+Most of the other commands are able to use the following
+environment variables to replace explicit parameters:
+
+* `YONTRACK_PROJECT_NAME` instead of `--project`
+* `YONTRACK_BRANCH_NAME` instead of `--branch`
+* `YONTRACK_BUILD_NAME` instead of `--build`
+
+The `ci config` command will export these environment variables for you, and it can be as easy as:
+
+```shell
+eval $(ontrack-cli ci config --output ...)
+```
+
+or:
+
+```shell
+ontrack-cli ci config --output ... > .yontrack
+source .yontrack
+```
 
 ## Branch setup
 

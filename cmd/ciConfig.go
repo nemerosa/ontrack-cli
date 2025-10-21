@@ -40,19 +40,25 @@ environment variables.
 			return err
 		}
 
-		fmt.Printf("File: %s\n", file)
+		_ = fmt.Errorf("File: %s\n", file)
 
 		ci, err := cmd.Flags().GetString("ci")
 		if err != nil {
 			return err
 		}
-		fmt.Printf("CI: %s\n", ci)
+		_ = fmt.Errorf("CI: %s\n", ci)
 
 		scm, err := cmd.Flags().GetString("scm")
 		if err != nil {
 			return err
 		}
-		fmt.Printf("SCM: %s\n", scm)
+		_ = fmt.Errorf("SCM: %s\n", scm)
+
+		output, err := cmd.Flags().GetBool("output")
+		if err != nil {
+			return err
+		}
+		_ = fmt.Errorf("Output: %t\n", output)
 
 		// Env vars from a file
 		envFile, err := cmd.Flags().GetString("env-file")
@@ -85,7 +91,7 @@ environment variables.
 
 		// Print the env variables
 		for key, value := range envVars {
-			fmt.Printf("Env: %s=%s\n", key, value)
+			_ = fmt.Errorf("Env: %s=%s\n", key, value)
 		}
 
 		// Convert envVars map to a list of CIEnv objects
@@ -104,7 +110,7 @@ environment variables.
 		}
 		configContent := string(contentBytes)
 
-		fmt.Printf("Configuration content:\n%s\n", configContent)
+		_ = fmt.Errorf("Configuration content:\n%s\n", configContent)
 
 		// Configuration
 		config, err := config.GetSelectedConfiguration()
@@ -182,6 +188,17 @@ environment variables.
 			return err
 		}
 
+		// Output
+		if output {
+			build := data.ConfigureBuild.Build
+			fmt.Printf("export YONTRACK_PROJECT_ID=%s\n", build.Branch.Project.ID)
+			fmt.Printf("export YONTRACK_PROJECT_NAME=%s\n", build.Branch.Project.Name)
+			fmt.Printf("export YONTRACK_BRANCH_ID=%s\n", build.Branch.ID)
+			fmt.Printf("export YONTRACK_BRANCH_NAME=%s\n", build.Branch.Name)
+			fmt.Printf("export YONTRACK_BUILD_ID=%s\n", build.ID)
+			fmt.Printf("export YONTRACK_BUILD_NAME=%s\n", build.Name)
+		}
+
 		// OK
 		return nil
 	},
@@ -195,6 +212,7 @@ func init() {
 	ciConfigCmd.Flags().String("env-file", "", "Path to an env file containing key/values (one per line, using the KEY=VALUE format)")
 	ciConfigCmd.Flags().String("ci", "", "ID of the CI engine to use. If not specified, Yontrack will try to guess it based on the provided environment variables.")
 	ciConfigCmd.Flags().String("scm", "", "ID of the SCM engine to use. If not specified, Yontrack will try to guess it based on the provided environment variables.")
+	ciConfigCmd.Flags().Bool("output", true, "Outputs shell export of variables, useable by other commands.")
 
 	// _ = ciConfigCmd.MarkFlagRequired("file")
 }
