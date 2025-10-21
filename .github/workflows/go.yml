@@ -63,7 +63,7 @@ jobs:
         ./ontrack-cli-linux-amd64 ci config \
           --env-all GITHUB_ \
           --env-all VERSION \
-          --output > .yontrack
+          --output > .yontrack.env
 
 #    - uses: nemerosa/ontrack-github-actions-cli-validation@v2.0.1
 #      if: ${{ always() && github.event_name != 'pull_request' }}
