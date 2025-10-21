@@ -47,6 +47,9 @@ jobs:
     - name: Build
       run: go build -v ./...
 
+    - name: List of files
+      run: ls -la
+
 #    - uses: nemerosa/ontrack-github-actions-cli-validation@v2.0.1
 #      if: ${{ always() && github.event_name != 'pull_request' }}
 #      with:
