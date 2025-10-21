@@ -79,6 +79,28 @@ environment variables.
 			}
 		}
 
+		// Get the env values from --env-all flags and merge
+		envAll, err := cmd.Flags().GetStringSlice("env-all")
+		if err != nil {
+			return err
+		}
+
+		for _, prefix := range envAll {
+			// Iterate through all environment variables
+			for _, envVar := range os.Environ() {
+				// Split on the first '=' to get key and value
+				parts := splitOnce(envVar, '=')
+				if len(parts) == 2 {
+					key := parts[0]
+					value := parts[1]
+					// Check if the key starts with the prefix
+					if len(key) >= len(prefix) && key[:len(prefix)] == prefix {
+						envVars[key] = value
+					}
+				}
+			}
+		}
+
 		// Get the env values from --env flags and merge (these take priority)
 		cmdEnvVars, err := getEnvMap(cmd)
 		if err != nil {
@@ -209,6 +231,7 @@ func init() {
 
 	ciConfigCmd.Flags().StringP("file", "f", ".yontrack/ci.yaml", "Configuration file")
 	ciConfigCmd.Flags().StringSliceP("env", "e", []string{}, "Environment variables in KEY=VALUE format (can be used multiple times)")
+	ciConfigCmd.Flags().StringSliceP("env-all", "e", []string{}, "Uses the specified prefix to select environment variables to inject.")
 	ciConfigCmd.Flags().String("env-file", "", "Path to an env file containing key/values (one per line, using the KEY=VALUE format)")
 	ciConfigCmd.Flags().String("ci", "", "ID of the CI engine to use. If not specified, Yontrack will try to guess it based on the provided environment variables.")
 	ciConfigCmd.Flags().String("scm", "", "ID of the SCM engine to use. If not specified, Yontrack will try to guess it based on the provided environment variables.")
