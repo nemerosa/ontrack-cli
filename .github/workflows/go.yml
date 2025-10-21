@@ -11,53 +11,53 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
 
     - name: Set up Go
       uses: actions/setup-go@v4
       with:
         go-version: 1.21.1
 
-    - uses: nemerosa/ontrack-github-actions-cli-setup@v2.0.3
-      id: ontrack
-      if: github.event_name != 'pull_request'
-      with:
-        only-for: nemerosa
-        url: https://ontrack.nemerosa.net
-        token: "${{ secrets.ONTRACK_TOKEN }}"
-        config: github.com
-        indexation: 120
-        github-token: ${{ github.token }}
-        auto-validation-stamps: true
-        auto-promotion-levels: true
-        promotions: ./.github/ontrack/promotions.yaml
-    
-    - run: |
-        ontrack-cli build setup \
-          -p ${{ steps.ontrack.outputs.project }} \
-          -b ${{ steps.ontrack.outputs.branch }} \
-          -n ${{ github.run_number }} \
-          --commit ${{ github.sha }}
-      if: github.event_name != 'pull_request'
+#    - uses: nemerosa/ontrack-github-actions-cli-setup@v2.0.3
+#      id: ontrack
+#      if: github.event_name != 'pull_request'
+#      with:
+#        only-for: nemerosa
+#        url: https://ontrack.nemerosa.net
+#        token: "${{ secrets.ONTRACK_TOKEN }}"
+#        config: github.com
+#        indexation: 120
+#        github-token: ${{ github.token }}
+#        auto-validation-stamps: true
+#        auto-promotion-levels: true
+#        promotions: ./.github/ontrack/promotions.yaml
+#
+#    - run: |
+#        ontrack-cli build setup \
+#          -p ${{ steps.ontrack.outputs.project }} \
+#          -b ${{ steps.ontrack.outputs.branch }} \
+#          -n ${{ github.run_number }} \
+#          --commit ${{ github.sha }}
+#      if: github.event_name != 'pull_request'
 
     - name: Build
       run: go build -v ./...
 
-    - uses: nemerosa/ontrack-github-actions-cli-validation@v2.0.1
-      if: ${{ always() && github.event_name != 'pull_request' }}
-      with:
-        step-name: Build
-        validation: BUILD
-        build: ${{ github.run_number }}
-        token: ${{ github.token }}
+#    - uses: nemerosa/ontrack-github-actions-cli-validation@v2.0.1
+#      if: ${{ always() && github.event_name != 'pull_request' }}
+#      with:
+#        step-name: Build
+#        validation: BUILD
+#        build: ${{ github.run_number }}
+#        token: ${{ github.token }}
 
     - name: Test
       run: go test -v ./...
 
-    - uses: nemerosa/ontrack-github-actions-cli-validation@v2.0.1
-      if: ${{ always() && github.event_name != 'pull_request' }}
-      with:
-        step-name: Test
-        validation: TESTS
-        build: ${{ github.run_number }}
-        token: ${{ github.token }}
+#    - uses: nemerosa/ontrack-github-actions-cli-validation@v2.0.1
+#      if: ${{ always() && github.event_name != 'pull_request' }}
+#      with:
+#        step-name: Test
+#        validation: TESTS
+#        build: ${{ github.run_number }}
+#        token: ${{ github.token }}
