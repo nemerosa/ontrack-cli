@@ -52,9 +52,6 @@ jobs:
 
     - name: Yontrack setup
       run: |
-        
-        env
-        
         ./ontrack-cli-linux-amd64 config create \
             local \
             ${{ vars.YONTRACK_DEMO_URL }} \
@@ -68,8 +65,11 @@ jobs:
 
     - if: ${{ always() && github.event_name != 'pull_request' }}
       name: Yontrack validation
+      # TODO Remove cat
       run: |
+        cat ./.yontrack.env
         source ./.yontrack.env
+        env
         ./ontrack-cli-linux-amd64 validate \
           --validation BUILD
 
