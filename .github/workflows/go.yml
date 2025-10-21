@@ -61,6 +61,7 @@ jobs:
             --token ${{ secrets.YONTRACK_DEMO_TOKEN }}
         
         ./ontrack-cli-linux-amd64 ci config \
+          --graphql-log \
           --env-all GITHUB_ \
           --env-all VERSION \
           --output > .yontrack.env

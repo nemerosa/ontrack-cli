@@ -40,25 +40,25 @@ environment variables.
 			return err
 		}
 
-		_ = fmt.Errorf("File: %s\n", file)
+		_, _ = fmt.Fprintf(os.Stderr, "File: %s\n", file)
 
 		ci, err := cmd.Flags().GetString("ci")
 		if err != nil {
 			return err
 		}
-		_ = fmt.Errorf("CI: %s\n", ci)
+		_, _ = fmt.Fprintf(os.Stderr, "CI: %s\n", ci)
 
 		scm, err := cmd.Flags().GetString("scm")
 		if err != nil {
 			return err
 		}
-		_ = fmt.Errorf("SCM: %s\n", scm)
+		_, _ = fmt.Fprintf(os.Stderr, "SCM: %s\n", scm)
 
 		output, err := cmd.Flags().GetBool("output")
 		if err != nil {
 			return err
 		}
-		_ = fmt.Errorf("Output: %t\n", output)
+		_, _ = fmt.Fprintf(os.Stderr, "Output: %t\n", output)
 
 		// Env vars from a file
 		envFile, err := cmd.Flags().GetString("env-file")
@@ -113,7 +113,7 @@ environment variables.
 
 		// Print the env variables
 		for key, value := range envVars {
-			_ = fmt.Errorf("Env: %s=%s\n", key, value)
+			_, _ = fmt.Fprintf(os.Stderr, "Env: %s=%s\n", key, value)
 		}
 
 		// Convert envVars map to a list of CIEnv objects
@@ -132,7 +132,7 @@ environment variables.
 		}
 		configContent := string(contentBytes)
 
-		_ = fmt.Errorf("Configuration content:\n%s\n", configContent)
+		_, _ = fmt.Fprintf(os.Stderr, "Configuration content:\n%s\n", configContent)
 
 		// Configuration
 		config, err := config.GetSelectedConfiguration()
@@ -213,12 +213,12 @@ environment variables.
 		// Output
 		if output {
 			build := data.ConfigureBuild.Build
-			fmt.Printf("export YONTRACK_PROJECT_ID=%s\n", build.Branch.Project.ID)
-			fmt.Printf("export YONTRACK_PROJECT_NAME=%s\n", build.Branch.Project.Name)
-			fmt.Printf("export YONTRACK_BRANCH_ID=%s\n", build.Branch.ID)
-			fmt.Printf("export YONTRACK_BRANCH_NAME=%s\n", build.Branch.Name)
-			fmt.Printf("export YONTRACK_BUILD_ID=%s\n", build.ID)
-			fmt.Printf("export YONTRACK_BUILD_NAME=%s\n", build.Name)
+			_, _ = fmt.Fprintf(os.Stdout, "export YONTRACK_PROJECT_ID=%s\n", build.Branch.Project.ID)
+			_, _ = fmt.Fprintf(os.Stdout, "export YONTRACK_PROJECT_NAME=%s\n", build.Branch.Project.Name)
+			_, _ = fmt.Fprintf(os.Stdout, "export YONTRACK_BRANCH_ID=%s\n", build.Branch.ID)
+			_, _ = fmt.Fprintf(os.Stdout, "export YONTRACK_BRANCH_NAME=%s\n", build.Branch.Name)
+			_, _ = fmt.Fprintf(os.Stdout, "export YONTRACK_BUILD_ID=%s\n", build.ID)
+			_, _ = fmt.Fprintf(os.Stdout, "export YONTRACK_BUILD_NAME=%s\n", build.Name)
 		}
 
 		// OK
