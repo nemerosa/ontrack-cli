@@ -45,7 +45,7 @@ jobs:
 #      if: github.event_name != 'pull_request'
 
     - name: Build
-      run: go build -v ./... -o yontrack-cli
+      run: go build -v ./...
 
     - name: List of files
       run: ls -la
