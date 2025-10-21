@@ -1,29 +1,9 @@
-/*
-Copyright © 2021 Damien Coraboeuf <damien.coraboeuf@nemerosa.com>
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-THE SOFTWARE.
-*/
 package cmd
 
 import (
 	"encoding/json"
 	"errors"
+	"os"
 
 	"github.com/spf13/cobra"
 
@@ -62,10 +42,22 @@ Type 'ontrack-cli validate --help' to get a list of all options.
 		if err != nil {
 			return err
 		}
+		if project == "" {
+			project = os.Getenv("YONTRACK_PROJECT_NAME")
+		}
+		if project == "" {
+			return errors.New("project is required (use --project flag or YONTRACK_PROJECT_NAME environment variable)")
+		}
 
 		branch, err := cmd.Flags().GetString("branch")
 		if err != nil {
 			return err
+		}
+		if branch == "" {
+			branch = os.Getenv("YONTRACK_BRANCH_NAME")
+		}
+		if branch == "" {
+			return errors.New("branch is required (use --branch flag or YONTRACK_BRANCH_NAME environment variable)")
 		}
 		branch = NormalizeBranchName(branch)
 
@@ -73,10 +65,19 @@ Type 'ontrack-cli validate --help' to get a list of all options.
 		if err != nil {
 			return err
 		}
+		if build == "" {
+			build = os.Getenv("YONTRACK_BUILD_NAME")
+		}
+		if build == "" {
+			return errors.New("build is required (use --build flag or YONTRACK_BUILD_NAME environment variable)")
+		}
 
 		validation, err := cmd.Flags().GetString("validation")
 		if err != nil {
 			return err
+		}
+		if validation == "" {
+			return errors.New("validation is required (use --validation flag)")
 		}
 
 		description, err := cmd.Flags().GetString("description")
@@ -229,10 +230,7 @@ func init() {
 	validateCmd.PersistentFlags().StringP("validation", "v", "", "Name of the validation stamp")
 	validateCmd.PersistentFlags().StringP("description", "d", "", "Description for the validation")
 
-	validateCmd.MarkPersistentFlagRequired("project")
-	validateCmd.MarkPersistentFlagRequired("branch")
-	validateCmd.MarkPersistentFlagRequired("build")
-	validateCmd.MarkPersistentFlagRequired("validation")
+	_ = validateCmd.MarkPersistentFlagRequired("validation")
 
 	// Run info arguments
 	InitRunInfoCommandFlags(validateCmd)

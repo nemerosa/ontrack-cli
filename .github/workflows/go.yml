@@ -66,13 +66,12 @@ jobs:
           --env-all VERSION \
           --output > .yontrack.env
 
-#    - uses: nemerosa/ontrack-github-actions-cli-validation@v2.0.1
-#      if: ${{ always() && github.event_name != 'pull_request' }}
-#      with:
-#        step-name: Build
-#        validation: BUILD
-#        build: ${{ github.run_number }}
-#        token: ${{ github.token }}
+    - if: ${{ always() && github.event_name != 'pull_request' }}
+      name: Yontrack validation
+      run: |
+        source ./.yontrack.env
+        ./ontrack-cli-linux-amd64 validate \
+          --validation BUILD
 
     - name: Test
       run: go test -v ./...
