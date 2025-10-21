@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"ontrack-cli/client"
 	"ontrack-cli/config"
+	"ontrack-cli/utils"
 	"os"
 
 	"github.com/spf13/cobra"
@@ -53,10 +54,33 @@ environment variables.
 		}
 		fmt.Printf("SCM: %s\n", scm)
 
-		// Get the env values as a map
-		envVars, err := getEnvMap(cmd)
+		// Env vars from a file
+		envFile, err := cmd.Flags().GetString("env-file")
 		if err != nil {
 			return err
+		}
+
+		// Start with env vars from file (if provided)
+		envVars := make(map[string]string)
+		if envFile != "" {
+			fileEnvVars, err := utils.ReadEnvFile(envFile)
+			if err != nil {
+				return fmt.Errorf("failed to read env file: %w", err)
+			}
+			// Add all vars from file
+			for key, value := range fileEnvVars {
+				envVars[key] = value
+			}
+		}
+
+		// Get the env values from --env flags and merge (these take priority)
+		cmdEnvVars, err := getEnvMap(cmd)
+		if err != nil {
+			return err
+		}
+		// Override/add vars from --env flags (they have highest priority)
+		for key, value := range cmdEnvVars {
+			envVars[key] = value
 		}
 
 		// Print the env variables
@@ -92,15 +116,15 @@ environment variables.
 		var data struct {
 			ConfigureBuild struct {
 				Build struct {
-					ID          int
+					ID          string
 					Name        string
 					DisplayName string
 					Branch      struct {
-						ID          int
+						ID          string
 						Name        string
 						DisplayName string
 						Project     struct {
-							ID   int
+							ID   string
 							Name string
 						}
 					}
@@ -168,6 +192,7 @@ func init() {
 
 	ciConfigCmd.Flags().StringP("file", "f", ".yontrack/ci.yaml", "Configuration file")
 	ciConfigCmd.Flags().StringSliceP("env", "e", []string{}, "Environment variables in KEY=VALUE format (can be used multiple times)")
+	ciConfigCmd.Flags().String("env-file", "", "Path to an env file containing key/values (one per line, using the KEY=VALUE format)")
 	ciConfigCmd.Flags().String("ci", "", "ID of the CI engine to use. If not specified, Yontrack will try to guess it based on the provided environment variables.")
 	ciConfigCmd.Flags().String("scm", "", "ID of the SCM engine to use. If not specified, Yontrack will try to guess it based on the provided environment variables.")
 
