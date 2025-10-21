@@ -60,11 +60,10 @@ jobs:
             ${{ vars.YONTRACK_DEMO_URL }} \
             --token ${{ secrets.YONTRACK_DEMO_TOKEN }}
         
-        eval $(./ontrack-cli-linux-amd64 ci config \
+        ./ontrack-cli-linux-amd64 ci config \
           --env-all GITHUB_ \
           --env-all VERSION \
-          --output \
-        )
+          --output > .yontrack
 
 #    - uses: nemerosa/ontrack-github-actions-cli-validation@v2.0.1
 #      if: ${{ always() && github.event_name != 'pull_request' }}
