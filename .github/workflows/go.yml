@@ -52,6 +52,9 @@ jobs:
 
     - name: Yontrack setup
       run: |
+        
+        env
+        
         ./ontrack-cli-linux-amd64 config create \
             local \
             ${{ vars.YONTRACK_DEMO_URL }} \
@@ -59,6 +62,7 @@ jobs:
         
         eval $(./ontrack-cli-linux-amd64 ci config \
           --env-all GITHUB_ \
+          --env-all VERSION \
           --output \
         )
 
