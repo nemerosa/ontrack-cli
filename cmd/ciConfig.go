@@ -231,7 +231,7 @@ func init() {
 
 	ciConfigCmd.Flags().StringP("file", "f", ".yontrack/ci.yaml", "Configuration file")
 	ciConfigCmd.Flags().StringSliceP("env", "e", []string{}, "Environment variables in KEY=VALUE format (can be used multiple times)")
-	ciConfigCmd.Flags().StringSliceP("env-all", "e", []string{}, "Uses the specified prefix to select environment variables to inject.")
+	ciConfigCmd.Flags().StringSlice("env-all", []string{}, "Uses the specified prefix to select environment variables to inject.")
 	ciConfigCmd.Flags().String("env-file", "", "Path to an env file containing key/values (one per line, using the KEY=VALUE format)")
 	ciConfigCmd.Flags().String("ci", "", "ID of the CI engine to use. If not specified, Yontrack will try to guess it based on the provided environment variables.")
 	ciConfigCmd.Flags().String("scm", "", "ID of the SCM engine to use. If not specified, Yontrack will try to guess it based on the provided environment variables.")
