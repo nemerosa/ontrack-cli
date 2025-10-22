@@ -45,7 +45,7 @@ jobs:
           grep -v '^#' .yontrack.env | grep -v '^$' | sed 's/^export //' >> $GITHUB_ENV
 
       - if: ${{ github.event_name != 'pull_request' }}
-        name: Yontrack validation
+        name: Yontrack build validation
         run: |
           ./ontrack-cli-linux-amd64 validate \
             --validation BUILD \
@@ -56,7 +56,7 @@ jobs:
         run: go test -v ./...
 
       - if: ${{ always() && github.event_name != 'pull_request' }}
-        name: Yontrack validation
+        name: Yontrack test validation
         run: |
           ./ontrack-cli-linux-amd64 validate \
             --validation TESTS \
