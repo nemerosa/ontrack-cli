@@ -22,8 +22,8 @@ THE SOFTWARE.
 package cmd
 
 import (
-	client "ontrack-cli/client"
-	config "ontrack-cli/config"
+	client "yontrack/client"
+	config "yontrack/config"
 
 	"github.com/spf13/cobra"
 )
@@ -37,11 +37,11 @@ var projectSetPropertyAutoPromotionLevelCmd = &cobra.Command{
 	
 For example, to set a project to create promotion levels only when they are predefined:
 
-	ontrack-cli project set-property -p PROJECT apl
+	yontrack project set-property -p PROJECT apl
 
 The '--auto-create' option can be used to disable this behaviour altogether:
 
-    ontrack-cli project set-property -p PROJECT apl --auto-create=false
+    yontrack project set-property -p PROJECT apl --auto-create=false
 `,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		project, err := cmd.Flags().GetString("project")

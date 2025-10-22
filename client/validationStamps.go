@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"text/template"
 
-	config "ontrack-cli/config"
+	config "yontrack/config"
 )
 
 func SetupValidationStamp(

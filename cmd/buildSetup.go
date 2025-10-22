@@ -3,8 +3,8 @@ package cmd
 import (
 	"github.com/spf13/cobra"
 
-	"ontrack-cli/client"
-	"ontrack-cli/config"
+	"yontrack/client"
+	"yontrack/config"
 )
 
 // buildSetupCmd represents the buildSetup command
@@ -15,7 +15,7 @@ var buildSetupCmd = &cobra.Command{
 
 For example, the following command will create the build:
 
-    ontrack-cli build setup --project my-project --branch release/1.0 --build 1
+    yontrack build setup --project my-project --branch release/1.0 --build 1
 
 and the same command run a second time won't do anything.
 `,

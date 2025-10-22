@@ -22,8 +22,8 @@ THE SOFTWARE.
 package cmd
 
 import (
-	client "ontrack-cli/client"
-	config "ontrack-cli/config"
+	client "yontrack/client"
+	config "yontrack/config"
 
 	"github.com/spf13/cobra"
 )
@@ -37,7 +37,7 @@ var validationStampSetupPercentageCmd = &cobra.Command{
 
 For example:
 
-	ontrack-cli vs setup percentage --project PROJECT --branch BRANCH --validation STAMP \
+	yontrack vs setup percentage --project PROJECT --branch BRANCH --validation STAMP \
 		--warning-if-skipped
 `,
 	RunE: func(cmd *cobra.Command, args []string) error {

@@ -1,7 +1,7 @@
 # Artifacts
-/ontrack-cli*
+/yontrack*
 /auto-versioning.yaml
-/.ontrack-cli-config.yaml
+/.yontrack-config.yaml
 
 # OS
 .DS_Store

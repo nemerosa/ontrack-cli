@@ -33,7 +33,7 @@ var validationStampSetupTestsCmd = &cobra.Command{
 
 For example:
 
-	ontrack-cli vs setup tests --project PROJECT --branch BRANCH --validation STAMP \
+	yontrack vs setup tests --project PROJECT --branch BRANCH --validation STAMP \
 		--warning-if-skipped
 `,
 	RunE: func(cmd *cobra.Command, args []string) error {

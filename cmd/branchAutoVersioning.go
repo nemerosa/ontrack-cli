@@ -5,9 +5,9 @@ import (
 	"github.com/spf13/cobra"
 	yamljson "sigs.k8s.io/yaml"
 
-	"ontrack-cli/client"
-	"ontrack-cli/config"
 	"os"
+	"yontrack/client"
+	"yontrack/config"
 )
 
 type AutoVersioningConfig struct {
@@ -20,7 +20,7 @@ var branchAutoVersioningCmd = &cobra.Command{
 	Short: "Management of branch auto-versioning",
 	Long: `Management of branch auto-versioning
 
-	ontrack-cli branch auto-versioning --project PROJECT --branch BRANCH --yaml FILE
+	yontrack branch auto-versioning --project PROJECT --branch BRANCH --yaml FILE
 
 This sets up the auto-versioning for a branch from a YAML file. The path defaults to ".ontrack/auto-versioning.yaml".
 

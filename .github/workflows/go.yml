@@ -31,12 +31,12 @@ jobs:
       - if: ${{ github.event_name != 'pull_request' }}
         name: Yontrack setup
         run: |
-          ./ontrack-cli-linux-amd64 config create \
+          ./yontrack-linux-amd64 config create \
               local \
               ${{ vars.YONTRACK_DEMO_URL }} \
               --token ${{ secrets.YONTRACK_DEMO_TOKEN }}
           
-          ./ontrack-cli-linux-amd64 ci config \
+          ./yontrack-linux-amd64 ci config \
             --graphql-log \
             --env-all GITHUB_ \
             --env-all VERSION \
@@ -47,7 +47,7 @@ jobs:
       - if: ${{ github.event_name != 'pull_request' }}
         name: Yontrack build validation
         run: |
-          ./ontrack-cli-linux-amd64 validate \
+          ./yontrack-linux-amd64 validate \
             --validation BUILD \
             --status PASSED
 
@@ -58,6 +58,6 @@ jobs:
       - if: ${{ always() && github.event_name != 'pull_request' }}
         name: Yontrack test validation
         run: |
-          ./ontrack-cli-linux-amd64 validate \
+          ./yontrack-linux-amd64 validate \
             --validation TESTS \
             --status ${{ steps.test.outcome == 'success' && 'PASSED' || 'FAILED' }}

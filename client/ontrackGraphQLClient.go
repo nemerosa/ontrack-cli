@@ -6,8 +6,8 @@ import (
 	"fmt"
 	resty "github.com/go-resty/resty/v2"
 	"net/http"
-	config "ontrack-cli/config"
 	"time"
+	config "yontrack/config"
 )
 
 // GraphQLCall performs a GraphQL query/mutation to Ontrack

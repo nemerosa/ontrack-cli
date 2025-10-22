@@ -26,7 +26,7 @@ import (
 
 	"github.com/spf13/cobra"
 
-	config "ontrack-cli/config"
+	config "yontrack/config"
 )
 
 // configListCmd represents the configList command

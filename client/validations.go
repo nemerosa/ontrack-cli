@@ -1,7 +1,7 @@
 package client
 
 import (
-	"ontrack-cli/config"
+	"yontrack/config"
 )
 
 func ValidateWithTests(

@@ -33,7 +33,7 @@ var branchSetPropertyGenericCmd = &cobra.Command{
 
 Example:
 
-ontrack-cli branch set-property --project PROJECT --branch BRANCH generic --property "net.nemerosa.ontrack.extension.git.property.GitBranchConfigurationPropertyType" --value '{branch:"main"}'
+yontrack branch set-property --project PROJECT --branch BRANCH generic --property "net.nemerosa.ontrack.extension.git.property.GitBranchConfigurationPropertyType" --value '{branch:"main"}'
 
 	`,
 	RunE: func(cmd *cobra.Command, args []string) error {

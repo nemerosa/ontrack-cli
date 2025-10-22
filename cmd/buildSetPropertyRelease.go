@@ -22,8 +22,8 @@ THE SOFTWARE.
 package cmd
 
 import (
-	"ontrack-cli/client"
-	"ontrack-cli/config"
+	"yontrack/client"
+	"yontrack/config"
 
 	"github.com/spf13/cobra"
 )
@@ -36,7 +36,7 @@ var buildSetPropertyReleaseCmd = &cobra.Command{
 	
 For example:
 
-ontrack-cli build set-property --project PROJECT --branch BRANCH --build BUILD release RC-1
+yontrack build set-property --project PROJECT --branch BRANCH --build BUILD release RC-1
 `,
 	Args: cobra.ExactValidArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {

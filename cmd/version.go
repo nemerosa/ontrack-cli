@@ -27,8 +27,8 @@ import (
 
 	"github.com/spf13/cobra"
 
-	client "ontrack-cli/client"
-	config "ontrack-cli/config"
+	client "yontrack/client"
+	config "yontrack/config"
 )
 
 var versionCli bool
@@ -40,15 +40,15 @@ var versionCmd = &cobra.Command{
 	Short: "Displays version information",
 	Long: `Displays the version of the CLI and the remote Ontrack instance:
 
-    ontrack-cli version
+    yontrack version
 
 To display only the CLI version, run:
 
-	ontrack-cli version --cli
+	yontrack version --cli
 
 To display only the Ontrack version, run:
 
-	ontrack-cli version --ontrack
+	yontrack version --ontrack
 `,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		return version()

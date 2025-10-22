@@ -23,9 +23,9 @@ package cmd
 
 import (
 	"fmt"
-	"ontrack-cli/client"
-	"ontrack-cli/config"
 	"strings"
+	"yontrack/client"
+	"yontrack/config"
 
 	"github.com/spf13/cobra"
 )
@@ -39,11 +39,11 @@ var buildChangelogExportCmd = &cobra.Command{
 
 For example:
 
-    ontrack-cli build changelog --from 1 --to 2
+    yontrack build changelog --from 1 --to 2
 
 Additional options are available for the formatting:
 
-	ontrack-cli build changelog --from 1 --to 2 \
+	yontrack build changelog --from 1 --to 2 \
 		--format markdown \
 		--grouping "Bugs=bug|Features=features" \
 		--alt-group "Misc" \

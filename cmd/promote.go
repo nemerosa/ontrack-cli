@@ -24,8 +24,8 @@ package cmd
 import (
 	"github.com/spf13/cobra"
 
-	client "ontrack-cli/client"
-	config "ontrack-cli/config"
+	client "yontrack/client"
+	config "yontrack/config"
 )
 
 // promoteCmd represents the promote command
@@ -34,7 +34,7 @@ var promoteCmd = &cobra.Command{
 	Short: "Promotes a build",
 	Long: `Promotes a build.
 	
-	ontrack-cli promote -p PROJECT -b BRANCH -n BUILD -l PROMOTION -d DESCRIPTION
+	yontrack promote -p PROJECT -b BRANCH -n BUILD -l PROMOTION -d DESCRIPTION
 	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		project, err := cmd.Flags().GetString("project")

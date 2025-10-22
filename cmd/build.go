@@ -33,14 +33,14 @@ var buildCmd = &cobra.Command{
 
 While you can create builds directly using:
 
-    ontrack-cli build create --project my-project --branch release/1.0 --build 1
+    yontrack build create --project my-project --branch release/1.0 --build 1
 
 the 'build' command will be typically used to setup, in an idempotent way,
 a build. For example:
 
-    ontrack-cli build setup --project my-project --branch release/1.0 --build 1
+    yontrack build setup --project my-project --branch release/1.0 --build 1
 
-See 'ontrack-cli build' for a list of other options.
+See 'yontrack build' for a list of other options.
 `,
 	// Run: func(cmd *cobra.Command, args []string) {},
 }

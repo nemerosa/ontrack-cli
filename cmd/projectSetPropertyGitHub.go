@@ -24,8 +24,8 @@ package cmd
 import (
 	"github.com/spf13/cobra"
 
-	client "ontrack-cli/client"
-	config "ontrack-cli/config"
+	client "yontrack/client"
+	config "yontrack/config"
 )
 
 // projectSetPropertyGitHubCmd represents the projectSetPropertyGitHub command
@@ -36,7 +36,7 @@ var projectSetPropertyGitHubCmd = &cobra.Command{
 
 Example:
 
-	ontrack-cli project set-property --project PROJECT github --configuration GitHub --repository nemerosa/ontrack --issue-service self
+	yontrack project set-property --project PROJECT github --configuration GitHub --repository nemerosa/ontrack --issue-service self
 	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		project, err := cmd.Flags().GetString("project")

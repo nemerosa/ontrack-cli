@@ -10,7 +10,7 @@ import (
 )
 
 const (
-	configFileName = ".ontrack-cli-config.yaml"
+	configFileName = ".yontrack-config.yaml"
 )
 
 // Root configuration

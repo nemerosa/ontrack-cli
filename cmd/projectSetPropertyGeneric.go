@@ -33,7 +33,7 @@ var projectSetPropertyGenericCmd = &cobra.Command{
 
 Example:
 
-	ontrack-cli project set-property --project PROJECT generic --property "net.nemerosa.ontrack.extension.github.property.GitHubProjectConfigurationPropertyType" --value '{configuration:"GitHub",repository:"nemerosa/ontrack"}'
+	yontrack project set-property --project PROJECT generic --property "net.nemerosa.ontrack.extension.github.property.GitHubProjectConfigurationPropertyType" --value '{configuration:"GitHub",repository:"nemerosa/ontrack"}'
 	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		project, err := cmd.Flags().GetString("project")

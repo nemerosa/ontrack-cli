@@ -25,9 +25,9 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"ontrack-cli/client"
-	config "ontrack-cli/config"
 	"regexp"
+	"yontrack/client"
+	config "yontrack/config"
 
 	"github.com/spf13/cobra"
 )
@@ -40,7 +40,7 @@ var graphQLCmd = &cobra.Command{
 	
 For example:
 
-    ontrack-cli graphql --query 'query ProjectList($name: String!) { projects(name: $name) { id name branches { name } } }' --var name=ontrack
+    yontrack graphql --query 'query ProjectList($name: String!) { projects(name: $name) { id name branches { name } } }' --var name=ontrack
 	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		query, err := cmd.Flags().GetString("query")

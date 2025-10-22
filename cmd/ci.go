@@ -11,17 +11,17 @@ var ciCmd = &cobra.Command{
 
 You can create the project, branch and build based on a unique "CI configuration" file.
 
-    ontrack-cli ci config
+    yontrack ci config
 
 The YAML configuration files is located by default at .yontrack/ci.yaml and this can 
 be changed using the --file option:
 
-	ontrack-cli ci config --file .yontrack/ci.yaml
+	yontrack ci config --file .yontrack/ci.yaml
 
 By default, no environment variable is passed to the configuration, for obvious security reasons.
 They need to be passed explicitly using the --env options:
 
-	ontrack-cli ci config \
+	yontrack ci config \
 	  --env GIT_URL=git@github.com:nemerosa/ontrack.git \
 	  --env GIT_BRANCH=release/5.0
 

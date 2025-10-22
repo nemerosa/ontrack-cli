@@ -3,9 +3,9 @@ package cmd
 import (
 	"github.com/spf13/cobra"
 
-	client "ontrack-cli/client"
-	"ontrack-cli/cmd/junit"
-	config "ontrack-cli/config"
+	client "yontrack/client"
+	"yontrack/cmd/junit"
+	config "yontrack/config"
 )
 
 var validateJUnitTestsCmd = &cobra.Command{
@@ -15,7 +15,7 @@ var validateJUnitTestsCmd = &cobra.Command{
 
 For example:
 
-    ontrack-cli validate -p PROJECT -b BRANCH -n BUILD -v VALIDATION junit --pattern "**/results/*.xml" --fail-when-no-results
+    yontrack validate -p PROJECT -b BRANCH -n BUILD -v VALIDATION junit --pattern "**/results/*.xml" --fail-when-no-results
 `,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		project, err := cmd.Flags().GetString("project")

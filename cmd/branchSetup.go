@@ -24,8 +24,8 @@ package cmd
 import (
 	"github.com/spf13/cobra"
 
-	client "ontrack-cli/client"
-	config "ontrack-cli/config"
+	client "yontrack/client"
+	config "yontrack/config"
 )
 
 // branchSetupCmd represents the branchSetup command
@@ -34,7 +34,7 @@ var branchSetupCmd = &cobra.Command{
 	Short: "Creates a branch (and its project) if they don't exist yet.",
 	Long: `Creates a branch (and its project) if they don't exist yet.
 
-    ontrack-cli branch setup --project PROJECT --branch BRANCH
+    yontrack branch setup --project PROJECT --branch BRANCH
 
 The BRANCH name will be adapted to fit Ontrack naming conventions, so you
 can directly give the name of the Git branch.

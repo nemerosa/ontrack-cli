@@ -27,7 +27,7 @@ import (
 
 	"github.com/spf13/cobra"
 
-	config "ontrack-cli/config"
+	config "yontrack/config"
 
 	homedir "github.com/mitchellh/go-homedir"
 	"github.com/spf13/viper"
@@ -37,43 +37,43 @@ var cfgFile string
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use:   "ontrack-cli",
+	Use:   "yontrack",
 	Short: "Ontrack Command Line Interface",
 	Long: `The Ontrack CLI allows you to communicate with an Ontrack server.
 
 First, you need to configure the connection to Ontrack. For example:
 
-	ontrack-cli config create local http://localhost:8080 --username <user> --password <password>
+	yontrack config create local http://localhost:8080 --username <user> --password <password>
 	
 Or, using a token:
 
-	ontrack-cli config create local http://localhost:8080 --token <token>
+	yontrack config create local http://localhost:8080 --token <token>
 	
 Note that you can create several configurations and manage them using
 
-	ontrack-cli config
+	yontrack config
 	
 Examples of usages:
 
 * To get the list of projects:
 
-	ontrack-cli project list
+	yontrack project list
 	
 * To setup a project and a branch in an idempotent way:
 
-	ontrack-cli branch setup --project my-project --branch release/1.0
+	yontrack branch setup --project my-project --branch release/1.0
 
 * To create a validation stamp in an idempotent way:
 
-	ontrack-cli validation setup --project my-project --branch release/1.0 --validation TESTS
+	yontrack validation setup --project my-project --branch release/1.0 --validation TESTS
 	
 * To create a new build on a branch and project:
 
-	ontrack-cli build create --project my-project --branch release/1.0 --build 123
+	yontrack build create --project my-project --branch release/1.0 --build 123
 	
 * To create a validation run on an existing build:
 
-	ontrack-cli build validate --project my-project --branch release/1.0 --build 123 --validation TESTS --status PASSED
+	yontrack build validate --project my-project --branch release/1.0 --build 123 --validation TESTS --status PASSED
 	`,
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
@@ -93,7 +93,7 @@ func init() {
 	// Cobra supports persistent flags, which, if defined here,
 	// will be global for your application.
 
-	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.ontrack-cli.yaml)")
+	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.yontrack.yaml)")
 
 	rootCmd.PersistentFlags().BoolVar(&config.GraphQLLogging, "graphql-log", false, "Enable traces on the GraphQL calls.")
 }
@@ -108,9 +108,9 @@ func initConfig() {
 		home, err := homedir.Dir()
 		cobra.CheckErr(err)
 
-		// Search config in home directory with name ".ontrack-cli" (without extension).
+		// Search config in home directory with name ".yontrack" (without extension).
 		viper.AddConfigPath(home)
-		viper.SetConfigName(".ontrack-cli")
+		viper.SetConfigName(".yontrack")
 	}
 
 	viper.AutomaticEnv() // read in environment variables that match

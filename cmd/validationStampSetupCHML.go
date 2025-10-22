@@ -29,8 +29,8 @@ import (
 	"regexp"
 	"strconv"
 
-	client "ontrack-cli/client"
-	config "ontrack-cli/config"
+	client "yontrack/client"
+	config "yontrack/config"
 )
 
 // validationStampSetupCHMLCmd represents the validationStampSetupCHML command
@@ -41,7 +41,7 @@ var validationStampSetupCHMLCmd = &cobra.Command{
 
 For example:
 
-	ontrack-cli vs setup chml --project PROJECT --branch BRANCH --validation STAMP \
+	yontrack vs setup chml --project PROJECT --branch BRANCH --validation STAMP \
 		--warning HIGH=1 \
 		--failed CRITICAL=1
 `,

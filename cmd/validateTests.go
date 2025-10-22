@@ -24,8 +24,8 @@ package cmd
 import (
 	"github.com/spf13/cobra"
 
-	client "ontrack-cli/client"
-	config "ontrack-cli/config"
+	client "yontrack/client"
+	config "yontrack/config"
 )
 
 // validateTestsCmd represents the validateTests command
@@ -36,7 +36,7 @@ var validateTestsCmd = &cobra.Command{
 
 For example:
 
-    ontrack-cli validate -p PROJECT -b BRANCH -n BUILD -v VALIDATION tests --passed 1 --skipped 2 --failed 3
+    yontrack validate -p PROJECT -b BRANCH -n BUILD -v VALIDATION tests --passed 1 --skipped 2 --failed 3
 `,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		project, err := cmd.Flags().GetString("project")

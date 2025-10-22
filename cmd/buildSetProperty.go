@@ -33,12 +33,12 @@ var buildSetPropertyCmd = &cobra.Command{
 	
 This can be used for setting generic properties, using their full qualified class name and some JSON content:
 	
-	ontrack-cli build set-property --project PROJECT --branch BRANCH --build BUILD generic --property "net.nemerosa.ontrack.extension.git.property.GitCommitPropertyType" --value '{commit:"bae524d43cf454386408cae4c174b12b11de90d0"}'
+	yontrack build set-property --project PROJECT --branch BRANCH --build BUILD generic --property "net.nemerosa.ontrack.extension.git.property.GitCommitPropertyType" --value '{commit:"bae524d43cf454386408cae4c174b12b11de90d0"}'
 
 Some specific commands are also available for the most common property types. The example below does exactly the
 same update than the one just above:
 
-	ontrack-cli build set-property --project PROJECT --branch BRANCH --build BUILD git --commit bae524d43cf454386408cae4c174b12b11de90d0
+	yontrack build set-property --project PROJECT --branch BRANCH --build BUILD git --commit bae524d43cf454386408cae4c174b12b11de90d0
 `,
 	// Run: func(cmd *cobra.Command, args []string) {},
 }

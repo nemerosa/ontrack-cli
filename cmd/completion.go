@@ -10,18 +10,18 @@ var completionCmd = &cobra.Command{
 	Long: `Prints shell completion scripts. To install:
 
 BASH
-ontrack-cli completion bash > ontrack-completion.bash
+yontrack completion bash > ontrack-completion.bash
 sudo cp ontrack-completion.bash /etc/bash_completion.d/
 source ~/.bashrc
 
 ZSH
-ontrack-cli completion zsh > _ontrack-cli
+yontrack completion zsh > _yontrack
 sudo mkdir -p /usr/local/share/zsh/site-functions
-sudo cp _ontrack-cli /usr/local/share/zsh/site-functions/
+sudo cp _yontrack /usr/local/share/zsh/site-functions/
 source ~/.zshrc
 
 FISH
-ontrack-cli completion fish > ~/.config/fish/completions/ontrack-cli.fish
+yontrack completion fish > ~/.config/fish/completions/yontrack.fish
 source ~/.config/fish/config.fish
 `,
 	ValidArgs: []string{"bash", "zsh", "fish"},

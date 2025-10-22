@@ -22,7 +22,7 @@ THE SOFTWARE.
 package cmd
 
 import (
-	config "ontrack-cli/config"
+	config "yontrack/config"
 
 	"github.com/spf13/cobra"
 )

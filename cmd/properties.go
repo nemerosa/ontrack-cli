@@ -2,10 +2,10 @@ package cmd
 
 import (
 	"bytes"
-	client "ontrack-cli/client"
-	config "ontrack-cli/config"
 	"strings"
 	"text/template"
+	client "yontrack/client"
+	config "yontrack/config"
 )
 
 // SetProperty sets a property on any given entity using its type name and its value as a JSON string

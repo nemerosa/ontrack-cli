@@ -24,8 +24,8 @@ package cmd
 import (
 	"github.com/spf13/cobra"
 
-	client "ontrack-cli/client"
-	config "ontrack-cli/config"
+	client "yontrack/client"
+	config "yontrack/config"
 )
 
 // branchSetPropertyGitCmd represents the branchSetPropertyGit command
@@ -36,7 +36,7 @@ var branchSetPropertyGitCmd = &cobra.Command{
 
 For example:
 
-    ontrack-cli branch set-property --project PROJECT --branch BRANCH git --git-branch main
+    yontrack branch set-property --project PROJECT --branch BRANCH git --git-branch main
 
 As of now, this also sets the "GitCommitPropertyLink" property by default (builds must have a Git commit).
 `,

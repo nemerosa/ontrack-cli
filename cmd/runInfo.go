@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	client "ontrack-cli/client"
+	client "yontrack/client"
 
 	"github.com/spf13/cobra"
 )

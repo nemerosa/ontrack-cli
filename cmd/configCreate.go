@@ -24,7 +24,7 @@ package cmd
 import (
 	"github.com/spf13/cobra"
 
-	config "ontrack-cli/config"
+	config "yontrack/config"
 )
 
 // authentication
@@ -40,11 +40,11 @@ var configCreateCmd = &cobra.Command{
 	Long: `To create a 'local' configuration to connect to a local instance of Ontrack 
 using a username and a password:
 	
-	ontrack-cli config create local http://localhost:8080 --username <username> --password <password>
+	yontrack config create local http://localhost:8080 --username <username> --password <password>
 		
 or to create a 'prod' configuration using a token:
 	
-	ontrack-cli config create prod https://ontrack.nemerosa.net --token <token>
+	yontrack config create prod https://ontrack.nemerosa.net --token <token>
 `,
 	Args: cobra.ExactValidArgs(2),
 	RunE: func(cmd *cobra.Command, args []string) error {

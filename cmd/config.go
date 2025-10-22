@@ -35,21 +35,21 @@ in different configurations, and to reuse them.
 By default, no configuration is present, and you need to create one. For example, to create
 a 'local' configuration to connect to a local instance of Ontrack using a username and a password:
 
-	ontrack-cli config create local http://localhost:8080 --username <username> --password <password>
+	yontrack config create local http://localhost:8080 --username <username> --password <password>
 	
 or to create a 'prod' configuration using a token:
 
-	ontrack-cli config create prod https://ontrack.nemerosa.net --token <token>
+	yontrack config create prod https://ontrack.nemerosa.net --token <token>
 
 When a configuration is created, it is used as a default. You can select another configuration by using:
 
-	ontrack-cli config select prod
+	yontrack config select prod
 
 and you can get the list of configurations using:
 
-	ontrack-cli config list
+	yontrack config list
 
-Use 'ontrack-cli config' to see the other options.
+Use 'yontrack config' to see the other options.
 `,
 	// Run: func(cmd *cobra.Command, args []string) {},
 }

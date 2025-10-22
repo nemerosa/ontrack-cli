@@ -36,7 +36,7 @@ See the subcommands.
 
 For example:
 
-    ontrack-cli build changelog export --from 1 --to 2`,
+    yontrack build changelog export --from 1 --to 2`,
 	// Run: func(cmd *cobra.Command, args []string) {},
 }
 

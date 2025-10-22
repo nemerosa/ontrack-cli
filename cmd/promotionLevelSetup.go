@@ -24,8 +24,8 @@ package cmd
 import (
 	"github.com/spf13/cobra"
 
-	client "ontrack-cli/client"
-	config "ontrack-cli/config"
+	client "yontrack/client"
+	config "yontrack/config"
 )
 
 // promotionLevelSetupCmd represents the promotionLevelSetup command
@@ -34,11 +34,11 @@ var promotionLevelSetupCmd = &cobra.Command{
 	Short: "Creates or updates a promotion level",
 	Long: `Creates or updates a promotion level.
 
-	ontrack-cli pl setup -p PROJECT -b BRANCH -l PROMOTION
+	yontrack pl setup -p PROJECT -b BRANCH -l PROMOTION
 
 The promotion can be set to be in "auto promotion" mode by using addtional options. For example:
 
-    ontrack-cli pl setup -p PROJECT -b BRANCH -l PROMOTION \
+    yontrack pl setup -p PROJECT -b BRANCH -l PROMOTION \
 	    --validation VALIDATION_1 \
 	    --validation VALIDATION_2 \
 		--depends-on IRON \

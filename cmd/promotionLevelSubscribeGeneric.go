@@ -2,8 +2,8 @@ package cmd
 
 import (
 	"github.com/spf13/cobra"
-	"ontrack-cli/client"
-	"ontrack-cli/config"
+	"yontrack/client"
+	"yontrack/config"
 )
 
 var promotionLevelSubscribeGenericCmd = &cobra.Command{
@@ -13,7 +13,7 @@ var promotionLevelSubscribeGenericCmd = &cobra.Command{
 	
 You can use subcommands to subscribe to events on a promotion level. For example:
 
-	ontrack-cli promotion-level subscribe --project PROJECT --branch BRANCH --promotion LEVEL \ 
+	yontrack promotion-level subscribe --project PROJECT --branch BRANCH --promotion LEVEL \ 
         --name "My subscription" \
         generic --channel "slack" --channel-config '{"channel":"#my-channel", "type": "SUCCESS"}'
 	

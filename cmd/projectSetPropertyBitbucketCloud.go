@@ -22,8 +22,8 @@ THE SOFTWARE.
 package cmd
 
 import (
-	client "ontrack-cli/client"
-	config "ontrack-cli/config"
+	client "yontrack/client"
+	config "yontrack/config"
 
 	"github.com/spf13/cobra"
 )
@@ -36,7 +36,7 @@ var projectSetPropertyBitbucketCloudCmd = &cobra.Command{
 
 Example:
 
-	ontrack-cli project set-property --project PROJECT bitbucket-cloud --configuration Bitbucket-Cloud --repository my-repository --issue-service jira//my-jira`,
+	yontrack project set-property --project PROJECT bitbucket-cloud --configuration Bitbucket-Cloud --repository my-repository --issue-service jira//my-jira`,
 
 	RunE: func(cmd *cobra.Command, args []string) error {
 

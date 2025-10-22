@@ -24,8 +24,8 @@ package cmd
 import (
 	"github.com/spf13/cobra"
 
-	client "ontrack-cli/client"
-	config "ontrack-cli/config"
+	client "yontrack/client"
+	config "yontrack/config"
 )
 
 // buildSetPropertyGitCommitCmd represents the buildSetPropertyGitCommit command
@@ -36,7 +36,7 @@ var buildSetPropertyGitCommitCmd = &cobra.Command{
 
 Example:
 
-    ontrack-cli build set-property --project PROJECT --branch BRANCH --build BUILD git-commit --commit bae524d43cf454386408cae4c174b12b11de90d0
+    yontrack build set-property --project PROJECT --branch BRANCH --build BUILD git-commit --commit bae524d43cf454386408cae4c174b12b11de90d0
 
 	`,
 	RunE: func(cmd *cobra.Command, args []string) error {

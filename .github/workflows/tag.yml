@@ -31,10 +31,10 @@ jobs:
 #    - name: Get Ontrack information
 #      # TODO Use a built-in action, included into the setup
 #      run: |
-#        RESULT=`ontrack-cli build search --project ${{ steps.ontrack.outputs.project }} --display-branch --commit ${{ github.sha }} --count 1`
+#        RESULT=`yontrack build search --project ${{ steps.ontrack.outputs.project }} --display-branch --commit ${{ github.sha }} --count 1`
 #        BRANCH=(${RESULT%/*})
 #        BUILD=(${RESULT#*/})
-#        BUILD_ID=`ontrack-cli build search --project ${{ steps.ontrack.outputs.project }} --display-id --name $BUILD --count 1`
+#        BUILD_ID=`yontrack build search --project ${{ steps.ontrack.outputs.project }} --display-id --name $BUILD --count 1`
 #        echo "BRANCH=$BRANCH" >> $GITHUB_ENV
 #        echo "BUILD=$BUILD" >> $GITHUB_ENV
 #        echo "BUILD_ID=$BUILD_ID" >> $GITHUB_ENV
@@ -52,11 +52,11 @@ jobs:
     # - name: Change log since last release
     #   # TODO Use a built-in action
     #   run: |
-    #     LAST_RELEASE=`ontrack-cli build search --project ${{ steps.ontrack.outputs.project }} --branch $BRANCH --with-promotion RELEASE --count 1 --display-id`
+    #     LAST_RELEASE=`yontrack build search --project ${{ steps.ontrack.outputs.project }} --branch $BRANCH --with-promotion RELEASE --count 1 --display-id`
     #     echo LAST_RELEASE=$LAST_RELEASE
     #     if [ $LAST_RELEASE != "" ]
     #     then
-    #       LOG=`ontrack-cli build changelog export --from $LAST_RELEASE --to $BUILD_ID --grouping "Features=feature|Enhancements=enhancement|Bugs=bug"`
+    #       LOG=`yontrack build changelog export --from $LAST_RELEASE --to $BUILD_ID --grouping "Features=feature|Enhancements=enhancement|Bugs=bug"`
     #     else
     #       LOG=""
     #     fi
@@ -72,8 +72,8 @@ jobs:
           Version ${{ env.VERSION }}
 
           ${{ env.LOG }}
-        files: ontrack-cli-*
+        files: yontrack-*
 
 #    - name: Release marker in Ontrack
 #      run: |
-#        ontrack-cli build set-property --project ${{ steps.ontrack.outputs.project }} --branch $BRANCH --build $BUILD release $VERSION
+#        yontrack build set-property --project ${{ steps.ontrack.outputs.project }} --branch $BRANCH --build $BUILD release $VERSION

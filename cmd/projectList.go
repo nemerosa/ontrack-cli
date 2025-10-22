@@ -23,8 +23,8 @@ package cmd
 
 import (
 	"fmt"
-	client "ontrack-cli/client"
-	config "ontrack-cli/config"
+	client "yontrack/client"
+	config "yontrack/config"
 
 	"github.com/spf13/cobra"
 )
@@ -37,11 +37,11 @@ var projectListCmd = &cobra.Command{
 	Short: "Displays the list of projects",
 	Long: `Displays the list of projects.
 
-	ontrack-cli project list
+	yontrack project list
 
 By default, only the names are displayed. You can display the ID instead:
 
-	ontrack-cli project list --show-id
+	yontrack project list --show-id
 `,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		return projectList()

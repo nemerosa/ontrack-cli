@@ -22,7 +22,7 @@ THE SOFTWARE.
 package main
 
 import (
-	"ontrack-cli/cmd"
+	"yontrack/cmd"
 )
 
 func main() {

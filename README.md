@@ -1,7 +1,7 @@
 Ontrack CLI
 ===========
 
-[![Build](https://github.com/nemerosa/ontrack-cli/actions/workflows/go.yml/badge.svg)](https://github.com/nemerosa/ontrack-cli/actions/workflows/go.yml)
+[![Build](https://github.com/nemerosa/yontrack/actions/workflows/go.yml/badge.svg)](https://github.com/nemerosa/yontrack/actions/workflows/go.yml)
 
 [Ontrack](https://github.com/nemerosa/ontrack) is an application which store all events which happen in your CI/CD environment: branches, builds, validations, promotions, labels, commits, etc. It allows your delivery chains to reach new levels by driving your pipelines using real-time data.
 
@@ -11,7 +11,7 @@ The Ontrack CLI is a Command Line Interface tool, available on many platforms, w
 
 # Installation
 
-Download the latest version for your platform from the [releases](https://github.com/nemerosa/ontrack-cli/releases) page.
+Download the latest version for your platform from the [releases](https://github.com/nemerosa/yontrack/releases) page.
 
 No further installation step is needed; the CLI is coded in Golang and does not need any dependency.
 
@@ -20,12 +20,12 @@ No further installation step is needed; the CLI is coded in Golang and does not 
 You need to register a configuration:
 
 ```bash
-ontrack-cli config create prod https://ontrack.example.com --token <token>
+yontrack config create prod https://ontrack.example.com --token <token>
 ```
 
 This registers an installation called `prod`, located at https://ontrack.example.com, using an authentication token.
 
-The configuration is stored on disk, in `~/.ontrack-cli-config.yaml` and the `config create` needs to be done only once.
+The configuration is stored on disk, in `~/.yontrack-config.yaml` and the `config create` needs to be done only once.
 
 > The Ontrack CLI supports only version 4.x and beyond of Ontrack.
 
@@ -40,7 +40,7 @@ After the configuration has been set, injection of data into Ontrack from a CI p
 An easy way to setup the project, branch and build is to use the `ci config` command:
 
 ```shell
-ontrack-cli ci config
+yontrack ci config
 ```
 
 By default, the `ci config` command will use a file at `.yontrack/ci.yaml` in the current directory
@@ -51,7 +51,7 @@ information extracted from the environment. For security reasons, no environment
 and they must be passed explicitly using the `--env` options:
 
 ```shell
-ontrack-cli ci config \
+yontrack ci config \
   --env GIT_URL=git@github.com:nemerosa/ontrack.git \
   --env GIT_BRANCH=release/5.0
 ```
@@ -67,7 +67,7 @@ GIT_BRANCH=release/5.0
 and then passed to the `ci config` command using the `--env-file` option:
 
 ```shell
-ontrack-cli ci config \
+yontrack ci config \
   --env-file .env
 ```
 
@@ -114,13 +114,13 @@ environment variables to replace explicit parameters:
 The `ci config` command will export these environment variables for you, and it can be as easy as:
 
 ```shell
-eval $(ontrack-cli ci config --output ...)
+eval $(yontrack ci config --output ...)
 ```
 
 or:
 
 ```shell
-ontrack-cli ci config --output ... > .yontrack
+yontrack ci config --output ... > .yontrack
 source .yontrack
 ```
 
@@ -130,20 +130,20 @@ We make sure the branch managed by the pipeline is registered into Ontrack:
 
 ```bash
 # Setup of the branch
-ontrack-cli branch setup --project <project> --branch <branch>
+yontrack branch setup --project <project> --branch <branch>
 ```
 
 Here, `<project>` is the name of your project or repository, and `<branch>` is typically the Git branch name
 or the PR name (like `PR-123`). The `branch setup` operation is idempotent.
 
-> Run `ontrack-cli branch setup --help` for additional options.
+> Run `yontrack branch setup --help` for additional options.
 
 ## Validation stamps setup
 
 The CLI can be used to create validation stamps:
 
 ```bash
-ontrack-cli validation-stamp setup --project <project> --branch <branch> --validation <validation>
+yontrack validation-stamp setup --project <project> --branch <branch> --validation <validation>
 ```
 
 The `validation-stamp setup` (or `vs setup` for a shortcut) command is idempotent.
@@ -153,7 +153,7 @@ Additionally, a validation stamp can be created with a
 and its configuration. For example, to create a CHML validation type:
 
 ```bash
-ontrack-cli validation-stamp setup --project <project> --branch <branch> --validation <validation> \
+yontrack validation-stamp setup --project <project> --branch <branch> --validation <validation> \
     --data-type net.nemerosa.ontrack.extension.general.validation.CHMLValidationDataType \
     --data-config '{warningLevel: {level: "HIGH",value:1},failedLevel:{level:"CRITICAL",value:1}}'
 ```
@@ -163,7 +163,7 @@ The later syntax is pretty cumbersome and the CLI provides dedicated commands fo
 * for CHML data type:
 
 ```bash
-ontrack-cli validation-stamp setup --project <project> --branch <branch> --validation <validation> \
+yontrack validation-stamp setup --project <project> --branch <branch> --validation <validation> \
     chml \
         --warning HIGH=1 \
         --failed CRITICAL=1
@@ -172,14 +172,14 @@ ontrack-cli validation-stamp setup --project <project> --branch <branch> --valid
 * for test summary data type:
 
 ```bash
-ontrack-cli validation-stamp setup --project <project> --branch <branch> --validation <validation> \
+yontrack validation-stamp setup --project <project> --branch <branch> --validation <validation> \
     tests --warning-if-skipped true
 ```
 
 * for percentage data type:
 
 ```bash
-ontrack-cli validation-stamp setup --project <project> --branch <branch> --validation <validation> \
+yontrack validation-stamp setup --project <project> --branch <branch> --validation <validation> \
     percentage \
         --warning 60 \
         --failure 50 \
@@ -189,7 +189,7 @@ ontrack-cli validation-stamp setup --project <project> --branch <branch> --valid
 * for metrics data type:
 
 ```bash
-ontrack-cli validation-stamp setup --project <project> --branch <branch> --validation <validation> \
+yontrack validation-stamp setup --project <project> --branch <branch> --validation <validation> \
     metrics
 ```
 
@@ -198,13 +198,13 @@ ontrack-cli validation-stamp setup --project <project> --branch <branch> --valid
 Promotions can be created using:
 
 ```bash
-ontrack-cli promotion-level setup --project <project> --branch <branch> --promotion <promotion>
+yontrack promotion-level setup --project <project> --branch <branch> --promotion <promotion>
 ```
 
 Their auto promotion can be set using:
 
 ```bash
-ontrack-cli promotion-level setup --project <project> --branch <branch> --promotion <promotion> \
+yontrack promotion-level setup --project <project> --branch <branch> --promotion <promotion> \
    --validation <stamp1> \
    --validation <stamp2> \
    --depends-on <other-promotion-1> \
@@ -219,7 +219,7 @@ Then, you can create a build entry the same way:
 
 ```bash
 # Setup of the build
-ontrack-cli build setup --project <project> --branch <branch> --build <build>
+yontrack build setup --project <project> --branch <branch> --build <build>
 ```
 
 where `<build>` is a unique identifier for your build (typically a build number).
@@ -227,13 +227,13 @@ where `<build>` is a unique identifier for your build (typically a build number)
 If you need to associated a release label to your build, you can use the `--release` option:
 
 ```bash
-ontrack-cli build setup --project <project> --branch <branch> --build <build> --release <label>
+yontrack build setup --project <project> --branch <branch> --build <build> --release <label>
 ```
 
 The same way, you can associate a Git commit property to the build with the `--commit` option:
 
 ```bash
-ontrack-cli build setup --project <project> --branch <branch> --build <build> --commit <commit>
+yontrack build setup --project <project> --branch <branch> --build <build> --commit <commit>
 ```
 
 ## Git integration
@@ -244,20 +244,20 @@ For example, to associate a project with a GitHub repository:
 
 ```bash
 # GitHub setup of the project
-ontrack-cli project set-property --project <project> github \
+yontrack project set-property --project <project> github \
     --configuration github.com \
-    --repository nemerosa/ontrack-cli \
+    --repository nemerosa/yontrack \
     --indexation 30 \
     --issue-service self
 ```
 
-This command associates the project with the `nemerosa/ontrack-cli` repository, using the credentials defined by the `github.com` GitHub configuration stored in Ontrack. Additionally, Ontrack will index the content of this repository every `30` minutes and the GitHub issues will be used to track issues.
+This command associates the project with the `nemerosa/yontrack` repository, using the credentials defined by the `github.com` GitHub configuration stored in Ontrack. Additionally, Ontrack will index the content of this repository every `30` minutes and the GitHub issues will be used to track issues.
 
 Whenever a branch is created, you associate it with the corresponding Git branch this way:
 
 ```bash
 # Git setup of the branch
-ontrack-cli branch set-property --project <project> --branch <branch> git \
+yontrack branch set-property --project <project> --branch <branch> git \
     --git-branch <branch>
 ```
 
@@ -267,14 +267,14 @@ Finally, each build can be associated with a Git commit:
 
 ```bash
 # Git setup of the build
-ontrack-cli build set-property --project <project> --branch <branch> --build <build> git-commit \
+yontrack build set-property --project <project> --branch <branch> --build <build> git-commit \
     --commit <full commit hash>
 ```
 
 > Note that the Git commit property on a build can be set directly using the `build setup` command and the `--commit` option:
 
 ```bash
-ontrack-cli build setup --project <project> --branch <branch> --build <build> --commit <commit>
+yontrack build setup --project <project> --branch <branch> --build <build> --commit <commit>
 ```
 
 # Validation
@@ -282,7 +282,7 @@ ontrack-cli build setup --project <project> --branch <branch> --build <build> --
 One of the most important point of Ontrack is to record _validations_:
 
 ```bash
-ontrack-cli validate --project <project> --branch <branch> --build <build> --validation <validation> --status <status>
+yontrack validate --project <project> --branch <branch> --build <build> --validation <validation> --status <status>
 ```
 
 where `<status>` is an Ontrack validation run status like `PASSED`, `WARNING` or `FAILED`.
@@ -293,7 +293,7 @@ Additionally, a validation run can be created with some
 [data](https://static.nemerosa.net/ontrack/release/latest/docs/doc/index.html#validation-stamps-data). For example, to create a test summary validation:
 
 ```bash
-ontrack-cli validate --project <project> --branch <branch> --build <build> --validation <validation> \
+yontrack validate --project <project> --branch <branch> --build <build> --validation <validation> \
     --data-type net.nemerosa.ontrack.extension.general.validation.TestSummaryValidationDataType \
     --data {passed: 1, skipped: 2, failed: 3}
 ```
@@ -303,7 +303,7 @@ The later syntax is pretty cumbersome and the CLI provides dedicated commands fo
 * for CHML data type:
 
 ```bash
-ontrack-cli validate --project <project> --branch <branch> --build <build> --validation <validation> \
+yontrack validate --project <project> --branch <branch> --build <build> --validation <validation> \
     chml \
         --critical 0 \
         --high 2 \
@@ -314,7 +314,7 @@ ontrack-cli validate --project <project> --branch <branch> --build <build> --val
 * for test summary data type:
 
 ```bash
-ontrack-cli validate --project <project> --branch <branch> --build <build> --validation <validation> \
+yontrack validate --project <project> --branch <branch> --build <build> --validation <validation> \
     tests \
         --passed 20 \
         --skipped 2 \
@@ -324,7 +324,7 @@ ontrack-cli validate --project <project> --branch <branch> --build <build> --val
 * for percentage data type:
 
 ```bash
-ontrack-cli validate --project <project> --branch <branch> --build <build> --validation <validation> \
+yontrack validate --project <project> --branch <branch> --build <build> --validation <validation> \
     percentage \
         --value 87
 ```
@@ -332,7 +332,7 @@ ontrack-cli validate --project <project> --branch <branch> --build <build> --val
 * for metrics data type:
 
 ```bash
-ontrack-cli validate --project <project> --branch <branch> --build <build> --validation <validation> \
+yontrack validate --project <project> --branch <branch> --build <build> --validation <validation> \
     metrics \
         --metric speed=1.5 \
         --metric acceleration=0.25 \
@@ -352,7 +352,7 @@ The `validate` commands accept additional flags to set the run info on a validat
 For example, to set the validation duration on a test summary validation:
 
 ```bash
-ontrack-cli validate --project <project> --branch <branch> --build <build> --validation <validation> \
+yontrack validate --project <project> --branch <branch> --build <build> --validation <validation> \
     --run-time 80 \
     tests \
         --passed 20 \
@@ -367,7 +367,7 @@ The Ontrack CLI can be used to set up the auto-versioning configuration for a br
 Given the `auto-versioning.yaml` file containing the configuration, the call looks like:
 
 ```bash
-ontrack-cli branch --project <project> --branch <branch> auto-versioning \
+yontrack branch --project <project> --branch <branch> auto-versioning \
     --yaml auto-versioning.yaml
 ```
 
@@ -392,7 +392,7 @@ dependencies:
 In a parent repository, you can use the auto-versioning check to automatically create the dependency links.
 
 ```yaml
-ontrack-cli build auto-versioning-check \
+yontrack build auto-versioning-check \
   --project <project> \
   --branch <branch> \
   --build <build>
@@ -405,7 +405,7 @@ The CLI can be used to setup subscriptions on some entities.
 For example, to send a Slack message each time a promotion is granted:
 
 ```shell
-ontrack-cli promotion subscribe \
+yontrack promotion subscribe \
   --project <project> \
   --branch <branch> \
   --promotion BRONZE \
@@ -418,7 +418,7 @@ ontrack-cli promotion subscribe \
 You can also use generic notifications. The code below is equivalent to the one above:
 
 ```shell
-ontrack-cli promotion subscribe \
+yontrack promotion subscribe \
   --project <project> \
   --branch <branch> \
   --promotion BRONZE \
@@ -431,7 +431,7 @@ ontrack-cli promotion subscribe \
 You can also use a specific content template by using the `--template` argument:
 
 ```shell
-ontrack-cli promotion subscribe \
+yontrack promotion subscribe \
   --project <project> \
   --branch <branch> \
   --promotion BRONZE \
@@ -451,9 +451,9 @@ The Ontrack CLI uses the GraphQL API of Ontrack for its communication. The `grap
 For example:
 
 ```bash
-ontrack-cli graphql \
+yontrack graphql \
     --query 'query ProjectList($name: String!) { projects(name: $name) { id name branches { name } } }' \
-    --var name=ontrack-cli
+    --var name=yontrack
 ```
 
 ## General options

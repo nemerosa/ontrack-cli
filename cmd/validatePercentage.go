@@ -24,8 +24,8 @@ package cmd
 import (
 	"github.com/spf13/cobra"
 
-	client "ontrack-cli/client"
-	config "ontrack-cli/config"
+	client "yontrack/client"
+	config "yontrack/config"
 )
 
 // validatePercentageCmd represents the validatePercentage command
@@ -37,7 +37,7 @@ var validatePercentageCmd = &cobra.Command{
 
 For example:
 
-    ontrack-cli validate -p PROJECT -b BRANCH -n BUILD -v VALIDATION percentage --value 87
+    yontrack validate -p PROJECT -b BRANCH -n BUILD -v VALIDATION percentage --value 87
 `,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		project, err := cmd.Flags().GetString("project")

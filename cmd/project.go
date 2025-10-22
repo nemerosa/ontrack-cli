@@ -31,15 +31,15 @@ var projectCmd = &cobra.Command{
 	Short: "Management of projects",
 	Long: `Management of projects. To get the list of projects:
 
-	ontrack-cli project list
+	yontrack project list
 
 You can create a new project using:
 
-    ontrack-cli project create NAME
+    yontrack project create NAME
 
 with an optional description:
 
-	ontrack-cli project create NAME --description "..."
+	yontrack project create NAME --description "..."
 `,
 	// Run: func(cmd *cobra.Command, args []string) {},
 }

@@ -2,8 +2,8 @@ package cmd
 
 import (
 	"github.com/spf13/cobra"
-	"ontrack-cli/client"
-	"ontrack-cli/config"
+	"yontrack/client"
+	"yontrack/config"
 )
 
 var buildAutoversioningCheckCmd = &cobra.Command{
@@ -14,7 +14,7 @@ var buildAutoversioningCheckCmd = &cobra.Command{
 
 For example:
 
-    ontrack-cli build auto-versioning-check --project my-project --branch release/1.0 --build 1`,
+    yontrack build auto-versioning-check --project my-project --branch release/1.0 --build 1`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		project, err := cmd.Flags().GetString("project")
 		if err != nil {

@@ -23,8 +23,8 @@ package cmd
 
 import (
 	"fmt"
-	"ontrack-cli/client"
-	config "ontrack-cli/config"
+	"yontrack/client"
+	config "yontrack/config"
 
 	"github.com/spf13/cobra"
 )
@@ -37,20 +37,20 @@ var buildSearchCmd = &cobra.Command{
 
 Builds can be searched on a project using the '--project' flag:
 
-    ontrack-cli build search --project PROJECT
+    yontrack build search --project PROJECT
 
 or on a branch using the '--branch' flag:
 
-    ontrack-cli build search --project PROJECT --branch BRANCH
+    yontrack build search --project PROJECT --branch BRANCH
 
-In both cases, several criteria are available - see 'ontrack-cli build search --help' to get their list. For example,
+In both cases, several criteria are available - see 'yontrack build search --help' to get their list. For example,
 to look for a build using its commit:
 
-    ontrack-cli build search --project PROJECT --branch BRANCH --commit commit
+    yontrack build search --project PROJECT --branch BRANCH --commit commit
 
 By default, only the build names are printed, one per line.
 
-You can change the display options using additional flags - see 'ontrack-cli build search --help' to get their list.`,
+You can change the display options using additional flags - see 'yontrack build search --help' to get their list.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 
 		project, err := cmd.Flags().GetString("project")

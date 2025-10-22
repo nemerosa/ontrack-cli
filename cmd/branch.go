@@ -33,14 +33,14 @@ var branchCmd = &cobra.Command{
 
 While you can create branches directly using:
 
-    ontrack-cli branch create --project my-project --branch release/1.0
+    yontrack branch create --project my-project --branch release/1.0
 
 the 'branch' command will be typically used to setup, in an idempotent way,
 a branch and its setup. For example:
 
-    ontrack-cli branch setup --project my-project --branch release/1.0
+    yontrack branch setup --project my-project --branch release/1.0
 
-See 'ontrack-cli branch' for a list of other options.
+See 'yontrack branch' for a list of other options.
 `,
 	// Run: func(cmd *cobra.Command, args []string) {},
 }

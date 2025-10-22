@@ -7,8 +7,8 @@ import (
 
 	"github.com/spf13/cobra"
 
-	client "ontrack-cli/client"
-	config "ontrack-cli/config"
+	client "yontrack/client"
+	config "yontrack/config"
 )
 
 // validateCmd represents the validate command
@@ -19,13 +19,13 @@ var validateCmd = &cobra.Command{
 
 The simplest form is:
 
-    ontrack-cli validate -p PROJECT -b BRANCH -n BUILD -v VALIDATION -s STATUS
+    yontrack validate -p PROJECT -b BRANCH -n BUILD -v VALIDATION -s STATUS
 
 where 'STATUS' is a valid Ontrack status, like 'PASSED', 'WARNING' or 'FAILED'.
 
 In case there is some data to be passed to the validation:
 
-	ontrack-cli validate -p PROJECT -b BRANCH -n BUILD -v VALIDATION \
+	yontrack validate -p PROJECT -b BRANCH -n BUILD -v VALIDATION \
 		--data-type net.nemerosa.ontrack.extension.general.validation.TestSummaryValidationDataType \
 		--data {passed: 1, skipped: 2, failed: 3}
 
@@ -33,9 +33,9 @@ In this case, there is no need to pass the status but it could still be forced u
 
 Note that subcommands, dedicated to the most common types are also available. For example:
 
-    ontrack-cli validate -p PROJECT -b BRANCH -n BUILD -v VALIDATION tests --passed 1 --skipped 2 --failed 3
+    yontrack validate -p PROJECT -b BRANCH -n BUILD -v VALIDATION tests --passed 1 --skipped 2 --failed 3
 
-Type 'ontrack-cli validate --help' to get a list of all options.
+Type 'yontrack validate --help' to get a list of all options.
 `,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		project, err := cmd.Flags().GetString("project")

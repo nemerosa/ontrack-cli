@@ -1,6 +1,6 @@
 package client
 
-import "ontrack-cli/config"
+import "yontrack/config"
 
 func SetupPromotionLevel(
 	cfg *config.Config,

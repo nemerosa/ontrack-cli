@@ -33,12 +33,12 @@ var branchSetPropertyCmd = &cobra.Command{
 	
 This can be used for setting generic properties, using their full qualified class name and some JSON content:
 	
-	ontrack-cli branch set-property --project PROJECT --branch BRANCH generic --property "net.nemerosa.ontrack.extension.git.property.GitBranchConfigurationPropertyType" --value '{branch:"main"}'
+	yontrack branch set-property --project PROJECT --branch BRANCH generic --property "net.nemerosa.ontrack.extension.git.property.GitBranchConfigurationPropertyType" --value '{branch:"main"}'
 
 Some specific commands are also available for the most common property types. The example below does exactly the
 same update than the one just above:
 
-	ontrack-cli branch set-property --project PROJECT --branch BRANCH git --git-branch main
+	yontrack branch set-property --project PROJECT --branch BRANCH git --git-branch main
 `,
 	// Run: func(cmd *cobra.Command, args []string) {},
 }

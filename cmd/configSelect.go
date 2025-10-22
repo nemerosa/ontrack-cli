@@ -24,7 +24,7 @@ package cmd
 import (
 	"github.com/spf13/cobra"
 
-	config "ontrack-cli/config"
+	config "yontrack/config"
 )
 
 // configSelectCmd represents the configSelect command

@@ -34,7 +34,7 @@ var promotionLevelCmd = &cobra.Command{
 
 The simplest way to setup a promotion level for a branch:
 
-    ontrack-cli pl setup -p PROJECT -b BRANCH -l PROMOTION
+    yontrack pl setup -p PROJECT -b BRANCH -l PROMOTION
 
 This will create a promotion level for the branch, or updates it if it exists already.
 `,

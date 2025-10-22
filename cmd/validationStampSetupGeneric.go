@@ -24,8 +24,8 @@ package cmd
 import (
 	"github.com/spf13/cobra"
 
-	client "ontrack-cli/client"
-	config "ontrack-cli/config"
+	client "yontrack/client"
+	config "yontrack/config"
 )
 
 // validationStampSetupGenericCmd represents the validationStampSetupGeneric command
@@ -36,15 +36,15 @@ var validationStampSetupGenericCmd = &cobra.Command{
 
 To create a plain validation stamp (without any data type):
 
-	ontrack-cli vs setup generic --project PROJECT --branch BRANCH --validation STAMP
+	yontrack vs setup generic --project PROJECT --branch BRANCH --validation STAMP
 
 You can also associate a data type with it, using the JSON representation of the configuration:
 
-    ontrack-cli vs setup generic --project PROJECT --branch BRANCH --validation STAMP \
+    yontrack vs setup generic --project PROJECT --branch BRANCH --validation STAMP \
         --data-type "net.nemerosa.ontrack.extension.general.validation.CHMLValidationDataType" \
         --data-config '{warningLevel: {level: "HIGH",value:1}, failedLevel:{level:"CRITICAL",value:1}}'
 
-Note that specific commands per type are also available, see 'ontrack-cli vs setup'.
+Note that specific commands per type are also available, see 'yontrack vs setup'.
 	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		project, err := cmd.Flags().GetString("project")

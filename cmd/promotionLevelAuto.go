@@ -2,10 +2,10 @@ package cmd
 
 import (
 	"io"
-	client "ontrack-cli/client"
-	config "ontrack-cli/config"
 	"os"
 	"slices"
+	client "yontrack/client"
+	config "yontrack/config"
 
 	"github.com/spf13/cobra"
 	"gopkg.in/yaml.v2"
@@ -52,7 +52,7 @@ var promotionLevelAutoCmd = &cobra.Command{
 	Short: "Sets up promotions and their auto promotions criteria using local YAML file",
 	Long: `Sets up promotions and their auto promotions criteria using local YAML file.
 
-	ontrack-cli pl auto -p PROJECT -b BRANCH -l PROMOTION
+	yontrack pl auto -p PROJECT -b BRANCH -l PROMOTION
 
 By default, the definition of the promotions and their auto promotion is available in a local (current directory)
 .ontrack/promotions.yaml file but this can be configured using the option:

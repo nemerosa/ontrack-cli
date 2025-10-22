@@ -1,4 +1,4 @@
-module ontrack-cli
+module yontrack
 
 go 1.22
 

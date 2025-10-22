@@ -33,7 +33,7 @@ var buildSetPropertyGenericCmd = &cobra.Command{
 
 Example:
 
-    ontrack-cli build set-property --project PROJECT --branch BRANCH --build BUILD generic --property "net.nemerosa.ontrack.extension.git.property.GitCommitPropertyType" --value '{commit:"bae524d43cf454386408cae4c174b12b11de90d0"}'
+    yontrack build set-property --project PROJECT --branch BRANCH --build BUILD generic --property "net.nemerosa.ontrack.extension.git.property.GitCommitPropertyType" --value '{commit:"bae524d43cf454386408cae4c174b12b11de90d0"}'
 
 	`,
 	RunE: func(cmd *cobra.Command, args []string) error {

@@ -11,13 +11,13 @@ var promotionLevelSubscribeCmd = &cobra.Command{
 	
 You can use subcommands to subscribe to events on a promotion level. For example:
 
-	ontrack-cli promotion-level subscribe --project PROJECT --branch BRANCH --promotion LEVEL \ 
+	yontrack promotion-level subscribe --project PROJECT --branch BRANCH --promotion LEVEL \ 
         --name "My subscription" \
         slack --channel "#my-channel" --type SUCCESS
 
 Generic notifications can also be used:
 
-	ontrack-cli promotion-level subscribe --project PROJECT --branch BRANCH --promotion LEVEL \ 
+	yontrack promotion-level subscribe --project PROJECT --branch BRANCH --promotion LEVEL \ 
         --name "My subscription" \
         generic --channel "slack" --channel-config '{"channel":"#my-channel", "type": "SUCCESS"}'
 	

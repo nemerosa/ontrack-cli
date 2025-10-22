@@ -29,8 +29,8 @@ import (
 
 	"github.com/spf13/cobra"
 
-	client "ontrack-cli/client"
-	config "ontrack-cli/config"
+	client "yontrack/client"
+	config "yontrack/config"
 )
 
 // validateMetricsCmd represents the validateMetrics command
@@ -41,11 +41,11 @@ var validateMetricsCmd = &cobra.Command{
 
 For example:
 
-    ontrack-cli validate -p PROJECT -b BRANCH -n BUILD -v VALIDATION metrics --metric name1=value1 --metric name2=value2
+    yontrack validate -p PROJECT -b BRANCH -n BUILD -v VALIDATION metrics --metric name1=value1 --metric name2=value2
 
 An alternative syntax is:
 
-	ontrack-cli validate -p PROJECT -b BRANCH -n BUILD -v VALIDATION metrics --metrics name1=value1,name2=value2
+	yontrack validate -p PROJECT -b BRANCH -n BUILD -v VALIDATION metrics --metrics name1=value1,name2=value2
 `,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		project, err := cmd.Flags().GetString("project")

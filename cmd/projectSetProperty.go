@@ -33,12 +33,12 @@ var projectSetPropertyCmd = &cobra.Command{
 	
 This can be used for setting generic properties, using their full qualified class name and some JSON content:
 	
-	ontrack-cli project set-property --project PROJECT generic --property "net.nemerosa.ontrack.extension.github.property.GitHubProjectConfigurationPropertyType" --value '{"configuration":"GitHub","repository":"nemerosa/ontrack"}'
+	yontrack project set-property --project PROJECT generic --property "net.nemerosa.ontrack.extension.github.property.GitHubProjectConfigurationPropertyType" --value '{"configuration":"GitHub","repository":"nemerosa/ontrack"}'
 
 Some specific commands are also available for the most common property types. The example below does exactly the
 same update than the one just above:
 
-	ontrack-cli project set-property --project PROJECT github --configuration GitHub --repository nemerosa/ontrack
+	yontrack project set-property --project PROJECT github --configuration GitHub --repository nemerosa/ontrack
 `,
 	// Run: func(cmd *cobra.Command, args []string) {},
 }

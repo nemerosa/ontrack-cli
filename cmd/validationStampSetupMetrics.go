@@ -22,8 +22,8 @@ THE SOFTWARE.
 package cmd
 
 import (
-	client "ontrack-cli/client"
-	config "ontrack-cli/config"
+	client "yontrack/client"
+	config "yontrack/config"
 
 	"github.com/spf13/cobra"
 )
@@ -36,7 +36,7 @@ var validationStampSetupMetricsCmd = &cobra.Command{
 
 For example:
 
-	ontrack-cli vs setup metrics --project PROJECT --branch BRANCH --validation STAMP
+	yontrack vs setup metrics --project PROJECT --branch BRANCH --validation STAMP
 `,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		project, err := cmd.Flags().GetString("project")
