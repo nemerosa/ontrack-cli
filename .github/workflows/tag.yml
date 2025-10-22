@@ -10,23 +10,15 @@ jobs:
   release:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
-    - name: Set up Go
-      uses: actions/setup-go@v4
-      with:
-        go-version: 1.21.1
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: 1.21.1
 
-#    - uses: nemerosa/ontrack-github-actions-cli-setup@v2.0.3
-#      id: ontrack
-#      with:
-#        only-for: nemerosa
-#        url: https://ontrack.nemerosa.net
-#        token: ${{ secrets.ONTRACK_TOKEN }}
-#        github-token: ${{ github.token }}
-
-    - name: Get version
-      run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
+      - name: Get version
+        run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
     
 #    - name: Get Ontrack information
 #      # TODO Use a built-in action, included into the setup
@@ -46,8 +38,8 @@ jobs:
 #        echo BUILD=$BUILD
 #        echo BUILD_ID=$BUILD_ID
 
-    - name: Build packages
-      run: ./go-executable-build.bash ${VERSION}
+      - name: Build packages
+        run: ./go-executable-build.bash ${VERSION}
 
     # - name: Change log since last release
     #   # TODO Use a built-in action
@@ -63,16 +55,16 @@ jobs:
     #     echo LOG=$LOG
     #     echo "LOG=$LOG" >> $GITHUB_ENV
 
-    - name: Release
-      uses: softprops/action-gh-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        body: |
-          Version ${{ env.VERSION }}
-
-          ${{ env.LOG }}
-        files: yontrack-*
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          body: |
+            Version ${{ env.VERSION }}
+  
+            ${{ env.LOG }}
+          files: yontrack-*
 
 #    - name: Release marker in Ontrack
 #      run: |
