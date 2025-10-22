@@ -4,3 +4,10 @@ configuration:
     branch:
       validations:
         BUILD: {}
+        TESTS:
+          tests: {}
+      promotion:
+        BRONZE:
+          validations:
+            - BUILD
+            - TESTS
