@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"encoding/json"
 	"fmt"
 	"ontrack-cli/client"
 	"ontrack-cli/config"
@@ -54,11 +55,11 @@ environment variables.
 		}
 		_, _ = fmt.Fprintf(os.Stderr, "SCM: %s\n", scm)
 
-		output, err := cmd.Flags().GetBool("output")
+		output, err := cmd.Flags().GetString("output")
 		if err != nil {
 			return err
 		}
-		_, _ = fmt.Fprintf(os.Stderr, "Output: %t\n", output)
+		_, _ = fmt.Fprintf(os.Stderr, "Output: %s\n", output)
 
 		// Env vars from a file
 		envFile, err := cmd.Flags().GetString("env-file")
@@ -211,14 +212,24 @@ environment variables.
 		}
 
 		// Output
-		if output {
+		if output != "" {
 			build := data.ConfigureBuild.Build
-			_, _ = fmt.Fprintf(os.Stdout, "export YONTRACK_PROJECT_ID=%s\n", build.Branch.Project.ID)
-			_, _ = fmt.Fprintf(os.Stdout, "export YONTRACK_PROJECT_NAME=%s\n", build.Branch.Project.Name)
-			_, _ = fmt.Fprintf(os.Stdout, "export YONTRACK_BRANCH_ID=%s\n", build.Branch.ID)
-			_, _ = fmt.Fprintf(os.Stdout, "export YONTRACK_BRANCH_NAME=%s\n", build.Branch.Name)
-			_, _ = fmt.Fprintf(os.Stdout, "export YONTRACK_BUILD_ID=%s\n", build.ID)
-			_, _ = fmt.Fprintf(os.Stdout, "export YONTRACK_BUILD_NAME=%s\n", build.Name)
+			if output == "env" {
+				_, _ = fmt.Fprintf(os.Stdout, "export YONTRACK_PROJECT_ID=%s\n", build.Branch.Project.ID)
+				_, _ = fmt.Fprintf(os.Stdout, "export YONTRACK_PROJECT_NAME=%s\n", build.Branch.Project.Name)
+				_, _ = fmt.Fprintf(os.Stdout, "export YONTRACK_BRANCH_ID=%s\n", build.Branch.ID)
+				_, _ = fmt.Fprintf(os.Stdout, "export YONTRACK_BRANCH_NAME=%s\n", build.Branch.Name)
+				_, _ = fmt.Fprintf(os.Stdout, "export YONTRACK_BUILD_ID=%s\n", build.ID)
+				_, _ = fmt.Fprintf(os.Stdout, "export YONTRACK_BUILD_NAME=%s\n", build.Name)
+			} else if output == "json" {
+				jsonBytes, err := json.MarshalIndent(build, "", "  ")
+				if err != nil {
+					return fmt.Errorf("failed to marshal build to JSON: %w", err)
+				}
+				_, _ = fmt.Fprintf(os.Stdout, "%s\n", jsonBytes)
+			} else {
+				return fmt.Errorf("unsupported output type %s", output)
+			}
 		}
 
 		// OK
@@ -235,7 +246,7 @@ func init() {
 	ciConfigCmd.Flags().String("env-file", "", "Path to an env file containing key/values (one per line, using the KEY=VALUE format)")
 	ciConfigCmd.Flags().String("ci", "", "ID of the CI engine to use. If not specified, Yontrack will try to guess it based on the provided environment variables.")
 	ciConfigCmd.Flags().String("scm", "", "ID of the SCM engine to use. If not specified, Yontrack will try to guess it based on the provided environment variables.")
-	ciConfigCmd.Flags().Bool("output", true, "Outputs shell export of variables, useable by other commands.")
+	ciConfigCmd.Flags().StringP("output", "o", "", "Output of the command: env, json.")
 
 	// _ = ciConfigCmd.MarkFlagRequired("file")
 }

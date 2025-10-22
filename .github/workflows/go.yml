@@ -61,15 +61,13 @@ jobs:
           --graphql-log \
           --env-all GITHUB_ \
           --env-all VERSION \
-          --output > .yontrack.env
+          --output env > .yontrack.env
+        
+        grep -v '^#' .yontrack.env | grep -v '^$' | sed 's/^export //' >> $GITHUB_ENV
 
     - if: ${{ always() && github.event_name != 'pull_request' }}
       name: Yontrack validation
-      # TODO Remove cat
       run: |
-        cat ./.yontrack.env
-        source ./.yontrack.env
-        env
         ./ontrack-cli-linux-amd64 validate \
           --validation BUILD
 
