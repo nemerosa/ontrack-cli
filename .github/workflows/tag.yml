@@ -56,10 +56,6 @@ jobs:
             --to $YONTRACK_BUILD_ID \
             --format markdown \
             --grouping "Features=feature|Enhancements=enhancement|Bugs=bug" > .yontrack.log.md
-          
-          echo "LOG<<EOF" >> $GITHUB_ENV
-          cat .yontrack.log.md >> $GITHUB_ENV
-          echo "EOF" >> $GITHUB_ENV
 
       - name: Release
         uses: softprops/action-gh-release@v2.4.1
@@ -67,10 +63,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           draft: true # TODO Set to true when ready
-          body: |
-            Version ${{ env.VERSION }}
-  
-            ${{ env.LOG }}
+          body_path: .yontrack.log.md
           files: yontrack-*
 
       - name: Release validation
