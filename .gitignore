@@ -9,3 +9,6 @@ cmd/.DS_Store
 
 # IDE
 /.idea
+
+# Environment files
+/*.env

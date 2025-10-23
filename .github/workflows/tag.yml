@@ -19,24 +19,30 @@ jobs:
 
       - name: Get version
         run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
+
+      - name: Yontrack setup
+        run: |
+          COMMIT=$(git rev-parse $VERSION)
+          
+          ./yontrack-linux-amd64 config create \
+              local \
+              ${{ vars.YONTRACK_DEMO_URL }} \
+              --token ${{ secrets.YONTRACK_DEMO_TOKEN }}
+          
+          ./yontrack-linux-amd64 build search \
+            --project ontrack-cli \
+            --commit $COMMIT \
+            --count 1 \
+            --output env > .yontrack.env
+          
+          grep -v '^#' .yontrack.env | grep -v '^$' | sed 's/^export //' >> $GITHUB_ENV
     
-#    - name: Get Ontrack information
-#      # TODO Use a built-in action, included into the setup
-#      run: |
-#        RESULT=`yontrack build search --project ${{ steps.ontrack.outputs.project }} --display-branch --commit ${{ github.sha }} --count 1`
-#        BRANCH=(${RESULT%/*})
-#        BUILD=(${RESULT#*/})
-#        BUILD_ID=`yontrack build search --project ${{ steps.ontrack.outputs.project }} --display-id --name $BUILD --count 1`
-#        echo "BRANCH=$BRANCH" >> $GITHUB_ENV
-#        echo "BUILD=$BUILD" >> $GITHUB_ENV
-#        echo "BUILD_ID=$BUILD_ID" >> $GITHUB_ENV
-#
-#    - name: Displays version and build
-#      run: |
-#        echo VERSION=${VERSION}
-#        echo BRANCH=$BRANCH
-#        echo BUILD=$BUILD
-#        echo BUILD_ID=$BUILD_ID
+      - name: Displays version and build
+        run: |
+          echo VERSION=${VERSION}
+          echo YONTRACK_PROJECT_NAME=$YONTRACK_PROJECT_NAME
+          echo YONTRACK_BRANCH_NAME=$YONTRACK_BRANCH_NAME
+          echo YONTRACK_BUILD_NAME=$YONTRACK_BUILD_NAME
 
       - name: Build packages
         run: ./go-executable-build.bash ${VERSION}
@@ -56,10 +62,11 @@ jobs:
     #     echo "LOG=$LOG" >> $GITHUB_ENV
 
       - name: Release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2.4.1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
+          draft: true # TODO Set to true when ready
           body: |
             Version ${{ env.VERSION }}
   

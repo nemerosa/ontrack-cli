@@ -1,28 +1,9 @@
-/*
-Copyright © 2021 Damien Coraboeuf <damien.coraboeuf@nemerosa.com>
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-THE SOFTWARE.
-*/
 package cmd
 
 import (
+	"encoding/json"
 	"fmt"
+	"os"
 	"yontrack/client"
 	config "yontrack/config"
 
@@ -73,14 +54,23 @@ You can change the display options using additional flags - see 'yontrack build 
 	},
 }
 
-type buildList struct {
-	Builds []struct {
-		Id     int
-		Name   string
-		Branch struct {
+type build struct {
+	Id          string
+	Name        string
+	DisplayName string
+	Branch      struct {
+		Id          string
+		Name        string
+		DisplayName string
+		Project     struct {
+			Id   string
 			Name string
 		}
 	}
+}
+
+type buildList struct {
+	Builds []build
 }
 
 func projectSearch(cmd *cobra.Command, project string) error {
@@ -96,8 +86,15 @@ func projectSearch(cmd *cobra.Command, project string) error {
 			) {
 				id
 				name
+				displayName
 				branch {
+					id
 					name
+					displayName
+					project {
+						id
+						name
+					}
 				}
 			}
 		}
@@ -163,9 +160,17 @@ func branchSearch(cmd *cobra.Command, project string, branch string) error {
 				branch: $branch,
 				buildBranchFilter: $buildBranchFilter
 			) {
+				id
 				name
+				displayName
 				branch {
+					id
 					name
+					displayName
+					project {
+						id
+						name
+					}
 				}
 			}
 		}
@@ -215,19 +220,68 @@ func displayBuilds(cmd *cobra.Command, data *buildList) error {
 	if err != nil {
 		return err
 	}
+	output, err := cmd.Flags().GetString("output")
+	if err != nil {
+		return err
+	}
 
-	for _, build := range data.Builds {
-		if displayBranch {
-			fmt.Printf("%s/", build.Branch.Name)
+	if output == "" {
+		for _, build := range data.Builds {
+			if displayBranch {
+				fmt.Printf(build.Branch.Name)
+			} else if displayId {
+				fmt.Println(build.Id)
+			} else {
+				fmt.Println(build.Name)
+			}
 		}
-		if displayId {
-			fmt.Println(build.Id)
+	} else {
+		count, err := cmd.Flags().GetInt("count")
+		if err != nil {
+			return err
+		}
+		if count == 1 {
+			if len(data.Builds) == 0 {
+				return fmt.Errorf("no build found")
+			} else {
+				build := data.Builds[0]
+				return displayBuildOutput(build, output)
+			}
 		} else {
-			fmt.Println(build.Name)
+			return fmt.Errorf("output not supported with multiple builds. Set count to 1 or remove the output flag")
 		}
 	}
 
 	return nil
+}
+
+func displayBuildOutput(build build, output string) error {
+	if output == "env" {
+		return displayBuildEnv(build)
+	} else if output == "json" {
+		return displayBuildJson(build)
+	} else {
+		return fmt.Errorf("unknown output format: %s", output)
+	}
+}
+
+func displayBuildEnv(build build) error {
+	_, _ = fmt.Fprintf(os.Stdout, "export YONTRACK_PROJECT_ID=%s\n", build.Branch.Project.Id)
+	_, _ = fmt.Fprintf(os.Stdout, "export YONTRACK_PROJECT_NAME=%s\n", build.Branch.Project.Name)
+	_, _ = fmt.Fprintf(os.Stdout, "export YONTRACK_BRANCH_ID=%s\n", build.Branch.Id)
+	_, _ = fmt.Fprintf(os.Stdout, "export YONTRACK_BRANCH_NAME=%s\n", build.Branch.Name)
+	_, _ = fmt.Fprintf(os.Stdout, "export YONTRACK_BUILD_ID=%s\n", build.Id)
+	_, _ = fmt.Fprintf(os.Stdout, "export YONTRACK_BUILD_NAME=%s\n", build.Name)
+	return nil
+}
+
+func displayBuildJson(build build) error {
+	jsonBytes, err := json.MarshalIndent(build, "", "  ")
+	if err != nil {
+		return fmt.Errorf("failed to marshal build to JSON: %w", err)
+	}
+	_, err = fmt.Fprintf(os.Stdout, "%s\n", jsonBytes)
+	return err
 }
 
 func fillFormWithCount(cmd *cobra.Command, form *map[string]interface{}, countField string) error {
@@ -277,17 +331,9 @@ func fillForm(cmd *cobra.Command, form *map[string]interface{}, argName string, 
 func init() {
 	buildCmd.AddCommand(buildSearchCmd)
 
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// buildSearchCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// buildSearchCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 	buildSearchCmd.Flags().StringP("project", "p", "", "Name of the project")
-	buildSearchCmd.MarkFlagRequired("project")
+	_ = buildSearchCmd.MarkFlagRequired("project")
+
 	buildSearchCmd.Flags().StringP("branch", "b", "", "Name of the branch")
 
 	// Criteria
@@ -299,7 +345,8 @@ func init() {
 	// Property criteria
 	buildSearchCmd.Flags().String("commit", "", "Commit for the build")
 
-	// Display criteria
-	buildSearchCmd.Flags().Bool("display-branch", false, "Displays branch information: <branch name>/<build name>. Used only for project-based searches.")
+	// Display options
+	buildSearchCmd.Flags().StringP("output", "o", "", "How to output the search results (env, json). Incompatible with the `display` options.")
 	buildSearchCmd.Flags().Bool("display-id", false, "Displays the build ID instead of its name.")
+	buildSearchCmd.Flags().Bool("display-branch", false, "Displays the build branch name instead of its name.")
 }
