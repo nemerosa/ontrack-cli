@@ -6,6 +6,7 @@ configuration:
         BUILD: {}
         TESTS:
           tests: {}
+        GITHUB.RELEASE: {}
       promotions:
         BRONZE:
           validations:
@@ -14,3 +15,5 @@ configuration:
         RELEASE:
           promotions:
             - BRONZE
+          validations:
+            - GITHUB.RELEASE
