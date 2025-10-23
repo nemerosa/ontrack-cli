@@ -72,6 +72,9 @@ jobs:
             ${{ env.LOG }}
           files: yontrack-*
 
-#    - name: TODO Release marker in Ontrack
-#      run: |
-#        yontrack build set-property --project ${{ steps.ontrack.outputs.project }} --branch $BRANCH --build $BUILD release $VERSION
+      - name: Release validation
+        run: |
+          # Release validation
+          ./yontrack validate --validation GITHUB.RELEASE --status PASSED
+          # Release label in Ontrack
+          yontrack build set-property release $VERSION

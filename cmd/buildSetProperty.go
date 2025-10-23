@@ -46,20 +46,8 @@ same update than the one just above:
 func init() {
 	buildCmd.AddCommand(buildSetPropertyCmd)
 
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// buildSetPropertyCmd.PersistentFlags().String("foo", "", "A help for foo")
 	buildSetPropertyCmd.PersistentFlags().StringP("project", "p", "", "Name of the project")
 	buildSetPropertyCmd.PersistentFlags().StringP("branch", "b", "", "Name of the branch")
 	buildSetPropertyCmd.PersistentFlags().StringP("build", "n", "", "Name of the build")
 
-	buildSetPropertyCmd.MarkPersistentFlagRequired("project")
-	buildSetPropertyCmd.MarkPersistentFlagRequired("branch")
-	buildSetPropertyCmd.MarkPersistentFlagRequired("build")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// buildSetPropertyCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
