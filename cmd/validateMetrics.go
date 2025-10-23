@@ -26,6 +26,7 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"yontrack/utils"
 
 	"github.com/spf13/cobra"
 
@@ -48,18 +49,7 @@ An alternative syntax is:
 	yontrack validate -p PROJECT -b BRANCH -n BUILD -v VALIDATION metrics --metrics name1=value1,name2=value2
 `,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		project, err := cmd.Flags().GetString("project")
-		if err != nil {
-			return err
-		}
-
-		branch, err := cmd.Flags().GetString("branch")
-		if err != nil {
-			return err
-		}
-		branch = NormalizeBranchName(branch)
-
-		build, err := cmd.Flags().GetString("build")
+		project, branch, build, err := utils.GetProjectBranchBuildFlags(cmd, false, true)
 		if err != nil {
 			return err
 		}

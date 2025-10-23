@@ -1,6 +1,8 @@
 package cmd
 
 import (
+	"yontrack/utils"
+
 	"github.com/spf13/cobra"
 
 	"yontrack/client"
@@ -25,21 +27,7 @@ and the same command run a second time won't do anything.
 }
 
 func buildSetup(cmd *cobra.Command) error {
-	project, err := cmd.Flags().GetString("project")
-	if err != nil {
-		return err
-	}
-
-	branch, err := cmd.Flags().GetString("branch")
-	if err != nil {
-		return err
-	}
-	branch = NormalizeBranchName(branch)
-
-	build, err := cmd.Flags().GetString("build")
-	if err != nil {
-		return err
-	}
+	project, branch, build, err := utils.GetProjectBranchBuildFlags(cmd, false, true)
 
 	description, err := cmd.Flags().GetString("description")
 	if err != nil {

@@ -6,6 +6,7 @@ import (
 	"os"
 	"yontrack/client"
 	config "yontrack/config"
+	"yontrack/utils"
 
 	"github.com/spf13/cobra"
 )
@@ -34,16 +35,10 @@ By default, only the build names are printed, one per line.
 You can change the display options using additional flags - see 'yontrack build search --help' to get their list.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 
-		project, err := cmd.Flags().GetString("project")
+		project, branch, err := utils.GetProjectBranchFlags(cmd, true, true)
 		if err != nil {
 			return err
 		}
-
-		branch, err := cmd.Flags().GetString("branch")
-		if err != nil {
-			return err
-		}
-		branch = NormalizeBranchName(branch)
 
 		// Project vs. branch search
 		if branch == "" {
@@ -332,8 +327,6 @@ func init() {
 	buildCmd.AddCommand(buildSearchCmd)
 
 	buildSearchCmd.Flags().StringP("project", "p", "", "Name of the project")
-	_ = buildSearchCmd.MarkFlagRequired("project")
-
 	buildSearchCmd.Flags().StringP("branch", "b", "", "Name of the branch")
 
 	// Criteria

@@ -22,6 +22,8 @@ THE SOFTWARE.
 package cmd
 
 import (
+	"yontrack/utils"
+
 	"github.com/spf13/cobra"
 
 	client "yontrack/client"
@@ -41,12 +43,7 @@ For example:
 As of now, this also sets the "GitCommitPropertyLink" property by default (builds must have a Git commit).
 `,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		project, err := cmd.Flags().GetString("project")
-		if err != nil {
-			return err
-		}
-
-		branch, err := cmd.Flags().GetString("branch")
+		project, branch, err := utils.GetProjectBranchFlags(cmd, false, false)
 		if err != nil {
 			return err
 		}
@@ -58,7 +55,7 @@ As of now, this also sets the "GitCommitPropertyLink" property by default (build
 		if gitBranch == "" {
 			gitBranch = branch
 		}
-		branch = NormalizeBranchName(branch)
+		branch = utils.NormalizeBranchName(branch)
 
 		cfg, err := config.GetSelectedConfiguration()
 		if err != nil {

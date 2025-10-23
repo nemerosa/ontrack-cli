@@ -6,6 +6,7 @@ import (
 	"slices"
 	client "yontrack/client"
 	config "yontrack/config"
+	"yontrack/utils"
 
 	"github.com/spf13/cobra"
 	"gopkg.in/yaml.v2"
@@ -79,17 +80,11 @@ promotions:
 		- deploy
 `,
 	RunE: func(cmd *cobra.Command, args []string) error {
+		project, branch, err := utils.GetProjectBranchFlags(cmd, false, true)
+		if err != nil {
+			return err
+		}
 
-		// Parameters
-		project, err := cmd.Flags().GetString("project")
-		if err != nil {
-			return err
-		}
-		branch, err := cmd.Flags().GetString("branch")
-		if err != nil {
-			return err
-		}
-		branch = NormalizeBranchName(branch)
 		promotionYamlPath, err := cmd.Flags().GetString("yaml")
 		if err != nil {
 			return err
@@ -114,7 +109,10 @@ promotions:
 		if err != nil {
 			return err
 		}
-		yaml.Unmarshal(buf, &root)
+		err = yaml.Unmarshal(buf, &root)
+		if err != nil {
+			return err
+		}
 
 		// Setup of validations
 		var createdValidations []string

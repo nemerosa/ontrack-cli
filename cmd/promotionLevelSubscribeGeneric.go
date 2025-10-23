@@ -1,9 +1,11 @@
 package cmd
 
 import (
-	"github.com/spf13/cobra"
 	"yontrack/client"
 	"yontrack/config"
+	"yontrack/utils"
+
+	"github.com/spf13/cobra"
 )
 
 var promotionLevelSubscribeGenericCmd = &cobra.Command{
@@ -20,16 +22,10 @@ You can use subcommands to subscribe to events on a promotion level. For example
 By default, the subscription listens to "new_promotion_run" events.
 `,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		project, err := cmd.Flags().GetString("project")
+		project, branch, err := utils.GetProjectBranchFlags(cmd, false, true)
 		if err != nil {
 			return err
 		}
-
-		branch, err := cmd.Flags().GetString("branch")
-		if err != nil {
-			return err
-		}
-		branch = NormalizeBranchName(branch)
 
 		promotion, err := cmd.Flags().GetString("promotion")
 		if err != nil {

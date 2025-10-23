@@ -2,6 +2,8 @@ package cmd
 
 import (
 	"encoding/json"
+	"yontrack/utils"
+
 	"github.com/spf13/cobra"
 	yamljson "sigs.k8s.io/yaml"
 
@@ -27,15 +29,10 @@ This sets up the auto-versioning for a branch from a YAML file. The path default
 The format of this file is full described in the Ontrack documentation.
 `,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		project, err := cmd.Flags().GetString("project")
+		project, branch, err := utils.GetProjectBranchFlags(cmd, false, true)
 		if err != nil {
 			return err
 		}
-		branch, err := cmd.Flags().GetString("branch")
-		if err != nil {
-			return err
-		}
-		branch = NormalizeBranchName(branch)
 		avConfigPath, err := cmd.Flags().GetString("yaml")
 		if err != nil {
 			return err

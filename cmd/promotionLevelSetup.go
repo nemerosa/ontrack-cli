@@ -22,6 +22,8 @@ THE SOFTWARE.
 package cmd
 
 import (
+	"yontrack/utils"
+
 	"github.com/spf13/cobra"
 
 	client "yontrack/client"
@@ -45,15 +47,10 @@ The promotion can be set to be in "auto promotion" mode by using addtional optio
 		--depends-on SILVER
 `,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		project, err := cmd.Flags().GetString("project")
+		project, branch, err := utils.GetProjectBranchFlags(cmd, false, true)
 		if err != nil {
 			return err
 		}
-		branch, err := cmd.Flags().GetString("branch")
-		if err != nil {
-			return err
-		}
-		branch = NormalizeBranchName(branch)
 		promotion, err := cmd.Flags().GetString("promotion")
 		if err != nil {
 			return err

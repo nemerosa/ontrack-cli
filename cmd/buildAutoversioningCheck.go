@@ -1,9 +1,11 @@
 package cmd
 
 import (
-	"github.com/spf13/cobra"
 	"yontrack/client"
 	"yontrack/config"
+	"yontrack/utils"
+
+	"github.com/spf13/cobra"
 )
 
 var buildAutoversioningCheckCmd = &cobra.Command{
@@ -16,18 +18,7 @@ For example:
 
     yontrack build auto-versioning-check --project my-project --branch release/1.0 --build 1`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		project, err := cmd.Flags().GetString("project")
-		if err != nil {
-			return err
-		}
-
-		branch, err := cmd.Flags().GetString("branch")
-		if err != nil {
-			return err
-		}
-		branch = NormalizeBranchName(branch)
-
-		build, err := cmd.Flags().GetString("build")
+		project, branch, build, err := utils.GetProjectBranchBuildFlags(cmd, false, true)
 		if err != nil {
 			return err
 		}

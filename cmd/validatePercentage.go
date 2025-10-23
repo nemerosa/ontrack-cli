@@ -22,6 +22,8 @@ THE SOFTWARE.
 package cmd
 
 import (
+	"yontrack/utils"
+
 	"github.com/spf13/cobra"
 
 	client "yontrack/client"
@@ -40,18 +42,7 @@ For example:
     yontrack validate -p PROJECT -b BRANCH -n BUILD -v VALIDATION percentage --value 87
 `,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		project, err := cmd.Flags().GetString("project")
-		if err != nil {
-			return err
-		}
-
-		branch, err := cmd.Flags().GetString("branch")
-		if err != nil {
-			return err
-		}
-		branch = NormalizeBranchName(branch)
-
-		build, err := cmd.Flags().GetString("build")
+		project, branch, build, err := utils.GetProjectBranchBuildFlags(cmd, false, true)
 		if err != nil {
 			return err
 		}

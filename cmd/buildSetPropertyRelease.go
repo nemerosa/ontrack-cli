@@ -24,6 +24,7 @@ package cmd
 import (
 	"yontrack/client"
 	"yontrack/config"
+	"yontrack/utils"
 
 	"github.com/spf13/cobra"
 )
@@ -40,18 +41,7 @@ yontrack build set-property --project PROJECT --branch BRANCH --build BUILD rele
 `,
 	Args: cobra.ExactValidArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
-		project, err := cmd.Flags().GetString("project")
-		if err != nil {
-			return err
-		}
-
-		branch, err := cmd.Flags().GetString("branch")
-		if err != nil {
-			return err
-		}
-		branch = NormalizeBranchName(branch)
-
-		build, err := cmd.Flags().GetString("build")
+		project, branch, build, err := utils.GetProjectBranchBuildFlags(cmd, false, true)
 		if err != nil {
 			return err
 		}

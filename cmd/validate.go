@@ -3,7 +3,7 @@ package cmd
 import (
 	"encoding/json"
 	"errors"
-	"os"
+	"yontrack/utils"
 
 	"github.com/spf13/cobra"
 
@@ -38,38 +38,9 @@ Note that subcommands, dedicated to the most common types are also available. Fo
 Type 'yontrack validate --help' to get a list of all options.
 `,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		project, err := cmd.Flags().GetString("project")
+		project, branch, build, err := utils.GetProjectBranchBuildFlags(cmd, false, true)
 		if err != nil {
 			return err
-		}
-		if project == "" {
-			project = os.Getenv("YONTRACK_PROJECT_NAME")
-		}
-		if project == "" {
-			return errors.New("project is required (use --project flag or YONTRACK_PROJECT_NAME environment variable)")
-		}
-
-		branch, err := cmd.Flags().GetString("branch")
-		if err != nil {
-			return err
-		}
-		if branch == "" {
-			branch = os.Getenv("YONTRACK_BRANCH_NAME")
-		}
-		if branch == "" {
-			return errors.New("branch is required (use --branch flag or YONTRACK_BRANCH_NAME environment variable)")
-		}
-		branch = NormalizeBranchName(branch)
-
-		build, err := cmd.Flags().GetString("build")
-		if err != nil {
-			return err
-		}
-		if build == "" {
-			build = os.Getenv("YONTRACK_BUILD_NAME")
-		}
-		if build == "" {
-			return errors.New("build is required (use --build flag or YONTRACK_BUILD_NAME environment variable)")
 		}
 
 		validation, err := cmd.Flags().GetString("validation")
