@@ -20,6 +20,11 @@ jobs:
       - name: Get version
         run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
 
+      - name: Build packages
+        run: |
+          ./go-executable-build.bash ${VERSION}
+          cp yontrack-linux-amd64 yontrack
+
       - name: Yontrack setup
         run: |
           COMMIT=$(git rev-parse $VERSION)
@@ -44,22 +49,16 @@ jobs:
           echo YONTRACK_BRANCH_NAME=$YONTRACK_BRANCH_NAME
           echo YONTRACK_BUILD_NAME=$YONTRACK_BUILD_NAME
 
-      - name: Build packages
-        run: ./go-executable-build.bash ${VERSION}
-
-    # - name: Change log since last release
-    #   # TODO Use a built-in action
-    #   run: |
-    #     LAST_RELEASE=`yontrack build search --project ${{ steps.ontrack.outputs.project }} --branch $BRANCH --with-promotion RELEASE --count 1 --display-id`
-    #     echo LAST_RELEASE=$LAST_RELEASE
-    #     if [ $LAST_RELEASE != "" ]
-    #     then
-    #       LOG=`yontrack build changelog export --from $LAST_RELEASE --to $BUILD_ID --grouping "Features=feature|Enhancements=enhancement|Bugs=bug"`
-    #     else
-    #       LOG=""
-    #     fi
-    #     echo LOG=$LOG
-    #     echo "LOG=$LOG" >> $GITHUB_ENV
+      - name: Change log since last release
+        run: |
+          LOG=$(yontrack build changelog export \
+            --from-promotion RELEASE \
+            --to $YONTRACK_BUILD_ID \
+            --format markdown \
+            --grouping "Features=feature|Enhancements=enhancement|Bugs=bug"
+          )
+          echo LOG=$LOG
+          echo "LOG=$LOG" >> $GITHUB_ENV
 
       - name: Release
         uses: softprops/action-gh-release@v2.4.1
@@ -73,6 +72,6 @@ jobs:
             ${{ env.LOG }}
           files: yontrack-*
 
-#    - name: Release marker in Ontrack
+#    - name: TODO Release marker in Ontrack
 #      run: |
 #        yontrack build set-property --project ${{ steps.ontrack.outputs.project }} --branch $BRANCH --build $BUILD release $VERSION
