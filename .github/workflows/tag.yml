@@ -51,7 +51,7 @@ jobs:
 
       - name: Change log since last release
         run: |
-          LOG=$(yontrack build changelog export \
+          LOG=$(./yontrack build changelog export \
             --from-promotion RELEASE \
             --to $YONTRACK_BUILD_ID \
             --format markdown \
@@ -77,4 +77,4 @@ jobs:
           # Release validation
           ./yontrack validate --validation GITHUB.RELEASE --status PASSED
           # Release label in Ontrack
-          yontrack build set-property release $VERSION
+          ./yontrack build set-property release $VERSION
