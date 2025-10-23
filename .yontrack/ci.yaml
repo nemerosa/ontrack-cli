@@ -11,3 +11,6 @@ configuration:
           validations:
             - BUILD
             - TESTS
+        RELEASE:
+          promotions:
+            - BRONZE
