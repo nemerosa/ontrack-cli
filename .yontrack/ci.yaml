@@ -7,13 +7,4 @@ configuration:
         TESTS:
           tests: {}
         GITHUB.RELEASE: {}
-      promotions:
-        BRONZE:
-          validations:
-            - BUILD
-            - TESTS
-        RELEASE:
-          promotions:
-            - BRONZE
-          validations:
-            - GITHUB.RELEASE
+      promotions: @.yontrack/promotions.yaml

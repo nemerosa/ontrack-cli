@@ -131,7 +131,11 @@ environment variables.
 		if err != nil {
 			return fmt.Errorf("failed to read configuration file: %w", err)
 		}
-		configContent := string(contentBytes)
+		initialConfigContent := string(contentBytes)
+		configContent, err := utils.ExpandConfig(initialConfigContent)
+		if err != nil {
+			return fmt.Errorf("failed to expand configuration: %w", err)
+		}
 
 		_, _ = fmt.Fprintf(os.Stderr, "Configuration content:\n%s\n", configContent)
 
