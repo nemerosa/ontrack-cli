@@ -22,7 +22,7 @@ jobs:
 
       - name: Build packages
         run: |
-          ./go-executable-build.bash ${VERSION}
+          ./go-executable-build.bash ${VERSION} release
           cp yontrack-linux-amd64 yontrack
 
       - name: Yontrack setup
@@ -64,7 +64,9 @@ jobs:
         with:
           draft: true # TODO Set to true when ready
           body_path: .yontrack.log.md
-          files: yontrack-*
+          files: |
+            yontrack-*
+            ontrack-cli-*
 
       - name: Release validation
         run: |
