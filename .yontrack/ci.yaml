@@ -7,4 +7,4 @@ configuration:
         TESTS:
           tests: {}
         GITHUB.RELEASE: {}
-      promotions: @.yontrack/promotions.yaml
+      promotions: '@.yontrack/promotions.yaml'
