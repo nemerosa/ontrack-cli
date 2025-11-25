@@ -62,7 +62,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          draft: true # TODO Set to true when ready
+          prerelease: true # TODO Remove when ready
           body_path: .yontrack.log.md
           files: |
             yontrack-*
