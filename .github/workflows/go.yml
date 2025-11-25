@@ -33,8 +33,8 @@ jobs:
         run: |
           ./yontrack-linux-amd64 config create \
               local \
-              ${{ vars.YONTRACK_DEMO_URL }} \
-              --token ${{ secrets.YONTRACK_DEMO_TOKEN }}
+              ${{ vars.ONTRACK_URL }} \
+              --token ${{ secrets.ONTRACK_TOKEN }}
           
           ./yontrack-linux-amd64 ci config \
             --graphql-log \
