@@ -149,7 +149,7 @@ yontrack validation-stamp setup --project <project> --branch <branch> --validati
 The `validation-stamp setup` (or `vs setup` for a shortcut) command is idempotent.
 
 Additionally, a validation stamp can be created with a
-[data type](https://static.nemerosa.net/ontrack/release/latest/docs/doc/index.html#validation-stamps-data)
+[data type](https://docs.yontrack.com/yontrack/ref/latest/content/concepts/model/index.html#validation-stamp-types)
 and its configuration. For example, to create a CHML validation type:
 
 ```bash
@@ -387,7 +387,7 @@ dependencies:
 ```
 
 > The format of this file is fully described in the Ontrack documentation at
-> https://static.nemerosa.net/ontrack/release/latest/docs/doc/index.html#auto-versioning-config
+> https://docs.yontrack.com/yontrack/ref/latest/content/integrations/auto-versioning/auto-versioning.html
 
 In a parent repository, you can use the auto-versioning check to automatically create the dependency links.
 
