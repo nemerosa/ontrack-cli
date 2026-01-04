@@ -126,8 +126,5 @@ func init() {
 	promoteCmd.Flags().StringP("promotion", "l", "", "Name of the promotion level")
 	promoteCmd.Flags().StringP("description", "d", "", "Description for the promotion")
 
-	promoteCmd.MarkFlagRequired("project")
-	promoteCmd.MarkFlagRequired("branch")
-	promoteCmd.MarkFlagRequired("build")
-	promoteCmd.MarkFlagRequired("promotion")
+	_ = promoteCmd.MarkFlagRequired("promotion")
 }
