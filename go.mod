@@ -5,6 +5,7 @@ go 1.22
 toolchain go1.24.2
 
 require (
+	github.com/Masterminds/sprig/v3 v3.3.0
 	github.com/go-resty/resty/v2 v2.4.0
 	github.com/gobwas/glob v0.2.3
 	github.com/mitchellh/go-homedir v1.1.0
@@ -19,7 +20,6 @@ require (
 	dario.cat/mergo v1.0.1 // indirect
 	github.com/Masterminds/goutils v1.1.1 // indirect
 	github.com/Masterminds/semver/v3 v3.3.0 // indirect
-	github.com/Masterminds/sprig/v3 v3.3.0 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/fsnotify/fsnotify v1.4.7 // indirect
 	github.com/google/uuid v1.6.0 // indirect
