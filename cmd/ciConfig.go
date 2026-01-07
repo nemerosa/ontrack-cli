@@ -103,7 +103,7 @@ environment variables.
 		}
 
 		// Get the env values from --env flags and merge (these take priority)
-		cmdEnvVars, err := getEnvMap(cmd)
+		cmdEnvVars, err := getEnvMap(cmd, "env")
 		if err != nil {
 			return err
 		}
@@ -126,15 +126,25 @@ environment variables.
 			})
 		}
 
+		// Get the variables from the --var flags
+		cmdVars, err := getEnvMap(cmd, "var")
+		if err != nil {
+			return err
+		}
+
 		// Reading the configuration file
 		contentBytes, err := os.ReadFile(file)
 		if err != nil {
 			return fmt.Errorf("failed to read configuration file: %w", err)
 		}
 		initialConfigContent := string(contentBytes)
-		configContent, err := utils.ExpandConfig(initialConfigContent)
+		configExpanded, err := utils.ExpandConfig(initialConfigContent)
 		if err != nil {
 			return fmt.Errorf("failed to expand configuration: %w", err)
+		}
+		configContent, err := utils.RenderConfig(configExpanded, cmdVars, envVars)
+		if err != nil {
+			return fmt.Errorf("failed to render configuration as a template: %w", err)
 		}
 
 		_, _ = fmt.Fprintf(os.Stderr, "Configuration content:\n%s\n", configContent)
@@ -251,13 +261,14 @@ func init() {
 	ciConfigCmd.Flags().String("ci", "", "ID of the CI engine to use. If not specified, Yontrack will try to guess it based on the provided environment variables.")
 	ciConfigCmd.Flags().String("scm", "", "ID of the SCM engine to use. If not specified, Yontrack will try to guess it based on the provided environment variables.")
 	ciConfigCmd.Flags().StringP("output", "o", "", "Output of the command: env, json.")
+	ciConfigCmd.Flags().StringSliceP("var", "v", []string{}, "Arbitrary variables in KEY=VALUE format to pass to the evaluation of the configuration file as a Go template. Each variable is accessed from the `vars` scope.")
 
 	// _ = ciConfigCmd.MarkFlagRequired("file")
 }
 
 // getEnvMap parses the --env flags and returns a map of key-value pairs
-func getEnvMap(cmd *cobra.Command) (map[string]string, error) {
-	envSlice, err := cmd.Flags().GetStringSlice("env")
+func getEnvMap(cmd *cobra.Command, flagName string) (map[string]string, error) {
+	envSlice, err := cmd.Flags().GetStringSlice(flagName)
 	if err != nil {
 		return nil, err
 	}
@@ -267,7 +278,7 @@ func getEnvMap(cmd *cobra.Command) (map[string]string, error) {
 		// Split on the first '=' only
 		parts := splitOnce(env, '=')
 		if len(parts) != 2 {
-			return nil, fmt.Errorf("invalid env format: %s (expected KEY=VALUE)", env)
+			return nil, fmt.Errorf("invalid env/var format: %s (expected KEY=VALUE)", env)
 		}
 		envMap[parts[0]] = parts[1]
 	}

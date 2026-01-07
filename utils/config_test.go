@@ -288,3 +288,53 @@ project:
 	assert.Contains(t, result, "type: junit")
 	assert.Contains(t, result, "path: test-results.xml")
 }
+
+func TestRenderConfig(t *testing.T) {
+	vars := map[string]string{
+		"version": "1.0.0",
+		"name":    "test",
+	}
+	envMap := map[string]string{
+		"HOME": "/home/user",
+	}
+
+	tests := []struct {
+		name     string
+		content  string
+		expected string
+	}{
+		{
+			name:     "simple variables",
+			content:  "name: {{ vars \"name\" }}\nversion: {{ vars \"version\" }}",
+			expected: "name: test\nversion: 1.0.0",
+		},
+		{
+			name:     "default variable",
+			content:  "other: {{ getvar \"other\" \"default\" }}",
+			expected: "other: default",
+		},
+		{
+			name:     "environment variable",
+			content:  "home: {{ env \"HOME\" }}",
+			expected: "home: /home/user",
+		},
+		{
+			name:     "default environment variable",
+			content:  "path: {{ getenv \"PATH\" \"/usr/bin\" }}",
+			expected: "path: /usr/bin",
+		},
+		{
+			name:     "sprig functions",
+			content:  "upper: {{ \"hello\" | upper }}",
+			expected: "upper: HELLO",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			result, err := RenderConfig(tt.content, vars, envMap)
+			require.NoError(t, err)
+			assert.Equal(t, tt.expected, result)
+		})
+	}
+}

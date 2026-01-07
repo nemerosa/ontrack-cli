@@ -102,6 +102,74 @@ configuration:
 > For more information about the configuration, see the Yontrack documentation to see how to configure:
 > properties, promotions, validation stamps, notifications, workflows, auto-versioning, custom setup, etc.
 
+### Templating
+
+The configuration file (defaulting to `.yontrack/ci.yaml`) is processed as a template before being parsed.
+
+#### File inclusion
+
+You can include other YAML files by using the `@path` syntax as a value:
+
+```yaml
+version: v1
+configuration:
+  branch:
+    validations: '@.yontrack/validations.yaml'
+```
+
+If the path is relative, it is resolved relative to the file containing the reference.
+
+#### Variables
+
+You can access variables passed via the `--var` option:
+
+```shell
+yontrack ci config --var version=1.0.0
+```
+
+And then in your configuration:
+
+```yaml
+version: v1
+configuration:
+  build:
+    name: "{{ vars \"version\" }}"
+```
+
+You can also use a default value if the variable is not set:
+
+```yaml
+name: "{{ getvar \"version\" \"development\" }}"
+```
+
+#### Environment variables
+
+Similarly, you can access environment variables passed via `--env` or `--env-file`:
+
+```yaml
+version: v1
+configuration:
+  project:
+    name: "{{ env \"GIT_URL\" | base }}"
+```
+
+With default values:
+
+```yaml
+version: v1
+configuration:
+  project:
+    name: "{{ getenv \"PROJECT_NAME\" \"my-project\" }}"
+```
+
+#### Sprig functions
+
+The [Sprig](https://masterminds.github.io/sprig/) library is integrated, providing many useful functions for string manipulation, math, and more.
+
+```yaml
+name: "{{ vars \"name\" | upper | truncate 10 }}"
+```
+
 ## Configuration and using it in other commands
 
 Most of the other commands are able to use the following

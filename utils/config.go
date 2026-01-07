@@ -5,7 +5,9 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"text/template"
 
+	"github.com/Masterminds/sprig/v3"
 	"gopkg.in/yaml.v2"
 )
 
@@ -89,4 +91,52 @@ func expandNode(node interface{}, baseDir string) (interface{}, error) {
 		// For other types (int, bool, nil, etc.), return as-is
 		return v, nil
 	}
+}
+
+func RenderConfig(content string, vars map[string]string, envMap map[string]string) (string, error) {
+	// Map of functions
+	funcMap := sprig.TxtFuncMap()
+
+	// Add custom env function for environment variable access
+	funcMap["env"] = func(key string) string {
+		if val, exists := envMap[key]; exists {
+			return val
+		}
+		return ""
+	}
+	funcMap["getenv"] = func(key, defaultVal string) string {
+		if val, exists := envMap[key]; exists && val != "" {
+			return val
+		}
+		return defaultVal
+	}
+
+	// Add custom vars function for variable access
+	funcMap["vars"] = func(key string) string {
+		if val, exists := vars[key]; exists {
+			return val
+		}
+		return ""
+	}
+	funcMap["getvar"] = func(key, defaultVal string) string {
+		if val, exists := vars[key]; exists && val != "" {
+			return val
+		}
+		return defaultVal
+	}
+
+	// Creating the template
+	tmpl, err := template.New("yaml").Funcs(funcMap).Parse(content)
+	if err != nil {
+		return "", fmt.Errorf("error parsing template: %w", err)
+	}
+
+	// Executing the template
+	var writer strings.Builder
+	err = tmpl.Execute(&writer, nil)
+	if err != nil {
+		return "", fmt.Errorf("error executing template: %w", err)
+	}
+
+	return writer.String(), nil
 }
