@@ -25,6 +25,4 @@ func init() {
 	buildChangelogCmd.PersistentFlags().Int("from", 0, "Build from")
 	buildChangelogCmd.PersistentFlags().String("from-promotion", "", "Build from a given promotion")
 	buildChangelogCmd.PersistentFlags().Int("to", 0, "Build to")
-
-	_ = buildChangelogCmd.MarkPersistentFlagRequired("to")
 }

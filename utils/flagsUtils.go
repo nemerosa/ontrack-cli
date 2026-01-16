@@ -3,6 +3,7 @@ package utils
 import (
 	"errors"
 	"os"
+	"strconv"
 
 	"github.com/spf13/cobra"
 )
@@ -64,6 +65,18 @@ func GetBuildFlag(cmd *cobra.Command) (string, error) {
 	} else {
 		return build, nil
 	}
+}
+
+func GetBuildIdFromEnv() (int, error) {
+	buildIdStr := os.Getenv("YONTRACK_BUILD_ID")
+	if buildIdStr == "" {
+		return 0, errors.New("use YONTRACK_BUILD_ID environment variable to set the build ID")
+	}
+	buildId, err := strconv.Atoi(buildIdStr)
+	if err != nil {
+		return 0, err
+	}
+	return buildId, nil
 }
 
 func GetProjectBranchBuildFlags(cmd *cobra.Command, ignoreEmptyBranch bool, normalizeBranch bool) (string, string, string, error) {

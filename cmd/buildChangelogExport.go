@@ -7,6 +7,7 @@ import (
 	"strings"
 	"yontrack/client"
 	"yontrack/config"
+	"yontrack/utils"
 
 	"github.com/spf13/cobra"
 )
@@ -73,8 +74,19 @@ The change log is available directly in the standard output.
 			return err
 		}
 
+		// Computing the boundaries (to)
+		var toId int
+		if to != 0 {
+			toId = to
+		} else {
+			toId, err = getToBoundary()
+			if err != nil {
+				return err
+			}
+		}
+
 		// Computing the boundaries (from)
-		fromId, err := getFromBoundary(to, from, fromPromotion)
+		fromId, err := getFromBoundary(toId, from, fromPromotion)
 		if err != nil {
 			return err
 		}
@@ -132,7 +144,7 @@ The change log is available directly in the standard output.
 
 		if err := client.GraphQLCall(cfg, query, map[string]interface{}{
 			"from":    fromId,
-			"to":      to,
+			"to":      toId,
 			"request": request,
 		}, &data); err != nil {
 			return err
@@ -146,14 +158,17 @@ The change log is available directly in the standard output.
 	},
 }
 
+func getToBoundary() (int, error) {
+	return utils.GetBuildIdFromEnv()
+}
+
 func getFromBoundary(to int, from int, promotion string) (int, error) {
 	if from > 0 {
 		return from, nil
 	} else if promotion != "" {
 		return getFromPromotion(to, promotion)
-	} else {
-		return 0, fmt.Errorf("either --from or --from-promotion must be specified")
 	}
+	return 0, fmt.Errorf("either --from or --from-promotion must be specified")
 }
 
 func getFromPromotion(to int, promotion string) (int, error) {
