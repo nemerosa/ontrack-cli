@@ -219,6 +219,10 @@ func displayBuilds(cmd *cobra.Command, data *buildList) error {
 	if err != nil {
 		return err
 	}
+	acceptNotFound, err := cmd.Flags().GetBool("accept-not-found")
+	if err != nil {
+		return err
+	}
 
 	if output == "" {
 		for _, build := range data.Builds {
@@ -237,7 +241,9 @@ func displayBuilds(cmd *cobra.Command, data *buildList) error {
 		}
 		if count == 1 {
 			if len(data.Builds) == 0 {
-				return fmt.Errorf("no build found")
+				if !acceptNotFound {
+					return fmt.Errorf("no build found")
+				}
 			} else {
 				build := data.Builds[0]
 				return displayBuildOutput(build, output)
@@ -342,4 +348,5 @@ func init() {
 	buildSearchCmd.Flags().StringP("output", "o", "", "How to output the search results (env, json). Incompatible with the `display` options.")
 	buildSearchCmd.Flags().Bool("display-id", false, "Displays the build ID instead of its name.")
 	buildSearchCmd.Flags().Bool("display-branch", false, "Displays the build branch name instead of its name.")
+	buildSearchCmd.Flags().BoolP("accept-not-found", "n", false, "If the search does not return any build, does not fail the command.")
 }
