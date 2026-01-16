@@ -62,7 +62,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          prerelease: true # TODO Remove when ready
           body_path: .yontrack.log.md
           files: |
             yontrack-*
