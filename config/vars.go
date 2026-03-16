@@ -5,3 +5,6 @@ var Version = "Snapshot"
 
 // GraphQL logging flag
 var GraphQLLogging bool = false
+
+// Configuration file path
+var ConfigFilePath string

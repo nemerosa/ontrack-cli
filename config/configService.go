@@ -3,14 +3,11 @@ package config
 import (
 	"errors"
 	"fmt"
-	"gopkg.in/yaml.v2"
+	"io"
 	"io/ioutil"
 	"os"
-	"path/filepath"
-)
 
-const (
-	configFileName = ".yontrack-config.yaml"
+	"gopkg.in/yaml.v2"
 )
 
 // Root configuration
@@ -78,9 +75,9 @@ func ReadRootConfiguration() (*RootConfig, error) {
 	}
 
 	reader, _ := os.Open(configFilePath)
-	buf, _ := ioutil.ReadAll(reader)
-	yaml.Unmarshal(buf, &root)
-	return &root, nil
+	buf, _ := io.ReadAll(reader)
+	err = yaml.Unmarshal(buf, &root)
+	return &root, err
 }
 
 // Adds a new configuration and set as default
@@ -165,7 +162,7 @@ func SetSelectedConfiguration(name string) error {
 	}
 	buf, _ := yaml.Marshal(newRoot)
 	_, _ = os.OpenFile(configFilePath, os.O_CREATE|os.O_WRONLY, 0600)
-	_ = ioutil.WriteFile(configFilePath, buf, 0600)
+	_ = os.WriteFile(configFilePath, buf, 0600)
 
 	// OK
 	return nil
@@ -191,7 +188,7 @@ func SetConfigurationState(name string, disabled bool) error {
 	}
 	buf, _ := yaml.Marshal(root)
 	_, _ = os.OpenFile(configFilePath, os.O_CREATE|os.O_WRONLY, 0600)
-	_ = ioutil.WriteFile(configFilePath, buf, 0600)
+	_ = os.WriteFile(configFilePath, buf, 0600)
 
 	// OK
 	return nil
@@ -199,10 +196,5 @@ func SetConfigurationState(name string, disabled bool) error {
 
 // Gets the path to the configuration file
 func getConfigFilePath() (string, error) {
-	path, err := os.Getwd()
-	if err != nil {
-		return "", err
-	}
-	configFilePath := filepath.Join(path, configFileName)
-	return configFilePath, nil
+	return ConfigFilePath, nil
 }
