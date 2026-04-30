@@ -304,6 +304,55 @@ The same way, you can associate a Git commit property to the build with the `--c
 yontrack build setup --project <project> --branch <branch> --build <build> --commit <commit>
 ```
 
+## Build links
+
+You can link a source build to a target build to express dependencies between projects:
+
+```bash
+yontrack build link \
+    --from-project <project> --from-build <build> \
+    --to-project <other-project> --to-build <other-build>
+```
+
+Each build (source and target) can be identified in three ways:
+
+* by project name and build name:
+
+```bash
+yontrack build link \
+    --from-project proj-a --from-build 42 \
+    --to-project proj-b --to-build 7
+```
+
+* by project name and version (release label):
+
+```bash
+yontrack build link \
+    --from-project proj-a --from-version 2.0.0 \
+    --to-project proj-b --to-version 1.2.3
+```
+
+* by build ID:
+
+```bash
+yontrack build link --from-id 101 --to-id 202
+```
+
+These can be mixed freely. An optional `--qualifier` (or `-q`) can be provided to qualify the nature of the link:
+
+```bash
+yontrack build link \
+    --from-project proj-a --from-build 42 \
+    --to-project proj-b --to-version 1.2.3 \
+    --qualifier integration
+```
+
+The `--from-project` flag defaults to the `YONTRACK_PROJECT_NAME` environment variable, and `--from-build` defaults to `YONTRACK_BUILD_NAME`, so in a typical CI context you can simply write:
+
+```bash
+yontrack build link --to-project proj-b --to-version 1.2.3
+```
+
 ## Git integration
 
 Ontrack can leverage SCM information stored in its model, in order to compute change logs or to allow searches based on commits.
