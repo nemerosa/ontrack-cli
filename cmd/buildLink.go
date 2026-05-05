@@ -165,19 +165,24 @@ func buildLink(cmd *cobra.Command) error {
 	return client.CheckDataErrors(data.LinkBuildById.Errors)
 }
 
-// resolveBuildID resolves a build to its integer ID using either name or version.
+// buildSearchFilter builds the BuildSearchForm filter map for a build lookup by name or version.
 // Exactly one of name or version must be non-empty.
-func resolveBuildID(cfg *config.Config, project, name, version string) (int, error) {
-	filter := map[string]interface{}{
-		"maximumCount": 1,
-	}
+func buildSearchFilter(name, version string) map[string]interface{} {
+	filter := map[string]interface{}{"maximumCount": 1}
 	if name != "" {
 		filter["buildName"] = name
 		filter["buildExactMatch"] = true
 	} else {
-		filter["propertyName"] = releasePropertyType
+		filter["property"] = releasePropertyType
 		filter["propertyValue"] = version
 	}
+	return filter
+}
+
+// resolveBuildID resolves a build to its integer ID using either name or version.
+// Exactly one of name or version must be non-empty.
+func resolveBuildID(cfg *config.Config, project, name, version string) (int, error) {
+	filter := buildSearchFilter(name, version)
 
 	var data struct {
 		Builds []struct {
