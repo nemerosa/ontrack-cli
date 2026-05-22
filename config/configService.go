@@ -194,6 +194,45 @@ func SetConfigurationState(name string, disabled bool) error {
 	return nil
 }
 
+// Deletes an existing configuration
+func DeleteConfiguration(name string) error {
+	root, err := ReadRootConfiguration()
+	if err != nil {
+		return err
+	}
+	existing := findConfigurationByName(root, name)
+	if existing == nil {
+		return fmt.Errorf("Configuration with name %s does not exist", name)
+	}
+	// Filter out the deleted configuration
+	configurations := make([]Config, 0, len(root.Configurations)-1)
+	for _, item := range root.Configurations {
+		if item.Name != name {
+			configurations = append(configurations, item)
+		}
+	}
+	// Clear selected if it was the deleted config
+	selected := root.Selected
+	if selected == name {
+		selected = ""
+	}
+	newRoot := RootConfig{
+		Selected:       selected,
+		Configurations: configurations,
+	}
+	// Saves the root configuration back
+	configFilePath, err := getConfigFilePath()
+	if err != nil {
+		return err
+	}
+	buf, _ := yaml.Marshal(newRoot)
+	_, _ = os.OpenFile(configFilePath, os.O_CREATE|os.O_WRONLY, 0600)
+	_ = os.WriteFile(configFilePath, buf, 0600)
+
+	// OK
+	return nil
+}
+
 // Gets the path to the configuration file
 func getConfigFilePath() (string, error) {
 	return ConfigFilePath, nil

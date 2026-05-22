@@ -29,6 +29,35 @@ The configuration is stored on disk, in `~/.yontrack-config.yaml` and the `confi
 
 > The Ontrack CLI supports only version 4.x and beyond of Ontrack.
 
+## Managing configurations
+
+List all registered configurations:
+
+```bash
+yontrack config list
+```
+
+Switch to a different configuration:
+
+```bash
+yontrack config select <name>
+```
+
+Temporarily disable or re-enable a configuration without removing it:
+
+```bash
+yontrack config disable <name>
+yontrack config enable <name>
+```
+
+Delete a configuration permanently:
+
+```bash
+yontrack config delete <name>
+```
+
+> If the deleted configuration was the currently selected one, you will need to run `config select` to choose another before using the CLI.
+
 # Usage
 
 After the configuration has been set, injection of data into Ontrack from a CI pipeline can be typically done this way.
