@@ -353,6 +353,30 @@ The `--from-project` flag defaults to the `YONTRACK_PROJECT_NAME` environment va
 yontrack build link --to-project proj-b --to-version 1.2.3
 ```
 
+## Removing build links
+
+To remove dependency links from a build, use `build unlink`. The source build is identified the same way as in `build link` (by name, version, or ID), with the same `YONTRACK_PROJECT_NAME` / `YONTRACK_BUILD_NAME` environment variable defaults.
+
+Remove all links from a build:
+
+```bash
+yontrack build unlink --from-project proj-a --from-build 42
+```
+
+Remove all links targeting a specific project:
+
+```bash
+yontrack build unlink --from-project proj-a --from-build 42 --to-project proj-b
+```
+
+Remove a specific qualified link:
+
+```bash
+yontrack build unlink --from-project proj-a --from-build 42 --to-project proj-b --qualifier integration
+```
+
+Note: `--qualifier` requires `--to-project` to be specified.
+
 ## Git integration
 
 Ontrack can leverage SCM information stored in its model, in order to compute change logs or to allow searches based on commits.
