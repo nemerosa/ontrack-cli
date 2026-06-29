@@ -302,6 +302,8 @@ type AutoVersioningSourceConfig {
   prBodyTemplateFormat: String
   "Template for the title of the pull request (optional)"
   prTitleTemplate: String
+  "Push mode"
+  pushMode: AutoVersioningPushMode
   "Qualifier for the build link to create (when links are created)"
   qualifier: String
   "List of reviewers to always set on the pull request created by the auto versioning"
@@ -896,6 +898,14 @@ type Configuration {
   name: String!
 }
 
+"Output type for the configureBranch mutation."
+type ConfigureBranchPayload implements Payload {
+  "Configured branch"
+  branch: Branch
+  "List of errors"
+  errors: [UserError]
+}
+
 "Output type for the configureBuild mutation."
 type ConfigureBuildPayload implements Payload {
   "Configured build"
@@ -1268,6 +1278,12 @@ type DeleteBuildGitCommitPropertyByIdPayload implements Payload {
 type DeleteBuildGitCommitPropertyPayload implements Payload {
   "Build updated"
   build: Build
+  "List of errors"
+  errors: [UserError]
+}
+
+"Output type for the deleteBuildLinks mutation."
+type DeleteBuildLinksPayload implements Payload {
   "List of errors"
   errors: [UserError]
 }
@@ -3168,6 +3184,11 @@ type Mutation {
   ): CheckAutoVersioningPayload
   "Cleans auto-versioning audit entries based on the retention policy"
   cleanupAutoVersioningAuditEntries: CleanupAutoVersioningAuditEntriesPayload
+  "Configuration of a Yontrack branch based on some input"
+  configureBranch(
+    "Input for the mutation"
+    input: ConfigureBranchInput
+  ): ConfigureBranchPayload
   "Configuration of a Yontrack build based on some input"
   configureBuild(
     "Input for the mutation"
@@ -3373,6 +3394,11 @@ type Mutation {
     "Input for the mutation"
     input: DeleteBuildGitCommitPropertyByIdInput
   ): DeleteBuildGitCommitPropertyByIdPayload
+  "Deletes build links from a build, optionally filtered by target project and/or qualifier"
+  deleteBuildLinks(
+    "Input for the mutation"
+    input: DeleteBuildLinksInput
+  ): DeleteBuildLinksPayload
   "Deletes the message property on a build identified by name."
   deleteBuildMessageProperty(
     "Input for the mutation"
@@ -3854,7 +3880,7 @@ type Mutation {
     "Input for the mutation"
     input: LinksBuildInput
   ): LinksBuildPayload
-"Maps an identity provider group to a Yontrack group"
+  "Maps an identity provider group to a Yontrack group"
   mapGroup(
     "Input for the mutation"
     input: MapGroupInput
@@ -3903,6 +3929,11 @@ type Mutation {
     "Input for the mutation"
     input: ReorderPromotionLevelByIdInput
   ): ReorderPromotionLevelByIdPayload
+  "Reordering the validation stamps in a branch"
+  reorderValidationStampById(
+    "Input for the mutation"
+    input: ReorderValidationStampByIdInput
+  ): ReorderValidationStampByIdPayload
   "Rescheduling an auto-versioning order"
   rescheduleAutoVersioning(
     "Input for the mutation"
@@ -4225,6 +4256,11 @@ type Mutation {
     "Input for the mutation"
     input: SetPromotionLevelAutoPromotionPropertyByIdInput
   ): SetPromotionLevelAutoPromotionPropertyByIdPayload
+  "Replaces all configurable field definitions on a promotion level"
+  setPromotionLevelFields(
+    "Input for the mutation"
+    input: SetPromotionLevelFieldsInput
+  ): SetPromotionLevelFieldsPayload
   "Set the message property on a promotion level identified by name."
   setPromotionLevelMessageProperty(
     "Input for the mutation"
@@ -5094,6 +5130,8 @@ type PromotionLevel implements Authorizable & ProjectEntity {
     type: String
   ): [Decoration!]!
   description: String
+  "Configurable fields defined on this promotion level"
+  fields: [PromotionLevelField!]!
   id: ID!
   "Flag to indicate if an image is associated"
   image: Boolean
@@ -5145,6 +5183,26 @@ type PromotionLevel implements Authorizable & ProjectEntity {
   userMenuActions: [UserMenuAction!]!
 }
 
+"Configurable field definition on a promotion level"
+type PromotionLevelField {
+  "Optional description"
+  description: String
+  "Human-readable label"
+  displayName: String!
+  "Internal ID"
+  id: Int!
+  "Technical name (used as key)"
+  name: String!
+  "Allowed values for CHOICE fields"
+  options: [String!]!
+  "Display order"
+  position: Int!
+  "Whether this field is required"
+  required: Boolean!
+  "Field type"
+  type: PromotionLevelFieldType!
+}
+
 type PromotionRun implements Authorizable & ProjectEntity {
   "Description with links."
   annotatedDescription: String
@@ -5169,6 +5227,8 @@ type PromotionRun implements Authorizable & ProjectEntity {
     type: String
   ): [Decoration!]!
   description: String
+  "Values for the configurable fields of the promotion level"
+  fieldValues: [PromotionRunFieldValue!]!
   id: ID!
   "List of information components attached to this entity"
   information: [EntityInformation!]!
@@ -5192,6 +5252,14 @@ type PromotionRun implements Authorizable & ProjectEntity {
   ): [Property!]!
   "List of actions available for this entity"
   userMenuActions: [UserMenuAction!]!
+}
+
+"A field value stored on a promotion run"
+type PromotionRunFieldValue {
+  "Field name (key)"
+  name: String!
+  "Field value as JSON (null for optional unfilled fields)"
+  value: JSON
 }
 
 type PromotionRunPaginated {
@@ -5957,6 +6025,12 @@ type ReorderPredefinedPromotionLevelByIdPayload implements Payload {
 
 "Output type for the reorderPromotionLevelById mutation."
 type ReorderPromotionLevelByIdPayload implements Payload {
+  "List of errors"
+  errors: [UserError]
+}
+
+"Output type for the reorderValidationStampById mutation."
+type ReorderValidationStampByIdPayload implements Payload {
   "List of errors"
   errors: [UserError]
 }
@@ -6751,6 +6825,12 @@ type SetPromotionLevelAutoPromotionPropertyPayload implements Payload {
   errors: [UserError]
   "Promotion level updated"
   promotionLevel: PromotionLevel
+}
+
+"Output type for the setPromotionLevelFields mutation."
+type SetPromotionLevelFieldsPayload implements Payload {
+  "List of errors"
+  errors: [UserError]
 }
 
 "Output type for the setPromotionLevelMessagePropertyById mutation."
@@ -8105,6 +8185,8 @@ type WorkflowNode {
   executorId: String!
   "Unique ID of the node in its workflow."
   id: String!
+  "Interval in seconds to wait between checks of an async process inside the execution of a node. Not defined by default, using default settings."
+  interval: Int
   "List of the IDs of the parents for this node"
   parents: [WorkflowParentNode!]!
   "Timeout in seconds (5 minutes by default)"
@@ -8145,6 +8227,7 @@ enum AutoApprovalMode {
 enum AutoVersioningAuditState {
   CREATED
   ERROR
+  PENDING_SCHEDULE
   POST_PROCESSING_END
   POST_PROCESSING_LAUNCHED
   POST_PROCESSING_START
@@ -8157,6 +8240,8 @@ enum AutoVersioningAuditState {
   PR_CREATING
   PR_MERGED
   PR_TIMEOUT
+  PUSHED
+  PUSHING
   RECEIVED
   SCHEDULED
   THROTTLED
@@ -8174,6 +8259,12 @@ enum AutoVersioningNotificationScope {
   ERROR
   PR_TIMEOUT
   SUCCESS
+}
+
+"Way the auto-versioning update is pushed to the target branch."
+enum AutoVersioningPushMode {
+  PR
+  PUSH
 }
 
 "CHML values"
@@ -8309,6 +8400,15 @@ enum ProjectEntityType {
   PROMOTION_RUN
   VALIDATION_RUN
   VALIDATION_STAMP
+}
+
+"Type of a configurable field on a promotion level"
+enum PromotionLevelFieldType {
+  BOOLEAN
+  CHOICE
+  LINK
+  NUMBER
+  TEXT
 }
 
 "Result of a dispaching on a queue"
@@ -8471,6 +8571,8 @@ input AutoVersioningSourceConfigInput {
   prBodyTemplateFormat: String
   "Template for the title of the pull request (optional)"
   prTitleTemplate: String
+  "Push mode"
+  pushMode: AutoVersioningPushMode
   "Qualifier for the build link to create (when links are created)"
   qualifier: String
   "List of reviewers to always set on the pull request created by the auto versioning"
@@ -8632,6 +8734,18 @@ input CheckAutoVersioningInput {
   build: String!
   "Project name"
   project: String!
+}
+
+"Input type for the configureBranch mutation."
+input ConfigureBranchInput {
+  "Type of CI engine. Will be guessed from the environment if not specified."
+  ci: String
+  "YAML configuration"
+  config: String!
+  "List of environment variables"
+  env: [CIEnv!]!
+  "Type of SCM. Will be guessed from the environment if not specified."
+  scm: String
 }
 
 "Input type for the configureBuild mutation."
@@ -8820,6 +8934,8 @@ input CreatePromotionLevelByIdInput {
   branchId: Int!
   "Promotion level description"
   description: String!
+  "Optional field definitions to set at creation time"
+  fields: [PromotionLevelFieldInput!]
   "Promotion level name"
   name: String!
 }
@@ -8832,6 +8948,8 @@ input CreatePromotionRunByIdInput {
   dateTime: LocalDateTime
   "Promotion description"
   description: String
+  "Values for the configurable fields of the promotion level"
+  fieldValues: [PromotionRunFieldValueInput!]
   "Promotion name"
   promotion: String!
 }
@@ -8846,6 +8964,8 @@ input CreatePromotionRunInput {
   dateTime: LocalDateTime
   "Promotion description"
   description: String
+  "Values for the configurable fields of the promotion level"
+  fieldValues: [PromotionRunFieldValueInput!]
   "Project name"
   project: String!
   "Promotion name"
@@ -9078,6 +9198,16 @@ input DeleteBuildGitCommitPropertyInput {
   build: String!
   "Project name"
   project: String!
+}
+
+"Input type for the deleteBuildLinks mutation."
+input DeleteBuildLinksInput {
+  "ID of the build from which links must be deleted"
+  fromBuild: Int!
+  "Name of the target project ? if null, links to all projects are deleted"
+  project: String
+  "Qualifier to match ? if null, links with any qualifier are deleted"
+  qualifier: String
 }
 
 "Input type for the deleteBuildMessagePropertyById mutation."
@@ -10035,6 +10165,28 @@ input ProjectEntityIDInput {
   type: ProjectEntityType!
 }
 
+input PromotionLevelFieldInput {
+  "Optional description"
+  description: String
+  "Human-readable label"
+  displayName: String!
+  "Technical name used as key"
+  name: String!
+  "Allowed values for CHOICE fields"
+  options: [String!]
+  "Whether the field is required when creating a promotion run"
+  required: Boolean!
+  "Field type"
+  type: PromotionLevelFieldType!
+}
+
+input PromotionRunFieldValueInput {
+  "Field name (key)"
+  name: String!
+  "Field value as JSON"
+  value: JSON
+}
+
 input PropertyFilter {
   "type field"
   type: String
@@ -10080,6 +10232,16 @@ input ReorderPredefinedPromotionLevelByIdInput {
 
 "Input type for the reorderPromotionLevelById mutation."
 input ReorderPromotionLevelByIdInput {
+  "Branch ID"
+  branchId: Int!
+  "New name to swap"
+  newName: String!
+  "Old name to swap"
+  oldName: String!
+}
+
+"Input type for the reorderValidationStampById mutation."
+input ReorderValidationStampByIdInput {
   "Branch ID"
   branchId: Int!
   "New name to swap"
@@ -10888,6 +11050,14 @@ input SetPromotionLevelAutoPromotionPropertyInput {
   promotionLevels: [String!]
   "List of needed validation stamps"
   validationStamps: [String!]
+}
+
+"Input type for the setPromotionLevelFields mutation."
+input SetPromotionLevelFieldsInput {
+  "Field definitions (replaces all existing fields)"
+  fields: [PromotionLevelFieldInput!]!
+  "Promotion level ID"
+  promotionLevelId: Int!
 }
 
 "Input type for the setPromotionLevelMessagePropertyById mutation."

@@ -22,6 +22,9 @@ THE SOFTWARE.
 package cmd
 
 import (
+	"encoding/json"
+	"fmt"
+	"strings"
 	"yontrack/utils"
 
 	"github.com/spf13/cobra"
@@ -51,6 +54,29 @@ var promoteCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
+		fields, err := cmd.Flags().GetStringArray("field")
+		if err != nil {
+			return err
+		}
+
+		type fieldValueInput struct {
+			Name  string      `json:"name"`
+			Value interface{} `json:"value"`
+		}
+		var fieldValues []fieldValueInput
+		for _, f := range fields {
+			idx := strings.Index(f, "=")
+			if idx < 0 {
+				return fmt.Errorf("invalid field format %q: expected name=value", f)
+			}
+			name := f[:idx]
+			raw := f[idx+1:]
+			var jsonVal interface{}
+			if err := json.Unmarshal([]byte(raw), &jsonVal); err != nil {
+				jsonVal = raw
+			}
+			fieldValues = append(fieldValues, fieldValueInput{Name: name, Value: jsonVal})
+		}
 
 		// Configuration
 		cfg, err := config.GetSelectedConfiguration()
@@ -74,14 +100,16 @@ var promoteCmd = &cobra.Command{
 				$branch: String!,
 				$build: String!,
 				$promotion: String!,
-				$description: String
+				$description: String,
+				$fieldValues: [PromotionRunFieldValueInput!]
 			) {
 				createPromotionRun(input: {
 					project: $project,
 					branch: $branch,
 					build: $build,
 					promotion: $promotion,
-					description: $description
+					description: $description,
+					fieldValues: $fieldValues
 				}) {
 					errors {
 						message
@@ -94,6 +122,7 @@ var promoteCmd = &cobra.Command{
 			"build":       build,
 			"promotion":   promotion,
 			"description": description,
+			"fieldValues": fieldValues,
 		}, &data); err != nil {
 			return err
 		}
@@ -125,6 +154,7 @@ func init() {
 	promoteCmd.Flags().StringP("build", "n", "", "Name of the build")
 	promoteCmd.Flags().StringP("promotion", "l", "", "Name of the promotion level")
 	promoteCmd.Flags().StringP("description", "d", "", "Description for the promotion")
+	promoteCmd.Flags().StringArray("field", []string{}, "Field value as name=value (can be repeated)")
 
 	_ = promoteCmd.MarkFlagRequired("promotion")
 }
