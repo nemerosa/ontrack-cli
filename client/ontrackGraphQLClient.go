@@ -35,7 +35,7 @@ func GraphQLCall(cfg *config.Config, query string, variables map[string]interfac
 		client.SetRetryCount(cfg.ConnectionRetry.MaxCount).
 			SetRetryMaxWaitTime(time.Duration(cfg.ConnectionRetry.MaxWaitTimeSec) * time.Second).
 			AddRetryCondition(func(r *resty.Response, err error) bool {
-				return r.StatusCode() == http.StatusRequestTimeout || r.StatusCode() >= 500
+				return err != nil || r.StatusCode() == http.StatusRequestTimeout || r.StatusCode() >= 500
 			})
 	}
 
